@@ -20,7 +20,6 @@
  */
 
 package ch.epfl.tabletlab.photon;
-
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
@@ -67,7 +66,7 @@ public class SampleProfileActivity extends Activity {
         } else {
           // User clicked to log in.
           ParseLoginBuilder loginBuilder = new ParseLoginBuilder(
-              SampleProfileActivity.this);
+                  SampleProfileActivity.this);
           startActivityForResult(loginBuilder.build(), LOGIN_REQUEST);
         }
       }

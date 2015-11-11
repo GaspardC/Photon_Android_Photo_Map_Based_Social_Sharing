@@ -103,8 +103,6 @@ public class ParseLoginFragment extends ParseLoginFragmentBase {
     facebookLoginButton = (Button) v.findViewById(R.id.facebook_login);
     twitterLoginButton = (Button) v.findViewById(R.id.twitter_login);
 
-
-
     if (appLogo != null && config.getAppLogo() != null) {
       appLogo.setImageResource(config.getAppLogo());
     }
