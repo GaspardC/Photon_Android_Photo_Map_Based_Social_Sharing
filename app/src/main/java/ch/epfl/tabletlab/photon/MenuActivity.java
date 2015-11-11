@@ -10,16 +10,11 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.parse.Parse;
-import com.parse.ParseFacebookUtils;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
-import com.parse.ui.ParseLoginActivity;
-import com.parse.ui.ParseLoginBuilder;
-import com.parse.ui.ParseLoginFragment;
 
 import ch.epfl.tabletlab.photon.MenuFragments.CalendarFragment;
 import ch.epfl.tabletlab.photon.MenuFragments.HomeFragment;
-import ch.epfl.tabletlab.photon.MenuFragments.ProfileFragment;
 import ch.epfl.tabletlab.photon.MenuFragments.SettingsFragment;
 import ch.epfl.tabletlab.photon.ResideMenu.ResideMenu;
 import ch.epfl.tabletlab.photon.ResideMenu.ResideMenuItem;
@@ -56,13 +51,10 @@ public class MenuActivity extends FragmentActivity implements View.OnClickListen
 
     private void setUpParse() {
         // Enable Local Datastore.
-        Parse.enableLocalDatastore(this);
+//        Parse.enableLocalDatastore(this);
+//
+//        Parse.initialize(this, "8Sl49UiakBdglrkaeJNIG4bF74qdApgMR6fS9VRe", "7ID0uhsKi7Syix6joJkXi8R5gfh42cOUWUDRQnSq");
 
-        Parse.initialize(this, "8Sl49UiakBdglrkaeJNIG4bF74qdApgMR6fS9VRe", "7ID0uhsKi7Syix6joJkXi8R5gfh42cOUWUDRQnSq");
-
-        ParseObject testObject = new ParseObject("TestObject");
-        testObject.put("foo", "bar");
-        testObject.saveInBackground();
 
     }
 
@@ -129,8 +121,11 @@ public class MenuActivity extends FragmentActivity implements View.OnClickListen
 ////                    showProfileLoggedOut();
 //                } else {
                     // User clicked to log in.
-                    ParseLoginBuilder builder = new ParseLoginBuilder(MenuActivity.this);
-                    startActivityForResult(builder.build(), 0);
+//                    ParseLoginBuilder builder = new ParseLoginBuilder(MenuActivity.this);
+//                    startActivityForResult(builder.build(), 0);
+                Intent intent = new Intent(this, SampleProfileActivity.class);
+                startActivity(intent);
+
 //                }
 
 //                changeFragment(new ParseLoginFragment());
