@@ -29,7 +29,7 @@ import com.parse.ParseFacebookUtils;
 
 import ch.epfl.tabletlab.photon.R;
 
-public class SampleApplication extends Application {
+public class ParseApplication extends Application {
   @Override
   public void onCreate() {
     super.onCreate();

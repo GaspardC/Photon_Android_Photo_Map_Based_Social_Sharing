@@ -9,8 +9,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
 
-import com.parse.Parse;
-import com.parse.ParseObject;
 import com.parse.ParseUser;
 
 import ch.epfl.tabletlab.photon.MenuFragments.CalendarFragment;
@@ -123,7 +121,7 @@ public class MenuActivity extends FragmentActivity implements View.OnClickListen
                     // User clicked to log in.
 //                    ParseLoginBuilder builder = new ParseLoginBuilder(MenuActivity.this);
 //                    startActivityForResult(builder.build(), 0);
-                Intent intent = new Intent(this, SampleProfileActivity.class);
+                Intent intent = new Intent(this, ProfileActivity.class);
                 startActivity(intent);
 
 //                }

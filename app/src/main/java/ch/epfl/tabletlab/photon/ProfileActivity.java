@@ -34,7 +34,7 @@ import com.parse.ui.ParseLoginBuilder;
  * Shows the user profile. This simple activity can function regardless of whether the user
  * is currently logged in.
  */
-public class SampleProfileActivity extends Activity {
+public class ProfileActivity extends Activity {
   private static final int LOGIN_REQUEST = 0;
 
   private TextView titleTextView;
@@ -66,7 +66,7 @@ public class SampleProfileActivity extends Activity {
         } else {
           // User clicked to log in.
           ParseLoginBuilder loginBuilder = new ParseLoginBuilder(
-                  SampleProfileActivity.this);
+                  ProfileActivity.this);
           startActivityForResult(loginBuilder.build(), LOGIN_REQUEST);
         }
       }
