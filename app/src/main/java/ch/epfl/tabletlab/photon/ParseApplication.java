@@ -31,6 +31,8 @@ import com.parse.ParseTwitterUtils;
 //import ch.epfl.tabletlab.photon.R;
 
 public class ParseApplication extends Application {
+
+
   @Override
   public void onCreate() {
     super.onCreate();
