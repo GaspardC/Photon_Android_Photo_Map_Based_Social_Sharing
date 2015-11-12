@@ -38,7 +38,6 @@ public class MenuActivity extends FragmentActivity implements View.OnClickListen
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
 //            ParseFacebookUtils.initialize(this);
-                int a = 2;
             setContentView(R.layout.main);
             mContext = this;
             if (resideMenu == null) setUpParse();
