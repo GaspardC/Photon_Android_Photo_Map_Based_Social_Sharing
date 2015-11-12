@@ -34,7 +34,7 @@
     <string name="settings_distance_format">%d feet</string>
     <string name="activity_post_title">Create a Post</string>
     <string name="character_count_placeholder">0/140</string>
-
+    <string name="hello_world">hello_world</string>
 
 
 </resources>

@@ -10,6 +10,7 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
 
     <android:uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <android:uses-permission android:name="android.permission.READ_PHONE_STATE" />
@@ -26,6 +27,10 @@
             android:label="@string/app_name"
             android:theme="@android:style/Theme.Light.NoTitleBar" >
 
+        </activity>
+        <activity
+            android:name=".WhereAmI"
+            android:label="@string/app_name">
         </activity>
         <activity
             android:name=".ProfileActivity"
@@ -83,7 +88,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyC_NPwXZ1HHsKdEy4IUnU-Oayrf1IkERwQ" />
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
 
     </application>
 
