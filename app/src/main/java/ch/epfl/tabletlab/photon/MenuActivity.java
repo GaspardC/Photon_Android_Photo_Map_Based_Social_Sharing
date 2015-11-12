@@ -40,20 +40,12 @@ public class MenuActivity extends FragmentActivity implements View.OnClickListen
 //            ParseFacebookUtils.initialize(this);
             setContentView(R.layout.main);
             mContext = this;
-            if (resideMenu == null) setUpParse();
             setUpMenu();
             if( savedInstanceState == null )
                 changeFragment(new HomeFragment());
         }
 
-    private void setUpParse() {
-        // Enable Local Datastore.
-//        Parse.enableLocalDatastore(this);
-//
-//        Parse.initialize(this, "8Sl49UiakBdglrkaeJNIG4bF74qdApgMR6fS9VRe", "7ID0uhsKi7Syix6joJkXi8R5gfh42cOUWUDRQnSq");
 
-
-    }
 
     private void setUpMenu() {
 
@@ -110,22 +102,10 @@ public class MenuActivity extends FragmentActivity implements View.OnClickListen
             if (view == itemHome){
                 changeFragment(new HomeFragment());
             }else if (view == itemProfile){
-//                changeFragment(new ProfileFragment());
-//                if (currentUser != null) {
-//                    // User clicked to log out.
-//                    ParseUser.logOut();
-//                    currentUser = null;
-////                    showProfileLoggedOut();
-//                } else {
-                    // User clicked to log in.
-//                    ParseLoginBuilder builder = new ParseLoginBuilder(MenuActivity.this);
-//                    startActivityForResult(builder.build(), 0);
+
                 Intent intent = new Intent(this, ProfileActivity.class);
                 startActivity(intent);
 
-//                }
-
-//                changeFragment(new ParseLoginFragment());
             }else if (view == itemCalendar){
                 changeFragment(new CalendarFragment());
             }else if (view == itemSettings){
@@ -135,16 +115,7 @@ public class MenuActivity extends FragmentActivity implements View.OnClickListen
             resideMenu.closeMenu();
         }
 
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        // Check which request we're responding to
-//        if (requestCode == 1) {
-//            // Make sure the request was successful
-//            if (resultCode == RESULT_OK) {
-//                ParseUser.getCurrentUser();
-//            }
-//        }
-//    }
+
 
         private ResideMenu.OnMenuListener menuListener = new ResideMenu.OnMenuListener() {
             @Override

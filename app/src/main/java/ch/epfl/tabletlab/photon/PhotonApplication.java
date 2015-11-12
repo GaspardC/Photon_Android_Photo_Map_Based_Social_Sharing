@@ -4,7 +4,9 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.parse.Parse;
+import com.parse.ParseFacebookUtils;
 import com.parse.ParseObject;
+import com.parse.ParseTwitterUtils;
 
 public class PhotonApplication extends android.app.Application {
   // Debugging switch
@@ -31,10 +33,22 @@ public class PhotonApplication extends android.app.Application {
   @Override
   public void onCreate() {
     super.onCreate();
+    // Required - Initialize the Parse SDK
+    Parse.enableLocalDatastore(this);
+
+    Parse.initialize(this, "8Sl49UiakBdglrkaeJNIG4bF74qdApgMR6fS9VRe", "7ID0uhsKi7Syix6joJkXi8R5gfh42cOUWUDRQnSq");
+
+    Parse.setLogLevel(Parse.LOG_LEVEL_DEBUG);
+
+    ParseFacebookUtils.initialize(this);
+
+    // Optional - If you don't want to allow Twitter login, you can
+    // remove this line (and other related ParseTwitterUtils calls)
+    ParseTwitterUtils.initialize(getString(R.string.twitter_consumer_key),
+            getString(R.string.twitter_consumer_secret));
 
     ParseObject.registerSubclass(AnywallPost.class);
-    Parse.initialize(this, "YOUR_PARSE_APPLICATION_ID",
-        "YOUR_PARSE_CLIENT_KEY");
+
 
     preferences = getSharedPreferences("com.parse.anywall", Context.MODE_PRIVATE);
 
