@@ -76,6 +76,10 @@ public class HomeFragment extends Fragment {
 
         myMapFragment = (SupportMapFragment) fm.findFragmentById(R.id.myMap);
 
+        // to add gesture operation's ignored views
+        FrameLayout ignored_view = (FrameLayout) parentView.findViewById(R.id.myMap);
+        resideMenu.addIgnoredView(ignored_view);
+        
         // Set up a progress dialog
         final ProgressDialog dialog = new ProgressDialog(getActivity());
         dialog.setMessage(getString(R.string.progress_map_init));
