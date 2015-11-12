@@ -10,7 +10,7 @@ public class DispatchActivity extends ParseLoginDispatchActivity {
 
     @Override
     protected Class<?> getTargetClass() {
-        return WhereAmI.class;
+        return MenuActivity.class;
     }
 
 //    @Override

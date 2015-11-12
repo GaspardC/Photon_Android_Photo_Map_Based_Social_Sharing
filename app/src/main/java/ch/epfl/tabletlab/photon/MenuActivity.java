@@ -17,6 +17,37 @@ import ch.epfl.tabletlab.photon.MenuFragments.SettingsFragment;
 import ch.epfl.tabletlab.photon.ResideMenu.ResideMenu;
 import ch.epfl.tabletlab.photon.ResideMenu.ResideMenuItem;
 
+import android.Manifest;
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.RectF;
+import android.location.Address;
+import android.location.Criteria;
+import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatActivity;
+import android.widget.TextView;
+
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
+
 
 
 
@@ -31,6 +62,7 @@ public class MenuActivity extends FragmentActivity implements View.OnClickListen
         private ParseUser currentUser;
 
 
+
     /**
          * Called when the activity is first created.
          */
@@ -43,7 +75,12 @@ public class MenuActivity extends FragmentActivity implements View.OnClickListen
             setUpMenu();
             if( savedInstanceState == null )
                 changeFragment(new HomeFragment());
+
+
         }
+
+
+
 
 
 
