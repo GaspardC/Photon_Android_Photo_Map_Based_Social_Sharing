@@ -1,6 +1,7 @@
 package ch.epfl.tabletlab.photon.MenuFragments;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Address;
@@ -57,7 +58,7 @@ public class HomeFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         parentView = inflater.inflate(R.layout.home, container, false);
-//        setUpViews();
+        setUpViews();
         setUpMap();
 
 
@@ -67,17 +68,19 @@ public class HomeFragment extends Fragment {
     private void setUpViews() {
         MenuActivity parentActivity = (MenuActivity) getActivity();
         resideMenu = parentActivity.getResideMenu();
-
-
-
-
     }
 
     private void setUpMap() {
-//        mGoogleMap = ((SupportMapFragment) getFragmentManager().findFragmentById(R.id.myMap)).getMap();
+
         fm=getChildFragmentManager();
 
         myMapFragment = (SupportMapFragment) fm.findFragmentById(R.id.myMap);
+
+        // Set up a progress dialog
+        final ProgressDialog dialog = new ProgressDialog(getActivity());
+        dialog.setMessage(getString(R.string.progress_map_init));
+        dialog.show();
+
 
         myMapFragment.getMapAsync(new OnMapReadyCallback() {
 
@@ -85,6 +88,7 @@ public class HomeFragment extends Fragment {
             public void onMapReady(GoogleMap googlemap) {
                 // TODO Auto-generated method stub
                 mGoogleMap=googlemap;
+                dialog.dismiss();
                 startMap();
             }
         });
