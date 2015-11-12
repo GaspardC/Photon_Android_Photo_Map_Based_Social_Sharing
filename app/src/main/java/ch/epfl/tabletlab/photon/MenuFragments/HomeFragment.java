@@ -4,6 +4,12 @@ import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.RectF;
 import android.location.Address;
 import android.location.Criteria;
 import android.location.Geocoder;
@@ -22,9 +28,9 @@ import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -79,7 +85,7 @@ public class HomeFragment extends Fragment {
         // to add gesture operation's ignored views
         FrameLayout ignored_view = (FrameLayout) parentView.findViewById(R.id.myMap);
         resideMenu.addIgnoredView(ignored_view);
-        
+
         // Set up a progress dialog
         final ProgressDialog dialog = new ProgressDialog(getActivity());
         dialog.setMessage(getString(R.string.progress_map_init));
@@ -146,15 +152,38 @@ public class HomeFragment extends Fragment {
             CameraPosition cameraPosition = new CameraPosition.Builder().target(new LatLng(latitude, longitude)).zoom(17).build();
             mGoogleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 
-            mGoogleMap.clear();
-            MarkerOptions markerOptions = new MarkerOptions();
-            markerOptions.position(new LatLng(latitude, longitude));
-            markerOptions.title("Here I am");
-            markerOptions.snippet("(" + latitude + "," + longitude + ")");
-            mGoogleMap.addMarker(markerOptions).showInfoWindow();
+//            mGoogleMap.clear();
+//            MarkerOptions markerOptions = new MarkerOptions();
+//            markerOptions.position(new LatLng(latitude, longitude));
+//            markerOptions.title("Here I am");
+//            markerOptions.snippet("(" + latitude + "," + longitude + ")");
+//            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.smallbeautifulimage));
+//            mGoogleMap.addMarker(markerOptions).showInfoWindow();
 
-            /*USE TO CREATE HIS OWN MARKER*/
-           /* String text = "Here I am";
+//            mGoogleMap.clear();
+//            Bitmap.Config conf = Bitmap.Config.ARGB_8888;
+//            Bitmap bmp = Bitmap.createBitmap(80, 80, conf);
+//            Canvas canvas1 = new Canvas(bmp);
+//
+//// paint defines the text color,
+//// stroke width, size
+//            Paint color = new Paint();
+//            color.setTextSize(35);
+//            color.setColor(Color.BLACK);
+//
+////modify canvas
+//            canvas1.drawBitmap(BitmapFactory.decodeResource(getResources(),
+//                    R.drawable.smallbeautifulimage), 0,0, color);
+//            canvas1.drawText(ParseUser.getCurrentUser().getUsername(), 30, 40, color);
+//
+////add marker to Map
+//            mGoogleMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude))
+//                    .icon(BitmapDescriptorFactory.fromBitmap(bmp))
+//                            // Specifies the anchor to be at a particular point in the marker image.
+//                    .anchor(0.5f, 1));
+
+            /*USE TO CREATE CUSTOM MARKER*/
+            String text = "Here I am";
             int textSize = 30;
             Paint paint = new Paint();
             paint.setTextSize(textSize);
@@ -163,19 +192,19 @@ public class HomeFragment extends Fragment {
             int width = (int) (paint.measureText(text) + 0.5f); // round
             float baseline = (int) (-paint.ascent() + 0.5f); // ascent() is negative
             int height = (int) (baseline + paint.descent() + 0.5f);
-            Bitmap image = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+            Bitmap image = Bitmap.createBitmap(width+50, height+50, Bitmap.Config.ARGB_8888);
             Canvas canvas = new Canvas(image);
             Paint backPaint = new Paint();
             backPaint.setARGB(250, 0, 0, 255);
             backPaint.setAntiAlias(true);
-            RectF backRect = new RectF(0, 0, width, height);
+            RectF backRect = new RectF(0, 0, width+50, height+50);
             canvas.drawRoundRect(backRect, 5, 5, backPaint);
             canvas.drawText(text, 0, baseline, paint);
             mGoogleMap.clear();
             MarkerOptions markerOptions = new MarkerOptions();
             markerOptions.position(new LatLng(latitude, longitude));
-            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(image));
-            mGoogleMap.addMarker(markerOptions).showInfoWindow();*/
+            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.smallbeautifulimage));
+            mGoogleMap.addMarker(markerOptions).showInfoWindow();
 
             try {
                 List<Address> addresses = gc.getFromLocation(latitude, longitude, 1);
