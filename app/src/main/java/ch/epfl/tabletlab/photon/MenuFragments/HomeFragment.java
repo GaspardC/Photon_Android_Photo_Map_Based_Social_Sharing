@@ -24,6 +24,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -33,14 +35,18 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.parse.ParseUser;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
 import ch.epfl.tabletlab.photon.MenuActivity;
+import ch.epfl.tabletlab.photon.MyMarker;
 import ch.epfl.tabletlab.photon.R;
 import ch.epfl.tabletlab.photon.ResideMenu.ResideMenu;
 
@@ -58,6 +64,9 @@ public class HomeFragment extends Fragment {
     FragmentManager fm;
     SupportMapFragment myMapFragment;
 
+    private HashMap<Marker, MyMarker> mMarkersHashMap;
+    private ArrayList<MyMarker> mMyMarkersArray = new ArrayList<MyMarker>();
+
 
 
 
@@ -68,7 +77,38 @@ public class HomeFragment extends Fragment {
         setUpMap();
 
 
+
+
         return parentView;
+    }
+
+    private void displayImage() {
+        //TODO utiliser la reele position de la personne
+        // Initialize the HashMap for Markers and MyMarker object
+        mMarkersHashMap = new HashMap<Marker, MyMarker>();
+
+        mMyMarkersArray.add(new MyMarker("Lausanne", "text", Double.parseDouble("46.5269830"), Double.parseDouble("6.5674850")));
+        //TODO here get all images in the map and add them
+        plotMarkers(mMyMarkersArray);
+
+    }
+    private void plotMarkers(ArrayList<MyMarker> markers)
+    {
+        if(markers.size() > 0)
+        {
+            for (MyMarker myMarker : markers)
+            {
+
+                // Create user marker with custom icon and other options
+                MarkerOptions markerOption = new MarkerOptions().position(new LatLng(myMarker.getmLatitude(), myMarker.getmLongitude()));
+                markerOption.icon(BitmapDescriptorFactory.fromResource(R.drawable.currentlocation_icon));
+
+                Marker currentMarker = mGoogleMap.addMarker(markerOption);
+                mMarkersHashMap.put(currentMarker, myMarker);
+
+                mGoogleMap.setInfoWindowAdapter(new MarkerInfoWindowAdapter());
+            }
+        }
     }
 
     private void setUpViews() {
@@ -100,6 +140,7 @@ public class HomeFragment extends Fragment {
                 mGoogleMap=googlemap;
                 dialog.dismiss();
                 startMap();
+                displayImage();
             }
         });
 //        mGoogleMap = ((SupportMapFragment) getFragmentManager().findFragmentById(
@@ -182,29 +223,29 @@ public class HomeFragment extends Fragment {
 //                            // Specifies the anchor to be at a particular point in the marker image.
 //                    .anchor(0.5f, 1));
 
-            /*USE TO CREATE CUSTOM MARKER*/
-            String text = "Here I am";
-            int textSize = 30;
-            Paint paint = new Paint();
-            paint.setTextSize(textSize);
-            paint.setColor(Color.WHITE);
-            paint.setTextAlign(Paint.Align.LEFT);
-            int width = (int) (paint.measureText(text) + 0.5f); // round
-            float baseline = (int) (-paint.ascent() + 0.5f); // ascent() is negative
-            int height = (int) (baseline + paint.descent() + 0.5f);
-            Bitmap image = Bitmap.createBitmap(width+50, height+50, Bitmap.Config.ARGB_8888);
-            Canvas canvas = new Canvas(image);
-            Paint backPaint = new Paint();
-            backPaint.setARGB(250, 0, 0, 255);
-            backPaint.setAntiAlias(true);
-            RectF backRect = new RectF(0, 0, width+50, height+50);
-            canvas.drawRoundRect(backRect, 5, 5, backPaint);
-            canvas.drawText(text, 0, baseline, paint);
-            mGoogleMap.clear();
-            MarkerOptions markerOptions = new MarkerOptions();
-            markerOptions.position(new LatLng(latitude, longitude));
-            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.smallbeautifulimage));
-            mGoogleMap.addMarker(markerOptions).showInfoWindow();
+//            /*USE TO CREATE CUSTOM MARKER*/
+//            String text = "Here I am";
+//            int textSize = 30;
+//            Paint paint = new Paint();
+//            paint.setTextSize(textSize);
+//            paint.setColor(Color.WHITE);
+//            paint.setTextAlign(Paint.Align.LEFT);
+//            int width = (int) (paint.measureText(text) + 0.5f); // round
+//            float baseline = (int) (-paint.ascent() + 0.5f); // ascent() is negative
+//            int height = (int) (baseline + paint.descent() + 0.5f);
+//            Bitmap image = Bitmap.createBitmap(width+50, height+50, Bitmap.Config.ARGB_8888);
+//            Canvas canvas = new Canvas(image);
+//            Paint backPaint = new Paint();
+//            backPaint.setARGB(250, 0, 0, 255);
+//            backPaint.setAntiAlias(true);
+//            RectF backRect = new RectF(0, 0, width+50, height+50);
+//            canvas.drawRoundRect(backRect, 5, 5, backPaint);
+//            canvas.drawText(text, 0, baseline, paint);
+//            mGoogleMap.clear();
+//            MarkerOptions markerOptions = new MarkerOptions();
+//            markerOptions.position(new LatLng(latitude, longitude));
+//            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.smallbeautifulimage));
+//            mGoogleMap.addMarker(markerOptions).showInfoWindow();
 
             try {
                 List<Address> addresses = gc.getFromLocation(latitude, longitude, 1);
@@ -245,4 +286,44 @@ public class HomeFragment extends Fragment {
         ;
     };
 
-}
+
+    public class MarkerInfoWindowAdapter implements GoogleMap.InfoWindowAdapter
+    {
+        public MarkerInfoWindowAdapter()
+        {
+        }
+
+        @Override
+        public View getInfoWindow(Marker marker)
+        {
+            return null;
+        }
+
+        @Override
+        public View getInfoContents(Marker marker)
+        {
+            View v  = getActivity().getLayoutInflater().inflate(R.layout.infowindow_layout, null);
+
+            MyMarker myMarker = mMarkersHashMap.get(marker);
+
+            ImageView markerIcon = (ImageView) v.findViewById(R.id.marker_icon);
+
+            TextView markerLabel = (TextView)v.findViewById(R.id.marker_label);
+            TextView markerOtherText = (TextView)v.findViewById(R.id.another_label);
+
+
+//            markerIcon.setImageResource(manageMarkerIcon(myMarker.getmIcon()));
+            markerIcon.setImageResource(R.drawable.smallbeautifulimage);
+
+
+            markerLabel.setText(myMarker.getmLabel());
+            markerOtherText.setText(myMarker.getmIcon());
+
+
+            return v;
+        }
+    }
+
+    }
+
+
