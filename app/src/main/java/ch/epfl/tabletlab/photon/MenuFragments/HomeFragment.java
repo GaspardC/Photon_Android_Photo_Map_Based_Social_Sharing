@@ -87,7 +87,7 @@ public class HomeFragment extends Fragment {
         // Initialize the HashMap for Markers and MyMarker object
         mMarkersHashMap = new HashMap<Marker, MyMarker>();
 
-        mMyMarkersArray.add(new MyMarker("Lausanne", "text", Double.parseDouble("46.5269830"), Double.parseDouble("6.5674850")));
+        mMyMarkersArray.add(new MyMarker("#labEPFL", "text", Double.parseDouble("46.5269830"), Double.parseDouble("6.5674850")));
         //TODO here get all images in the map and add them
         plotMarkers(mMyMarkersArray);
 
