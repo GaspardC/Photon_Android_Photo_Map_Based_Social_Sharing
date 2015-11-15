@@ -10,9 +10,13 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -27,6 +31,9 @@ import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 import ch.epfl.tabletlab.photon.MenuFragments.DataManager;
 
@@ -39,6 +46,10 @@ public class PostActivity extends Activity {
   private TextView characterCountTextView;
   private Button postButton;
 
+    Bitmap bmp;
+    Intent i;
+    Uri BmpFileName = null;
+
   private int maxCharacterCount = PhotonApplication.getConfigHelper().getPostMaxCharacterCount();
   private ParseGeoPoint geoPoint;
 
@@ -47,6 +58,7 @@ public class PostActivity extends Activity {
     super.onCreate(savedInstanceState);
 
     setContentView(R.layout.activity_post);
+      launchCamera();
 
 //    Intent intent = getIntent();
 //    Location location = intent.getParcelableExtra(PhotonApplication.INTENT_EXTRA_LOCATION);
@@ -95,19 +107,31 @@ public class PostActivity extends Activity {
     AnywallPost post = new AnywallPost();
 
     // Set the location to the current user's location
-    post.setLocation(geoPoint);
-    post.setText(text);
-    post.setUser(ParseUser.getCurrentUser());
+      post.setLocation(geoPoint);
+      post.setText(text);
+      post.setUser(ParseUser.getCurrentUser());
 
-//    ParseFile parseImage = new ParseFile()
-    Resources res = getResources();
-    Drawable drawable = res.getDrawable(R.drawable.smallbeautifulimage);
-    Bitmap bitmap = ((BitmapDrawable)drawable).getBitmap();
-    ByteArrayOutputStream stream = new ByteArrayOutputStream();
-    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-    byte[] bitmapdata = stream.toByteArray();
+      //USE TO GET PHoTO FROM DRAWABLE
+//    Resources res = getResources();
+//    Drawable drawable = res.getDrawable(R.drawable.smallbeautifulimage);
+//    Bitmap bitmap = ((BitmapDrawable)drawable).getBitmap();
+//    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+//    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+//    byte[] bitmapdata = stream.toByteArray();
+//      ParseFile pFile = new ParseFile("DocImage.jpg", bitmapdata);
 
-    ParseFile pFile = new ParseFile("DocImage.jpg", bitmapdata);
+
+      // Ensure bmp has value
+      if (bmp == null || BmpFileName == null) {
+          Log.d ("Error" , "Problem with image");
+          return;
+      }
+
+      ByteArrayOutputStream stream = new ByteArrayOutputStream();
+      bmp.compress(Bitmap.CompressFormat.PNG, 100, stream);
+      ParseFile pFile = new ParseFile("Photo.jpg", stream.toByteArray());
+
+
     post.put("image",pFile);
 
     ParseACL acl = new ParseACL();
@@ -126,7 +150,32 @@ public class PostActivity extends Activity {
     });
   }
 
-  private String getPostEditTextText () {
+    private void launchCamera() {
+
+        String storageState = Environment.getExternalStorageState();
+        if (storageState.equals(Environment.MEDIA_MOUNTED)) {
+
+//            String path = Environment.getExternalStorageDirectory().getName() + File.separatorChar + "Android/data/" + this.getPackageName() + "/files/" + "Doc1" + ".jpg";
+//            File photoFile = new File(path);
+
+            File photoFile = new File(Environment.getExternalStorageDirectory(), "dir/photo");
+            try {
+                if (photoFile.exists() == false) {
+                    photoFile.getParentFile().mkdir();
+                    photoFile.createNewFile();
+                }
+            } catch (IOException e) {
+                Log.e("DocumentActivity", "Could not create file.", e);
+            }
+//            Log.i("DocumentActivity", path);
+            BmpFileName = Uri.fromFile(photoFile);
+            i = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            i.putExtra(MediaStore.EXTRA_OUTPUT, BmpFileName);
+            startActivityForResult(i, 0);
+        }
+    }
+
+    private String getPostEditTextText () {
     return postEditText.getText().toString().trim();
   }
 
@@ -140,4 +189,25 @@ public class PostActivity extends Activity {
     String characterCountString = String.format("%d/%d", postEditText.length(), maxCharacterCount);
     characterCountTextView.setText(characterCountString);
   }
+
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+// TODO Auto-generated method stub
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            try {
+                bmp = MediaStore.Images.Media.getBitmap( this.getContentResolver(), BmpFileName);
+            } catch (FileNotFoundException e) {
+// TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (IOException e) {
+
+// TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            if (bmp != null){
+
+            }
+        }
+    }
 }
