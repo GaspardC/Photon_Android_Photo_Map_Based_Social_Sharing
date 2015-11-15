@@ -5,6 +5,10 @@ import android.app.Application;
 import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.Bundle;
 import android.text.Editable;
@@ -17,9 +21,12 @@ import android.widget.TextView;
 
 import com.parse.ParseACL;
 import com.parse.ParseException;
+import com.parse.ParseFile;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
+
+import java.io.ByteArrayOutputStream;
 
 import ch.epfl.tabletlab.photon.MenuFragments.DataManager;
 
@@ -91,6 +98,18 @@ public class PostActivity extends Activity {
     post.setLocation(geoPoint);
     post.setText(text);
     post.setUser(ParseUser.getCurrentUser());
+
+//    ParseFile parseImage = new ParseFile()
+    Resources res = getResources();
+    Drawable drawable = res.getDrawable(R.drawable.smallbeautifulimage);
+    Bitmap bitmap = ((BitmapDrawable)drawable).getBitmap();
+    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+    byte[] bitmapdata = stream.toByteArray();
+
+    ParseFile pFile = new ParseFile("DocImage.jpg", bitmapdata);
+    post.put("image",pFile);
+
     ParseACL acl = new ParseACL();
 
     // Give public read access
