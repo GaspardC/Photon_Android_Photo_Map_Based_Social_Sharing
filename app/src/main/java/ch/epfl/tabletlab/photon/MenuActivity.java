@@ -57,7 +57,7 @@ public class MenuActivity extends FragmentActivity implements View.OnClickListen
         private MenuActivity mContext;
         private ResideMenuItem itemHome;
         private ResideMenuItem itemProfile;
-        private ResideMenuItem itemCalendar;
+        private ResideMenuItem itemPost;
         private ResideMenuItem itemSettings;
         private ParseUser currentUser;
 
@@ -98,17 +98,17 @@ public class MenuActivity extends FragmentActivity implements View.OnClickListen
             // create menu items;
             itemHome     = new ResideMenuItem(this, R.drawable.icon_home,     "Home");
             itemProfile  = new ResideMenuItem(this, R.drawable.icon_profile,  "Profile");
-            itemCalendar = new ResideMenuItem(this, R.drawable.icon_calendar, "Calendar");
+            itemPost = new ResideMenuItem(this, R.drawable.icon_calendar, "Post");
             itemSettings = new ResideMenuItem(this, R.drawable.icon_settings, "Settings");
 
             itemHome.setOnClickListener(this);
             itemProfile.setOnClickListener(this);
-            itemCalendar.setOnClickListener(this);
+            itemPost.setOnClickListener(this);
             itemSettings.setOnClickListener(this);
 
             resideMenu.addMenuItem(itemHome, ResideMenu.DIRECTION_LEFT);
             resideMenu.addMenuItem(itemProfile, ResideMenu.DIRECTION_LEFT);
-            resideMenu.addMenuItem(itemCalendar, ResideMenu.DIRECTION_RIGHT);
+            resideMenu.addMenuItem(itemPost, ResideMenu.DIRECTION_RIGHT);
             resideMenu.addMenuItem(itemSettings, ResideMenu.DIRECTION_RIGHT);
 
             // You can disable a direction by setting ->
@@ -143,8 +143,10 @@ public class MenuActivity extends FragmentActivity implements View.OnClickListen
                 Intent intent = new Intent(this, ProfileActivity.class);
                 startActivity(intent);
 
-            }else if (view == itemCalendar){
-                changeFragment(new CalendarFragment());
+            }else if (view == itemPost){
+//                changeFragment(new CalendarFragment());
+                Intent intent = new Intent(this, PostActivity.class);
+                startActivity(intent);
             }else if (view == itemSettings){
                 changeFragment(new SettingsFragment());
             }

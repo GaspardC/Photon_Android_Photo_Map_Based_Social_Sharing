@@ -8,18 +8,19 @@
     <ImageView
         android:id="@+id/marker_icon"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"/>
 
     <TextView
         android:id="@+id/marker_label"
-        android:layout_marginLeft="5dp"
-        android:layout_width="match_parent"
+        android:layout_marginLeft="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textStyle="bold" />
     <TextView
         android:id="@+id/another_label"
-        android:layout_marginLeft="5dp"
-        android:layout_width="match_parent"
+        android:layout_marginLeft="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textStyle="bold" />
 

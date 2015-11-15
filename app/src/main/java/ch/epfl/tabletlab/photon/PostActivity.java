@@ -2,6 +2,7 @@ package ch.epfl.tabletlab.photon;
 
 import android.app.Activity;
 import android.app.Application;
+import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.location.Location;
@@ -19,6 +20,8 @@ import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
+
+import ch.epfl.tabletlab.photon.MenuFragments.DataManager;
 
 /**
  * Activity which displays a login screen to the user, offering registration as well.
@@ -38,9 +41,10 @@ public class PostActivity extends Activity {
 
     setContentView(R.layout.activity_post);
 
-    Intent intent = getIntent();
-    Location location = intent.getParcelableExtra(PhotonApplication.INTENT_EXTRA_LOCATION);
-    geoPoint = new ParseGeoPoint(location.getLatitude(), location.getLongitude());
+//    Intent intent = getIntent();
+//    Location location = intent.getParcelableExtra(PhotonApplication.INTENT_EXTRA_LOCATION);
+    geoPoint = DataManager.getUserLocation();
+//    geoPoint = new ParseGeoPoint(location.getLatitude(), location.getLongitude());
 
     postEditText = (EditText) findViewById(R.id.post_edittext);
     postEditText.addTextChangedListener(new TextWatcher() {

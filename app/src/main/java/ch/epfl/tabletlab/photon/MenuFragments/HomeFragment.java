@@ -87,7 +87,7 @@ public class HomeFragment extends Fragment {
         // Initialize the HashMap for Markers and MyMarker object
         mMarkersHashMap = new HashMap<Marker, MyMarker>();
 
-        mMyMarkersArray.add(new MyMarker("#labEPFL", "text", Double.parseDouble("46.5269830"), Double.parseDouble("6.5674850")));
+        mMyMarkersArray.add(new MyMarker("#labEPFL", "", Double.parseDouble("46.5269830"), Double.parseDouble("6.5674850")));
         //TODO here get all images in the map and add them
         plotMarkers(mMyMarkersArray);
 
@@ -107,6 +107,7 @@ public class HomeFragment extends Fragment {
                 mMarkersHashMap.put(currentMarker, myMarker);
 
                 mGoogleMap.setInfoWindowAdapter(new MarkerInfoWindowAdapter());
+                currentMarker.showInfoWindow();
             }
         }
     }
@@ -189,7 +190,7 @@ public class HomeFragment extends Fragment {
             latLongString = "Lat: " + latitude + "\nLong: " + longitude;
             Geocoder gc = new Geocoder(getActivity(), Locale.getDefault());
 
-
+            new DataManager().setUserLocation(location);
             CameraPosition cameraPosition = new CameraPosition.Builder().target(new LatLng(latitude, longitude)).zoom(17).build();
             mGoogleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 
