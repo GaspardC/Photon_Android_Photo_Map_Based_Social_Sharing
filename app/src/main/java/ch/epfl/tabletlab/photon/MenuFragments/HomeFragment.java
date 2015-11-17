@@ -164,7 +164,7 @@ public class HomeFragment extends Fragment {
                 mMarkersHashMap.put(currentMarker, myMarker);
 
                 mGoogleMap.setInfoWindowAdapter(new MarkerInfoWindowAdapter());
-                currentMarker.showInfoWindow();
+//                currentMarker.showInfoWindow();
             }
         }
     }
@@ -222,6 +222,10 @@ public class HomeFragment extends Fragment {
        * Set up the query to update the map view
        */
     private void doMapQuery() {
+
+
+//        //remove all markers on the map
+//        mGoogleMap.clear();
         final int myUpdateNumber = ++mostRecentMapUpdate;
         Location myLoc = (currentMapLocation == null) ? currentLocation : currentMapLocation;
 
@@ -257,6 +261,7 @@ public class HomeFragment extends Fragment {
                 if (myUpdateNumber != mostRecentMapUpdate) {
                     return;
                 }
+
                 // Posts to show on the map
                 Set<String> toKeep = new HashSet<String>();
                 mMyMarkersArray = new ArrayList<MyMarker>();
@@ -273,7 +278,7 @@ public class HomeFragment extends Fragment {
 
                     ParseFile thumbnail = image;
                     final ImageView img = new ImageView(getActivity());
-                    final Bitmap[] bmp = new Bitmap[1000];
+//                    final Bitmap[] bmp = new Bitmap[1000];
 
                     if (thumbnail != null) {
                         thumbnail.getDataInBackground(new GetDataCallback() {
@@ -282,10 +287,18 @@ public class HomeFragment extends Fragment {
                             public void done(byte[] data, ParseException e) {
 
                                 if (e == null) {
-                                    bmp[0] = BitmapFactory.decodeByteArray(data, 0,
-                                            data.length);
 
-                                    if (bmp[0] != null) {
+//                                    bmp[0] = BitmapFactory.decodeByteArray(data, 0,
+//                                            data.length);
+                                    final BitmapFactory.Options options = new BitmapFactory.Options();
+                                    options.inSampleSize = 4;
+
+                                   Bitmap bmp =  BitmapFactory
+                                            .decodeByteArray(
+                                                    data, 0,
+                                                    data.length,options);
+
+                                    if (bmp != null) {
 
                                         Log.e("parse file ok", " null");
                                         // img.setImageBitmap(Bitmap.createScaledBitmap(bmp,
@@ -295,7 +308,7 @@ public class HomeFragment extends Fragment {
                                         // img.setPadding(10, 10, 0, 0);
 
                                         MyMarker newMarker = new MyMarker(post.getText(), "", post.getLocation().getLatitude(),
-                                                post.getLocation().getLongitude(), bmp[0]);
+                                                post.getLocation().getLongitude(), bmp);
                                         mMyMarkersArray.add(newMarker);
 
 
