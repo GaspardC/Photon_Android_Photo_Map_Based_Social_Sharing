@@ -1,5 +1,10 @@
 package ch.epfl.tabletlab.photon;
 
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
+import android.media.Image;
+import android.widget.ImageView;
+
 import com.google.android.gms.maps.model.Marker;
 
 /**
@@ -11,13 +16,15 @@ public class MyMarker
     private String mIcon;
     private Double mLatitude;
     private Double mLongitude;
+    private Bitmap bitmap;
 
-    public MyMarker(String label, String icon, Double latitude, Double longitude)
+    public MyMarker(String label, String icon, Double latitude, Double longitude, Bitmap b)
     {
         this.mLabel = label;
         this.mLatitude = latitude;
         this.mLongitude = longitude;
         this.mIcon = icon;
+        this.bitmap = b;
     }
 
     public String getmLabel()
@@ -61,4 +68,7 @@ public class MyMarker
     }
 
 
+    public Bitmap getImage() {
+        return this.bitmap;
+    }
 }

@@ -128,7 +128,7 @@ public class PostActivity extends Activity {
       }
 
       ByteArrayOutputStream stream = new ByteArrayOutputStream();
-      bmp.compress(Bitmap.CompressFormat.PNG, 100, stream);
+      bmp.compress(Bitmap.CompressFormat.PNG, 10, stream);
       ParseFile pFile = new ParseFile("Photo.jpg", stream.toByteArray());
 
 

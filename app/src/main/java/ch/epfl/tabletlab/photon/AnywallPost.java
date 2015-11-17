@@ -1,6 +1,7 @@
 package ch.epfl.tabletlab.photon;
 
 import com.parse.ParseClassName;
+import com.parse.ParseFile;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -33,6 +34,14 @@ public class AnywallPost extends ParseObject {
 
   public void setLocation(ParseGeoPoint value) {
     put("location", value);
+  }
+
+  public void setImage(ParseFile image){
+    put("image", image);
+  }
+
+  public ParseFile getImage( ){
+    return getParseFile("image");
   }
 
   public static ParseQuery<AnywallPost> getQuery() {

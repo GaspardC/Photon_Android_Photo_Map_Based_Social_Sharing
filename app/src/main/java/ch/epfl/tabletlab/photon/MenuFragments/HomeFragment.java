@@ -42,8 +42,11 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.mopub.volley.toolbox.ImageLoader;
 import com.parse.FindCallback;
+import com.parse.GetDataCallback;
 import com.parse.ParseException;
+import com.parse.ParseFile;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
@@ -115,6 +118,20 @@ public class HomeFragment extends Fragment {
         mMarkersHashMap = new HashMap<Marker, MyMarker>();
         setUpViews();
         setUpMap();
+
+        //Create image options.
+//        DisplayImageOptions options = new DisplayImageOptions.Builder()
+//                .showImageOnLoading(R.drawable.button_default)
+//                .cacheInMemory(true)
+//                .cacheOnDisc(true)
+//                .build();
+//
+//        //Create a config with those options.
+//        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(getApplicationContext())
+//                .defaultDisplayImageOptions(options)
+//                .build();
+//
+//        ImageLoader.getInstance().init(config);
 
 
 
@@ -244,66 +261,69 @@ public class HomeFragment extends Fragment {
                 Set<String> toKeep = new HashSet<String>();
                 mMyMarkersArray = new ArrayList<MyMarker>();
                 // Loop through the results of the search
-                for (AnywallPost post : objects) {
+                for (final AnywallPost post : objects) {
                     // Add this post to the list of map pins to keep
                     toKeep.add(post.getObjectId());
                     // Check for an existing marker for this post
 //                    MyMarker oldMarker = mMarkersHashMap.get(post.getObjectId());
+
                     // Set up the map marker's location
+                    ParseFile image = post.getImage();
 
-                    MyMarker newMarker = new MyMarker(post.getText(), "", post.getLocation().getLatitude(), post.getLocation().getLongitude());
-                    mMyMarkersArray.add(newMarker);
-//
-//                      MarkerOptions markerOpts =
-//                            new MarkerOptions().position(new LatLng(post.getLocation().getLatitude(), post
-//                                    .getLocation().getLongitude()));
 
-                    // Set up the marker properties based on if it is within the search radius
-//
-//                    if (post.getLocation().distanceInKilometersTo(myPoint) > radius * METERS_PER_FEET
-//                            / METERS_PER_KILOMETER) {
-//                    if (post.getLocation().distanceInKilometersTo(myPoint) > 20.0) {
-                        // Check for an existing out of range marker
-//                        if (oldMarker != null) {
-//                            if (oldMarker.getSnippet() == null) {
-//                                // Out of range marker already exists, skip adding it
-//                                continue;
-//                            } else {
-//                                // Marker now out of range, needs to be refreshed
-//                                oldMarker.remove();
-//                            }
-//                        }
-                        // Display a red marker with a predefined title and no snippet
-//                        markerOpts =
-//                                markerOpts.title(getResources().getString(R.string.post_out_of_range)).icon(
-//                                        BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-//                    } else {
-//                        // Check for an existing in range marker
-//                        if (oldMarker != null) {
-//                            if (oldMarker.getSnippet() != null) {
-//                                // In range marker already exists, skip adding it
-//                                continue;
-//                            } else {
-//                                // Marker now in range, needs to be refreshed
-//                                oldMarker.remove();
-//                            }
-//                        }
-                        // Display a green marker with the post information
-//                        markerOpts =
-//                                markerOpts.title(post.getText()).snippet(post.getUser().getUsername())
-//                                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+                    ParseFile thumbnail = image;
+                    final ImageView img = new ImageView(getActivity());
+                    final Bitmap[] bmp = new Bitmap[1000];
+
+                    if (thumbnail != null) {
+                        thumbnail.getDataInBackground(new GetDataCallback() {
+
+                            @Override
+                            public void done(byte[] data, ParseException e) {
+
+                                if (e == null) {
+                                    bmp[0] = BitmapFactory.decodeByteArray(data, 0,
+                                            data.length);
+
+                                    if (bmp[0] != null) {
+
+                                        Log.e("parse file ok", " null");
+                                        // img.setImageBitmap(Bitmap.createScaledBitmap(bmp,
+                                        // (display.getWidth() / 5),
+                                        // (display.getWidth() /50), false));
+//                                        img.setImageBitmap(bmp[0]);
+                                        // img.setPadding(10, 10, 0, 0);
+
+                                        MyMarker newMarker = new MyMarker(post.getText(), "", post.getLocation().getLatitude(),
+                                                post.getLocation().getLongitude(), bmp[0]);
+                                        mMyMarkersArray.add(newMarker);
+
+
+
+                                    }
+                                } else {
+                                    Log.e("paser after downloade", " null");
+                                }
+
+                            }
+                        });
+                    } else {
+
+                        Log.e("parse file", " null");
+
+                        // img.setImageResource(R.drawable.ic_launcher);
+
+                        img.setPadding(10, 10, 10, 10);
                     }
-                    // Add a new marker
-//                    MyMarker marker = myMapFragment.getMap().addMarker(markerOpts);
-//                    mapMarkers.put(post.getObjectId(), marker);
-//                    if (post.getObjectId().equals(selectedPostObjectId)) {
-//                        marker.showInfoWindow();
-//                        selectedPostObjectId = null;
-//                    }
+
+
+
+//                    MyMarker newMarker = new MyMarker(post.getText(), "", post.getLocation().getLatitude(),
+//                            post.getLocation().getLongitude(), bmp[0]);
+//                    mMyMarkersArray.add(newMarker);
+                    }
                 }
-                // Clean up old markers.
-//                cleanUpMarkers(toKeep);
-//            }
+
         });
         displayImage();
 
@@ -358,6 +378,7 @@ public class HomeFragment extends Fragment {
             latLongString = "Lat: " + latitude + "\nLong: " + longitude;
             Geocoder gc = new Geocoder(getActivity(), Locale.getDefault());
 
+            // TO DO just do it at the beginning or on press compass
             new DataManager().setUserLocation(location);
             CameraPosition cameraPosition = new CameraPosition.Builder().target(new LatLng(latitude, longitude)).zoom(17).build();
             mGoogleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
@@ -437,7 +458,9 @@ public class HomeFragment extends Fragment {
 
     private final LocationListener locationListener = new LocationListener() {
         public void onLocationChanged(Location location) {
-            updateWithNewLocation(location);
+            if(currentLocation  == null){ //TO DO Updtate the locatoin
+                updateWithNewLocation(location);
+            }
         }
 
         public void onProviderDisabled(String provider) {
@@ -484,6 +507,7 @@ public class HomeFragment extends Fragment {
 
 //            markerIcon.setImageResource(manageMarkerIcon(myMarker.getmIcon()));
 //            markerIcon.setImageResource(R.drawable.smallbeautifulimage);
+            markerIcon.setImageBitmap(myMarker.getImage());
 
 
             markerLabel.setText(myMarker.getmLabel());
