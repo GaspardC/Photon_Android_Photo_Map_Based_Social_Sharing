@@ -1,5 +1,7 @@
 package ch.epfl.tabletlab.photon;
 
+import com.google.android.gms.maps.model.Marker;
+
 /**
  * Created by Gasp on 14/11/2015.
  */
@@ -57,4 +59,6 @@ public class MyMarker
     {
         this.mLongitude = mLongitude;
     }
+
+
 }

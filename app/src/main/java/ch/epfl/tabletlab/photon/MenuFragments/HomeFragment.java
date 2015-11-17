@@ -1,6 +1,8 @@
 package ch.epfl.tabletlab.photon.MenuFragments;
 
 import android.Manifest;
+import android.app.Application;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -16,10 +18,12 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.location.LocationProvider;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +31,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -37,18 +42,28 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseGeoPoint;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
+import ch.epfl.tabletlab.photon.AnywallPost;
 import ch.epfl.tabletlab.photon.MenuActivity;
 import ch.epfl.tabletlab.photon.MyMarker;
+import ch.epfl.tabletlab.photon.PhotonApplication;
 import ch.epfl.tabletlab.photon.R;
 import ch.epfl.tabletlab.photon.ResideMenu.ResideMenu;
+
+import static android.widget.Toast.LENGTH_SHORT;
 
 /**
  * User: special
@@ -58,6 +73,27 @@ import ch.epfl.tabletlab.photon.ResideMenu.ResideMenu;
  */
 public class HomeFragment extends Fragment {
 
+    /*
+     * Constants for handling location results
+     */
+    // Conversion from feet to meters
+    private static final float METERS_PER_FEET = 0.3048f;
+
+    // Conversion from kilometers to meters
+    private static final int METERS_PER_KILOMETER = 1000;
+
+    // Initial offset for calculating the map bounds
+    private static final double OFFSET_CALCULATION_INIT_DIFF = 1.0;
+
+    // Accuracy for calculating the map bounds
+    private static final float OFFSET_CALCULATION_ACCURACY = 0.01f;
+
+    // Maximum results returned from a Parse query
+    private static final int MAX_POST_SEARCH_RESULTS = 20;
+
+    // Maximum post search radius for map in kilometers
+    private static final int MAX_POST_SEARCH_DISTANCE = 100;
+
     private View parentView;
     private ResideMenu resideMenu;
     private GoogleMap mGoogleMap;
@@ -66,13 +102,17 @@ public class HomeFragment extends Fragment {
 
     private HashMap<Marker, MyMarker> mMarkersHashMap;
     private ArrayList<MyMarker> mMyMarkersArray = new ArrayList<MyMarker>();
-
-
+    private int mostRecentMapUpdate;
+    private Location currentLocation;
+    private android.location.LocationManager locationManager;
+    private Location currentMapLocation;
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         parentView = inflater.inflate(R.layout.home, container, false);
+        // Initialize the HashMap for Markers and MyMarker object
+        mMarkersHashMap = new HashMap<Marker, MyMarker>();
         setUpViews();
         setUpMap();
 
@@ -84,10 +124,10 @@ public class HomeFragment extends Fragment {
 
     private void displayImage() {
         //TODO utiliser la reele position de la personne
-        // Initialize the HashMap for Markers and MyMarker object
-        mMarkersHashMap = new HashMap<Marker, MyMarker>();
+//        // Initialize the HashMap for Markers and MyMarker object
+//        mMarkersHashMap = new HashMap<Marker, MyMarker>();
 
-        mMyMarkersArray.add(new MyMarker("#labEPFL", "", Double.parseDouble("46.5269830"), Double.parseDouble("6.5674850")));
+//        mMyMarkersArray.add(new MyMarker("#labEPFL", "", Double.parseDouble("46.5269830"), Double.parseDouble("6.5674850")));
         //TODO here get all images in the map and add them
         plotMarkers(mMyMarkersArray);
 
@@ -148,8 +188,133 @@ public class HomeFragment extends Fragment {
 //                R.id.map)).getMap();
         // Changing map type
 
+        myMapFragment.getMap().setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
+            public void onCameraChange(CameraPosition position) {
+                // When the camera changes, update the query
+                Location loc = new Location("cam");
+                loc.setLatitude(position.target.latitude);
+                loc.setLongitude(position.target.longitude);
+                currentMapLocation = loc;
+                doMapQuery();
+            }
+        });
+
     }
 
+    /*
+       * Set up the query to update the map view
+       */
+    private void doMapQuery() {
+        final int myUpdateNumber = ++mostRecentMapUpdate;
+        Location myLoc = (currentMapLocation == null) ? currentLocation : currentMapLocation;
+
+        // If location info isn't available, clean up any existing markers
+        if (myLoc == null) {
+//            cleanUpMarkers(new HashSet<String>());
+            Toast.makeText(this.getActivity(), "Unknown location", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        final ParseGeoPoint myPoint = geoPointFromLocation(myLoc);
+        // Create the map Parse query
+        ParseQuery<AnywallPost> mapQuery = AnywallPost.getQuery();
+        // Set up additional query filters
+        mapQuery.whereWithinKilometers("location", myPoint, MAX_POST_SEARCH_DISTANCE);
+        mapQuery.include("user");
+        mapQuery.orderByDescending("createdAt");
+        mapQuery.setLimit(MAX_POST_SEARCH_RESULTS);
+        // Kick off the query in the background
+        mapQuery.findInBackground(new FindCallback<AnywallPost>() {
+            @Override
+            public void done(List<AnywallPost> objects, ParseException e) {
+                if (e != null) {
+                    if (PhotonApplication.APPDEBUG) {
+                        Log.d(PhotonApplication.APPTAG, "An error occurred while querying for map posts.", e);
+                    }
+                    return;
+                }
+        /*
+         * Make sure we're processing results from
+         * the most recent update, in case there
+         * may be more than one in progress.
+         */
+                if (myUpdateNumber != mostRecentMapUpdate) {
+                    return;
+                }
+                // Posts to show on the map
+                Set<String> toKeep = new HashSet<String>();
+                mMyMarkersArray = new ArrayList<MyMarker>();
+                // Loop through the results of the search
+                for (AnywallPost post : objects) {
+                    // Add this post to the list of map pins to keep
+                    toKeep.add(post.getObjectId());
+                    // Check for an existing marker for this post
+//                    MyMarker oldMarker = mMarkersHashMap.get(post.getObjectId());
+                    // Set up the map marker's location
+
+                    MyMarker newMarker = new MyMarker(post.getText(), "", post.getLocation().getLatitude(), post.getLocation().getLongitude());
+                    mMyMarkersArray.add(newMarker);
+//
+//                      MarkerOptions markerOpts =
+//                            new MarkerOptions().position(new LatLng(post.getLocation().getLatitude(), post
+//                                    .getLocation().getLongitude()));
+
+                    // Set up the marker properties based on if it is within the search radius
+//
+//                    if (post.getLocation().distanceInKilometersTo(myPoint) > radius * METERS_PER_FEET
+//                            / METERS_PER_KILOMETER) {
+//                    if (post.getLocation().distanceInKilometersTo(myPoint) > 20.0) {
+                        // Check for an existing out of range marker
+//                        if (oldMarker != null) {
+//                            if (oldMarker.getSnippet() == null) {
+//                                // Out of range marker already exists, skip adding it
+//                                continue;
+//                            } else {
+//                                // Marker now out of range, needs to be refreshed
+//                                oldMarker.remove();
+//                            }
+//                        }
+                        // Display a red marker with a predefined title and no snippet
+//                        markerOpts =
+//                                markerOpts.title(getResources().getString(R.string.post_out_of_range)).icon(
+//                                        BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+//                    } else {
+//                        // Check for an existing in range marker
+//                        if (oldMarker != null) {
+//                            if (oldMarker.getSnippet() != null) {
+//                                // In range marker already exists, skip adding it
+//                                continue;
+//                            } else {
+//                                // Marker now in range, needs to be refreshed
+//                                oldMarker.remove();
+//                            }
+//                        }
+                        // Display a green marker with the post information
+//                        markerOpts =
+//                                markerOpts.title(post.getText()).snippet(post.getUser().getUsername())
+//                                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+                    }
+                    // Add a new marker
+//                    MyMarker marker = myMapFragment.getMap().addMarker(markerOpts);
+//                    mapMarkers.put(post.getObjectId(), marker);
+//                    if (post.getObjectId().equals(selectedPostObjectId)) {
+//                        marker.showInfoWindow();
+//                        selectedPostObjectId = null;
+//                    }
+                }
+                // Clean up old markers.
+//                cleanUpMarkers(toKeep);
+//            }
+        });
+        displayImage();
+
+    }
+
+    /*
+ * Helper method to get the Parse GEO point representation of a location
+ */
+    private ParseGeoPoint geoPointFromLocation(Location loc) {
+        return new ParseGeoPoint(loc.getLatitude(), loc.getLongitude());
+    }
     private void startMap() {
 
         mGoogleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
@@ -159,9 +324,10 @@ public class HomeFragment extends Fragment {
 // Enable/disable compass icon
         mGoogleMap.getUiSettings().setCompassEnabled(true);
 // Enable/disable rotate gesture mGoogleMap.getUiSettings().setRotateGesturesEnabled(true); // Enable/disable zooming functionality mGoogleMap.getUiSettings().setZoomGesturesEnabled(true);
-        LocationManager locationManager;
+
         String context = Context.LOCATION_SERVICE;
         locationManager = (LocationManager) getActivity().getSystemService(context);
+
         Criteria criteria = new Criteria();
         criteria.setAccuracy(Criteria.ACCURACY_FINE);
         criteria.setAltitudeRequired(false);
@@ -169,17 +335,19 @@ public class HomeFragment extends Fragment {
         criteria.setCostAllowed(true);
         criteria.setPowerRequirement(Criteria.POWER_LOW);
         String provider = locationManager.getBestProvider(criteria, true);
+        provider = LocationManager.NETWORK_PROVIDER;
         if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             Location location = locationManager.getLastKnownLocation(provider);
+            locationManager.requestLocationUpdates(provider, 2000, 10, locationListener);
             if (location != null) {
                 updateWithNewLocation(location);
             }
         }
-        locationManager.requestLocationUpdates(provider, 2000, 10, locationListener);
     }
 
 
     private void updateWithNewLocation(Location location) {
+        currentLocation = location;
         String latLongString;
         TextView myLocationText;
         myLocationText = (TextView) parentView.findViewById(R.id.myLocationText);
@@ -273,6 +441,7 @@ public class HomeFragment extends Fragment {
         }
 
         public void onProviderDisabled(String provider) {
+
             updateWithNewLocation(null);
         }
 
@@ -314,7 +483,7 @@ public class HomeFragment extends Fragment {
 
 
 //            markerIcon.setImageResource(manageMarkerIcon(myMarker.getmIcon()));
-            markerIcon.setImageResource(R.drawable.smallbeautifulimage);
+//            markerIcon.setImageResource(R.drawable.smallbeautifulimage);
 
 
             markerLabel.setText(myMarker.getmLabel());
@@ -324,6 +493,8 @@ public class HomeFragment extends Fragment {
             return v;
         }
     }
+
+
 
     }
 
