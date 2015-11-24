@@ -63,10 +63,7 @@ public class PostActivity extends Activity {
     setContentView(R.layout.activity_post);
       launchCamera();
 
-//    Intent intent = getIntent();
-//    Location location = intent.getParcelableExtra(PhotonApplication.INTENT_EXTRA_LOCATION);
     geoPoint = DataManager.getUserLocation();
-//    geoPoint = new ParseGeoPoint(location.getLatitude(), location.getLongitude());
 
     postEditText = (EditText) findViewById(R.id.post_edittext);
     postEditText.addTextChangedListener(new TextWatcher() {
@@ -189,9 +186,6 @@ public class PostActivity extends Activity {
 
         String storageState = Environment.getExternalStorageState();
         if (storageState.equals(Environment.MEDIA_MOUNTED)) {
-
-//            String path = Environment.getExternalStorageDirectory().getName() + File.separatorChar + "Android/data/" + this.getPackageName() + "/files/" + "Doc1" + ".jpg";
-//            File photoFile = new File(path);
 
             File photoFile = new File(Environment.getExternalStorageDirectory(), "dir/photo");
             try {

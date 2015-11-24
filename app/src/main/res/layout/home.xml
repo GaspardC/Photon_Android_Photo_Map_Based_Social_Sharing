@@ -5,29 +5,42 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="@drawable/beautifulimage"
     >
 
-    <TextView
-        android:id="@+id/myLocationText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/hello_world" />
 
     <fragment
         android:id="@+id/myMap"
         android:name="ch.epfl.tabletlab.photon.MenuFragments.HomeFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/myLocationText"
         class="com.google.android.gms.maps.SupportMapFragment" />
 
+    <LinearLayout
+        android:layout_alignBottom="@+id/myMap"
+        android:layout_width="match_parent"
+        android:id="@+id/LoginLinearLayoutForRestaurants"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal">
+        <SeekBar
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/seekBarRestaurantDistance"
+            android:layout_gravity="center_horizontal"
+            android:scrollIndicators="right"
+            android:thumbTint="#ffffff"
+            android:progressTint="#ffffff"
+            android:progressBackgroundTint="#ffffff"
+            android:max="30"
+            android:thumb="@android:drawable/btn_star_big_on"
+            android:layout_weight="5"/>
+        <TextView
+            android:layout_weight="3"
+            android:id="@+id/value_distance_restaurant"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            style="@style/ParseLoginUI.TextView" />
+    </LinearLayout>
+
 </RelativeLayout>
-
-
-
-<!--<fragment-->
-<!--android:id="@+id/map"-->
-<!--android:name="ch.epfl.tabletlab.photon.MenuFragments.HomeFragment"-->
-<!--android:layout_width="match_parent"-->
-<!--android:layout_height="match_parent"-->
-<!--class="com.google.android.gms.maps.SupportMapFragment" />-->

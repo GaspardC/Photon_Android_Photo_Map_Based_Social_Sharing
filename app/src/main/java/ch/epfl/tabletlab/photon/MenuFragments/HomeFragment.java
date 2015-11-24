@@ -30,6 +30,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -109,6 +110,9 @@ public class HomeFragment extends Fragment {
     private Location currentLocation;
     private android.location.LocationManager locationManager;
     private Location currentMapLocation;
+    private SeekBar seekBarNumber;
+    private ParseUser currentUser;
+    private  TextView seekBarValue;
 
 
     @Override
@@ -116,27 +120,46 @@ public class HomeFragment extends Fragment {
         parentView = inflater.inflate(R.layout.home, container, false);
         // Initialize the HashMap for Markers and MyMarker object
         mMarkersHashMap = new HashMap<Marker, MyMarker>();
+        seekBarNumber = (SeekBar)  parentView.findViewById(R.id.seekBarRestaurantDistance);
+        seekBarValue = (TextView)  parentView.findViewById(R.id.value_distance_restaurant);
         setUpViews();
         setUpMap();
-
-        //Create image options.
-//        DisplayImageOptions options = new DisplayImageOptions.Builder()
-//                .showImageOnLoading(R.drawable.button_default)
-//                .cacheInMemory(true)
-//                .cacheOnDisc(true)
-//                .build();
-//
-//        //Create a config with those options.
-//        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(getApplicationContext())
-//                .defaultDisplayImageOptions(options)
-//                .build();
-//
-//        ImageLoader.getInstance().init(config);
-
-
-
+        setSeekBar();
 
         return parentView;
+    }
+
+    private void setSeekBar() {
+        currentUser = DataManager.getUser();
+        if (currentUser == null) return;
+        int seekbarValueInit = currentUser.getInt("numberDisplayed");
+        if(0 != seekbarValueInit){
+            seekBarNumber.setProgress(seekbarValueInit);
+            seekBarValue.setText("Number of Photo displayed : " + String.valueOf(seekbarValueInit));
+        }
+
+        final int[] seekvalue = {0};
+
+        seekBarNumber.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener(){
+
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress,
+                                          boolean fromUser) {
+                seekBarValue.setText("Number of Photo displayed : "+String.valueOf(progress));
+                seekvalue[0] = progress;
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                currentUser.put("numberDisplayed", seekvalue[0]);
+                currentUser.saveInBackground();
+            }
+        });
+
     }
 
     private void displayImage() {
@@ -382,14 +405,16 @@ public class HomeFragment extends Fragment {
     private void updateWithNewLocation(Location location) {
         currentLocation = location;
         String latLongString;
-        TextView myLocationText;
+/*        TextView myLocationText;
         myLocationText = (TextView) parentView.findViewById(R.id.myLocationText);
-        String addressString = "No address found";
+        String addressString = "No address found";*/
         if (location != null) {
             double latitude = location.getLatitude();
             double longitude = location.getLongitude();
             latLongString = "Lat: " + latitude + "\nLong: " + longitude;
+/*
             Geocoder gc = new Geocoder(getActivity(), Locale.getDefault());
+*/
 
             // TO DO just do it at the beginning or on press compass
             new DataManager().setUserLocation(location);
@@ -426,7 +451,7 @@ public class HomeFragment extends Fragment {
 //                            // Specifies the anchor to be at a particular point in the marker image.
 //                    .anchor(0.5f, 1));
 
-//            /*USE TO CREATE CUSTOM MARKER*/
+//            USE TO CREATE CUSTOM MARKER
 //            String text = "Here I am";
 //            int textSize = 30;
 //            Paint paint = new Paint();
@@ -450,22 +475,22 @@ public class HomeFragment extends Fragment {
 //            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.smallbeautifulimage));
 //            mGoogleMap.addMarker(markerOptions).showInfoWindow();
 
-            try {
-                List<Address> addresses = gc.getFromLocation(latitude, longitude, 1);
-                StringBuilder sb = new StringBuilder();
-                if (addresses.size() > 0) {
-                    Address address = addresses.get(0);
-                    for (int i = 0; i <= address.getMaxAddressLineIndex(); i++) {
-                        sb.append("\n").append(address.getAddressLine(i));
-                    }
-                    addressString = sb.toString();
-                }
-            } catch (IOException e) {
-            }
-        } else {
+//            try {
+//                List<Address> addresses = gc.getFromLocation(latitude, longitude, 1);
+//                StringBuilder sb = new StringBuilder();
+//                if (addresses.size() > 0) {
+//                    Address address = addresses.get(0);
+//                    for (int i = 0; i <= address.getMaxAddressLineIndex(); i++) {
+//                        sb.append("\n").append(address.getAddressLine(i));
+//                    }
+//                    addressString = sb.toString();
+//                }
+//            } catch (IOException e) {
+//            }
+        }/* else {
             latLongString = "No location found";
         }
-        myLocationText.setText("Your Current Position is: \n" + latLongString + "\n" + addressString);
+        myLocationText.setText("Your Current Position is: \n" + latLongString + "\n" + addressString);*/
     }
 
 

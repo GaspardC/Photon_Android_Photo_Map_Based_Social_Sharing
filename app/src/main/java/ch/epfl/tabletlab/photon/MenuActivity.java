@@ -69,14 +69,11 @@ public class MenuActivity extends FragmentActivity implements View.OnClickListen
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-//            ParseFacebookUtils.initialize(this);
             setContentView(R.layout.main);
             mContext = this;
             setUpMenu();
             if( savedInstanceState == null )
                 changeFragment(new HomeFragment());
-
-
         }
 
 
@@ -89,7 +86,7 @@ public class MenuActivity extends FragmentActivity implements View.OnClickListen
             // attach to current activity;
             resideMenu = new ResideMenu(this);
             resideMenu.setUse3D(true);
-            resideMenu.setBackground(R.drawable.menu_background);
+            resideMenu.setBackground(R.drawable.background);
             resideMenu.attachToActivity(this);
             resideMenu.setMenuListener(menuListener);
             //valid scale factor is between 0.0f and 1.0f. leftmenu'width is 150dip.
