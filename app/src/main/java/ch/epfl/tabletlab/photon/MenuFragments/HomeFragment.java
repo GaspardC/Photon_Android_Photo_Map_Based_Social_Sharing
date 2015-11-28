@@ -93,7 +93,7 @@ public class HomeFragment extends Fragment {
     private static final int MAX_POST_SEARCH_RESULTS = 20;
 
     // Maximum post search radius for map in kilometers
-    private static final int MAX_POST_SEARCH_DISTANCE = 100;
+    private static int MAX_POST_SEARCH_DISTANCE = 100;
 
     private View parentView;
     private ResideMenu resideMenu;
@@ -110,6 +110,7 @@ public class HomeFragment extends Fragment {
     private ParseUser currentUser;
     private  TextView seekBarValue;
     private HashMap<String, Object> toKeep = new HashMap<>();
+    private CameraPosition cameraPosition;
 
 
     @Override
@@ -261,6 +262,7 @@ public class HomeFragment extends Fragment {
         // Create the map Parse query
         ParseQuery<PhotonPost> mapQuery = PhotonPost.getQuery();
         // Set up additional query filters
+        distanceForMapQuery();
         mapQuery.whereWithinKilometers("location", myPoint, MAX_POST_SEARCH_DISTANCE);
         mapQuery.include("user");
         mapQuery.orderByDescending("createdAt");
@@ -347,7 +349,6 @@ public class HomeFragment extends Fragment {
             }
 
         });
-//        displayImage();
 
     }
 
@@ -365,31 +366,26 @@ public class HomeFragment extends Fragment {
         }
 
 
+        return needToAddThisPost;
+    }
+
+    public void distanceForMapQuery(){
+
 
         /* But even if the object was not here maybe you dont want to download it if its not visible on the map*/
         LatLngBounds mLatLngBounds = myMapFragment.getMap().getProjection().getVisibleRegion().latLngBounds;
 
-        ParseGeoPoint locationPost = post.getLocation();
         LatLng northeast = mLatLngBounds.northeast ;
         LatLng southwest = mLatLngBounds.southwest;
         ParseGeoPoint southwestParseGeoPoint = new ParseGeoPoint(southwest.latitude,southwest.longitude);
         ParseGeoPoint locatonCenterCamera = new ParseGeoPoint(0.5*(northeast.latitude + southwest.latitude),0.5*(northeast.longitude + southwest.longitude));
-        double distanceToPost = locatonCenterCamera.distanceInKilometersTo(locationPost);
+
+
         double distanceToCorner = locatonCenterCamera.distanceInKilometersTo(southwestParseGeoPoint);
-
-        //post out of view
-        if(distanceToCorner<distanceToPost){
-            Log.d("add photo","object " +post.getText() + " too far");
-            needToAddThisPost =false;
-        }else{
-            Log.d("add photo","object " +post.getText() + "  close");
-            //So added only if not already exists : dont change the value of boolean
-        }
-
-        Log.d("add photo","object " +post.getText() + " "+needToAddThisPost+"  added");
-
-        return needToAddThisPost;
+        MAX_POST_SEARCH_DISTANCE = (int) distanceToCorner + 10;
+        // to round number at the superior int and have a little margin if the user move the map quickly
     }
+
 
 
     /*
@@ -445,7 +441,7 @@ public class HomeFragment extends Fragment {
 
             // TO DO just do it at the beginning or on press compass
             new DataManager().setUserLocation(location);
-            CameraPosition cameraPosition = new CameraPosition.Builder().target(new LatLng(latitude, longitude)).zoom(17).build();
+             cameraPosition = new CameraPosition.Builder().target(new LatLng(latitude, longitude)).zoom(17).build();
             mGoogleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 
 //            mGoogleMap.clear();
