@@ -133,7 +133,7 @@ public class HomeFragment extends Fragment {
         int seekbarValueInit = currentUser.getInt("numberDisplayed");
         if(0 != seekbarValueInit){
             seekBarNumber.setProgress(seekbarValueInit);
-            seekBarValue.setText("Number of Photo displayed : " + String.valueOf(seekbarValueInit));
+            seekBarValue.setText("  Number of Photo displayed : " + String.valueOf(seekbarValueInit));
         }
 
         final int[] seekvalue = {0};

@@ -35,4 +35,9 @@
     <style name="ParseLoginUI.EditText" parent="@android:style/Widget.EditText">
         <item name="android:singleLine">true</item>
     </style>
+    <style name="PhotonMaxPhotoDisplayed.TextView" parent="@android:style/Widget.TextView">
+        <item name="android:singleLine">true</item>
+        <item name="android:textColor">@color/colorAccent</item>
+        <item name="android:textSize">18sp</item>
+    </style>
 </resources>
