@@ -41,6 +41,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.mopub.volley.toolbox.ImageLoader;
@@ -216,7 +217,7 @@ public class HomeFragment extends Fragment {
             @Override
             public void onMapReady(GoogleMap googlemap) {
                 // TODO Auto-generated method stub
-                mGoogleMap=googlemap;
+                mGoogleMap = googlemap;
                 dialog.dismiss();
                 startMap();
                 displayImage();
@@ -233,7 +234,10 @@ public class HomeFragment extends Fragment {
                 loc.setLatitude(position.target.latitude);
                 loc.setLongitude(position.target.longitude);
                 currentMapLocation = loc;
-                doMapQuery();
+
+                LatLngBounds mLatLngBounds = myMapFragment.getMap().getProjection().getVisibleRegion().latLngBounds;
+
+                 doMapQuery();
             }
         });
 
@@ -289,10 +293,16 @@ public class HomeFragment extends Fragment {
                 // Loop through the results of the search
                 for (final PhotonPost post : objects) {
                     // Add this post to the list of map pins to keep
-//                    toKeep.add(post.getObjectId());
-                    // Check for an existing marker for this post
 
-                    checkIfPostIsAlreadyDownloaded(post);
+/*
+                     Check for an existing marker for this post, if it already exists don't add it again
+*/
+                    if (toKeep.get(post.getObjectId()) != null){
+                        Log.d("add photo","object already here");
+                        break;
+                    }
+                    Log.d("add photo","object not here");
+
 
 /*
                     Retrieve the image from the server
@@ -342,9 +352,7 @@ public class HomeFragment extends Fragment {
 
     }
 
-    private void checkIfPostIsAlreadyDownloaded(PhotonPost post) {
-        post.getObjectId();
-    }
+
 
     /*
  * Helper method to get the Parse GEO point representation of a location
