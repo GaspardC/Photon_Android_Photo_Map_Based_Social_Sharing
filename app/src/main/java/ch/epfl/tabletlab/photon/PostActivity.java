@@ -131,8 +131,8 @@ public class PostActivity extends Activity {
       rotateImage();
 
       ByteArrayOutputStream stream = new ByteArrayOutputStream();
-      bmp.compress(Bitmap.CompressFormat.PNG, 10, stream);
-      ParseFile pFile = new ParseFile("Photo.jpg", stream.toByteArray());
+      bmp.compress(Bitmap.CompressFormat.JPEG, 50, stream);
+      ParseFile pFile = new ParseFile(text+".jpg", stream.toByteArray());
 
 
     post.put("image",pFile);
