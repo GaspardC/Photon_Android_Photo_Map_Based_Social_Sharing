@@ -58,9 +58,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Set;
 
-import ch.epfl.tabletlab.photon.AnywallPost;
+import ch.epfl.tabletlab.photon.PhotonPost;
 import ch.epfl.tabletlab.photon.MenuActivity;
 import ch.epfl.tabletlab.photon.MyMarker;
 import ch.epfl.tabletlab.photon.PhotonApplication;
@@ -69,12 +70,7 @@ import ch.epfl.tabletlab.photon.ResideMenu.ResideMenu;
 
 import static android.widget.Toast.LENGTH_SHORT;
 
-/**
- * User: special
- * Date: 13-12-22
- * Time: 下午1:33
- * Mail: specialcyci@gmail.com
- */
+
 public class HomeFragment extends Fragment {
 
     /*
@@ -113,6 +109,7 @@ public class HomeFragment extends Fragment {
     private SeekBar seekBarNumber;
     private ParseUser currentUser;
     private  TextView seekBarValue;
+    private HashMap<String, Object> toKeep = new HashMap<>();
 
 
     @Override
@@ -140,12 +137,12 @@ public class HomeFragment extends Fragment {
 
         final int[] seekvalue = {0};
 
-        seekBarNumber.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener(){
+        seekBarNumber.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress,
                                           boolean fromUser) {
-                seekBarValue.setText("Number of Photo displayed : "+String.valueOf(progress));
+                seekBarValue.setText("Number of Photo displayed : " + String.valueOf(progress));
                 seekvalue[0] = progress;
             }
 
@@ -169,16 +166,17 @@ public class HomeFragment extends Fragment {
 
 //        mMyMarkersArray.add(new MyMarker("#labEPFL", "", Double.parseDouble("46.5269830"), Double.parseDouble("6.5674850")));
         //TODO here get all images in the map and add them
-        plotMarkers(mMyMarkersArray);
+        plotMarkers();
 
     }
-    private void plotMarkers(ArrayList<MyMarker> markers)
+    private void plotMarkers()
     {
-        if(markers.size() > 0)
+        if(toKeep.size() > 0)
         {
-            for (MyMarker myMarker : markers)
+//            for (MyMarker myMarker : markers)
+            for(String currentKey :  toKeep.keySet())
             {
-
+                MyMarker myMarker = (MyMarker) toKeep.get(currentKey);
                 // Create user marker with custom icon and other options
                 MarkerOptions markerOption = new MarkerOptions().position(new LatLng(myMarker.getmLatitude(), myMarker.getmLongitude()));
                 markerOption.icon(BitmapDescriptorFactory.fromResource(R.drawable.currentlocation_icon));
@@ -260,16 +258,16 @@ public class HomeFragment extends Fragment {
         }
         final ParseGeoPoint myPoint = geoPointFromLocation(myLoc);
         // Create the map Parse query
-        ParseQuery<AnywallPost> mapQuery = AnywallPost.getQuery();
+        ParseQuery<PhotonPost> mapQuery = PhotonPost.getQuery();
         // Set up additional query filters
         mapQuery.whereWithinKilometers("location", myPoint, MAX_POST_SEARCH_DISTANCE);
         mapQuery.include("user");
         mapQuery.orderByDescending("createdAt");
         mapQuery.setLimit(MAX_POST_SEARCH_RESULTS);
         // Kick off the query in the background
-        mapQuery.findInBackground(new FindCallback<AnywallPost>() {
+        mapQuery.findInBackground(new FindCallback<PhotonPost>() {
             @Override
-            public void done(List<AnywallPost> objects, ParseException e) {
+            public void done(List<PhotonPost> objects, ParseException e) {
                 if (e != null) {
                     if (PhotonApplication.APPDEBUG) {
                         Log.d(PhotonApplication.APPTAG, "An error occurred while querying for map posts.", e);
@@ -286,22 +284,23 @@ public class HomeFragment extends Fragment {
                 }
 
                 // Posts to show on the map
-                Set<String> toKeep = new HashSet<String>();
                 mMyMarkersArray = new ArrayList<MyMarker>();
-                // Loop through the results of the search
-                for (final AnywallPost post : objects) {
-                    // Add this post to the list of map pins to keep
-                    toKeep.add(post.getObjectId());
-                    // Check for an existing marker for this post
-//                    MyMarker oldMarker = mMarkersHashMap.get(post.getObjectId());
 
+                // Loop through the results of the search
+                for (final PhotonPost post : objects) {
+                    // Add this post to the list of map pins to keep
+//                    toKeep.add(post.getObjectId());
+                    // Check for an existing marker for this post
+
+                    checkIfPostIsAlreadyDownloaded(post);
+
+/*
+                    Retrieve the image from the server
+*/
                     // Set up the map marker's location
                     ParseFile image = post.getImage();
-
-
                     ParseFile thumbnail = image;
                     final ImageView img = new ImageView(getActivity());
-//                    final Bitmap[] bmp = new Bitmap[1000];
 
                     if (thumbnail != null) {
                         thumbnail.getDataInBackground(new GetDataCallback() {
@@ -311,8 +310,6 @@ public class HomeFragment extends Fragment {
 
                                 if (e == null) {
 
-//                                    bmp[0] = BitmapFactory.decodeByteArray(data, 0,
-//                                            data.length);
                                     final BitmapFactory.Options options = new BitmapFactory.Options();
                                     options.inSampleSize = 4;
 
@@ -320,49 +317,33 @@ public class HomeFragment extends Fragment {
                                             .decodeByteArray(
                                                     data, 0,
                                                     data.length,options);
-
                                     if (bmp != null) {
-
                                         Log.e("parse file ok", " null");
-                                        // img.setImageBitmap(Bitmap.createScaledBitmap(bmp,
-                                        // (display.getWidth() / 5),
-                                        // (display.getWidth() /50), false));
-//                                        img.setImageBitmap(bmp[0]);
-                                        // img.setPadding(10, 10, 0, 0);
 
                                         MyMarker newMarker = new MyMarker(post.getText(), "", post.getLocation().getLatitude(),
                                                 post.getLocation().getLongitude(), bmp);
-                                        mMyMarkersArray.add(newMarker);
-
-
+//                                        mMyMarkersArray.add(newMarker);
+                                        toKeep.put(post.getObjectId(),newMarker);
 
                                     }
-                                } else {
+                                } else {  
                                     Log.e("paser after downloade", " null");
                                 }
-
                             }
                         });
                     } else {
-
                         Log.e("parse file", " null");
-
-                        // img.setImageResource(R.drawable.ic_launcher);
-
-                        img.setPadding(10, 10, 10, 10);
                     }
-
-
-
-//                    MyMarker newMarker = new MyMarker(post.getText(), "", post.getLocation().getLatitude(),
-//                            post.getLocation().getLongitude(), bmp[0]);
-//                    mMyMarkersArray.add(newMarker);
                     }
                 }
 
         });
         displayImage();
 
+    }
+
+    private void checkIfPostIsAlreadyDownloaded(PhotonPost post) {
+        post.getObjectId();
     }
 
     /*

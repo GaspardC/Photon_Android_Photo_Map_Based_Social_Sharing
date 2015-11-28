@@ -47,7 +47,7 @@ public class PhotonApplication extends android.app.Application {
     ParseTwitterUtils.initialize(getString(R.string.twitter_consumer_key),
             getString(R.string.twitter_consumer_secret));
 
-    ParseObject.registerSubclass(AnywallPost.class);
+    ParseObject.registerSubclass(PhotonPost.class);
 
 
     preferences = getSharedPreferences("com.parse.anywall", Context.MODE_PRIVATE);

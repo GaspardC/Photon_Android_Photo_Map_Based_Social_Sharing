@@ -11,7 +11,7 @@ import com.parse.ParseUser;
  * Data model for a post.
  */
 @ParseClassName("Posts")
-public class AnywallPost extends ParseObject {
+public class PhotonPost extends ParseObject {
   public String getText() {
     return getString("text");
   }
@@ -44,7 +44,7 @@ public class AnywallPost extends ParseObject {
     return getParseFile("image");
   }
 
-  public static ParseQuery<AnywallPost> getQuery() {
-    return ParseQuery.getQuery(AnywallPost.class);
+  public static ParseQuery<PhotonPost> getQuery() {
+    return ParseQuery.getQuery(PhotonPost.class);
   }
 }

@@ -1,17 +1,11 @@
 package ch.epfl.tabletlab.photon;
 
 import android.app.Activity;
-import android.app.Application;
-import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.location.Location;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
@@ -104,7 +98,7 @@ public class PostActivity extends Activity {
     dialog.show();
 
     // Create a post.
-    AnywallPost post = new AnywallPost();
+    PhotonPost post = new PhotonPost();
 
     // Set the location to the current user's location
       post.setLocation(geoPoint);
@@ -135,7 +129,7 @@ public class PostActivity extends Activity {
       ParseFile pFile = new ParseFile(text+".jpg", stream.toByteArray());
 
 
-    post.put("image",pFile);
+    post.put("image", pFile);
 
     ParseACL acl = new ParseACL();
 
