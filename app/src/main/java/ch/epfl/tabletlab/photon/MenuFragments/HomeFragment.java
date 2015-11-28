@@ -90,7 +90,7 @@ public class HomeFragment extends Fragment {
     private static final float OFFSET_CALCULATION_ACCURACY = 0.01f;
 
     // Maximum results returned from a Parse query
-    private static final int MAX_POST_SEARCH_RESULTS = 20;
+    private static int MAX_POST_SEARCH_RESULTS = 20;
 
     // Maximum post search radius for map in kilometers
     private static int MAX_POST_SEARCH_DISTANCE = 100;
@@ -117,7 +117,7 @@ public class HomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         parentView = inflater.inflate(R.layout.home, container, false);
         // Initialize the HashMap for Markers and MyMarker object
-        mMarkersHashMap = new HashMap<Marker, MyMarker>();
+//        mMarkersHashMap = new HashMap<Marker, MyMarker>();
         seekBarNumber = (SeekBar)  parentView.findViewById(R.id.seekBarRestaurantDistance);
         seekBarValue = (TextView)  parentView.findViewById(R.id.value_distance_restaurant);
         setUpViews();
@@ -145,6 +145,8 @@ public class HomeFragment extends Fragment {
                                           boolean fromUser) {
                 seekBarValue.setText("Number of Photo displayed : " + String.valueOf(progress));
                 seekvalue[0] = progress;
+                MAX_POST_SEARCH_RESULTS = seekvalue[0];
+                displayImage();
             }
 
             @Override
@@ -155,7 +157,8 @@ public class HomeFragment extends Fragment {
             public void onStopTrackingTouch(SeekBar seekBar) {
                 currentUser.put("numberDisplayed", seekvalue[0]);
                 currentUser.saveInBackground();
-            }
+                MAX_POST_SEARCH_RESULTS = seekvalue[0];
+                displayImage();            }
         });
 
     }
@@ -163,7 +166,8 @@ public class HomeFragment extends Fragment {
     private void displayImage() {
         //TODO utiliser la reele position de la personne
 //        // Initialize the HashMap for Markers and MyMarker object
-//        mMarkersHashMap = new HashMap<Marker, MyMarker>();
+        mMarkersHashMap = new HashMap<Marker, MyMarker>();
+        mGoogleMap.clear();
 
         //TODO here get all images in the map and add them
         plotMarkers();
@@ -173,19 +177,26 @@ public class HomeFragment extends Fragment {
     {
         if(toKeep.size() > 0)
         {
-//            for (MyMarker myMarker : markers)
+            int countMaxMarkerDisplayed = 0;
             for(String currentKey :  toKeep.keySet())
             {
-                MyMarker myMarker = (MyMarker) toKeep.get(currentKey);
-                // Create user marker with custom icon and other options
-                MarkerOptions markerOption = new MarkerOptions().position(new LatLng(myMarker.getmLatitude(), myMarker.getmLongitude()));
-                markerOption.icon(BitmapDescriptorFactory.fromResource(R.drawable.currentlocation_icon));
+                if(countMaxMarkerDisplayed<MAX_POST_SEARCH_RESULTS) {
 
-                Marker currentMarker = mGoogleMap.addMarker(markerOption);
-                mMarkersHashMap.put(currentMarker, myMarker);
+                    countMaxMarkerDisplayed++;
+                    MyMarker myMarker = (MyMarker) toKeep.get(currentKey);
+                    // Create user marker with custom icon and other options
+                    MarkerOptions markerOption = new MarkerOptions().position(new LatLng(myMarker.getmLatitude(), myMarker.getmLongitude()));
+                    markerOption.icon(BitmapDescriptorFactory.fromResource(R.drawable.currentlocation_icon));
 
-                mGoogleMap.setInfoWindowAdapter(new MarkerInfoWindowAdapter());
+                    Marker currentMarker = mGoogleMap.addMarker(markerOption);
+                    mMarkersHashMap.put(currentMarker, myMarker);
+
+                    mGoogleMap.setInfoWindowAdapter(new MarkerInfoWindowAdapter());
 //                currentMarker.showInfoWindow();
+                }
+                else{
+                    break;
+                }
             }
         }
     }

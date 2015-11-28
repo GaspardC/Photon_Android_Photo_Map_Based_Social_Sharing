@@ -40,7 +40,7 @@
             android:id="@+id/value_distance_restaurant"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            style="@style/ParseLoginUI.TextView" />
+             />
     </LinearLayout>
 
 </RelativeLayout>
