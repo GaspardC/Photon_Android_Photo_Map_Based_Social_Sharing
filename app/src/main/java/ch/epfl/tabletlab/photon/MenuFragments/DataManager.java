@@ -5,6 +5,8 @@ import android.location.Location;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseUser;
 
+import java.text.ParseException;
+
 /**
  * Created by Gasp on 15/11/2015.
  */
@@ -23,21 +25,25 @@ import com.parse.ParseUser;
 
     public void setUserLocation(Location userLocation) {
         this.userLocation = userLocation;
-        ParseUser currentUser = ParseUser.getCurrentUser();
+        ParseUser currentUser = DataManager.getUser();
         currentUser.put("Location",new ParseGeoPoint(userLocation.getLatitude(),userLocation.getLongitude()));
         currentUser.saveInBackground();
 
     }
 
-    public static ParseUser getUser(){
+    public static ParseUser getUser()  {
         ParseUser currentUser = ParseUser.getCurrentUser();
+        if(currentUser == null) try {
+            throw new ParseException("Parse user is null",0);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
         return currentUser;
     }
 
 
     public static ParseGeoPoint getUserLocation(){
-        ParseUser currentUser = ParseUser.getCurrentUser();
-        return currentUser.getParseGeoPoint("Location");
+        return DataManager.getUser().getParseGeoPoint("Location");
     }
 
     public void pushPhotoToServer( ){
