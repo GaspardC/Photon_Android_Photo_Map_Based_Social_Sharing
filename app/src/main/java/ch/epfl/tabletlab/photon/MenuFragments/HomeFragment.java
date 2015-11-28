@@ -102,7 +102,6 @@ public class HomeFragment extends Fragment {
     SupportMapFragment myMapFragment;
 
     private HashMap<Marker, MyMarker> mMarkersHashMap;
-    private ArrayList<MyMarker> mMyMarkersArray = new ArrayList<MyMarker>();
     private int mostRecentMapUpdate;
     private Location currentLocation;
     private android.location.LocationManager locationManager;
@@ -165,7 +164,6 @@ public class HomeFragment extends Fragment {
 //        // Initialize the HashMap for Markers and MyMarker object
 //        mMarkersHashMap = new HashMap<Marker, MyMarker>();
 
-//        mMyMarkersArray.add(new MyMarker("#labEPFL", "", Double.parseDouble("46.5269830"), Double.parseDouble("6.5674850")));
         //TODO here get all images in the map and add them
         plotMarkers();
 
@@ -235,9 +233,8 @@ public class HomeFragment extends Fragment {
                 loc.setLongitude(position.target.longitude);
                 currentMapLocation = loc;
 
-                LatLngBounds mLatLngBounds = myMapFragment.getMap().getProjection().getVisibleRegion().latLngBounds;
 
-                 doMapQuery();
+                doMapQuery();
             }
         });
 
@@ -288,70 +285,111 @@ public class HomeFragment extends Fragment {
                 }
 
                 // Posts to show on the map
-                mMyMarkersArray = new ArrayList<MyMarker>();
+
 
                 // Loop through the results of the search
                 for (final PhotonPost post : objects) {
                     // Add this post to the list of map pins to keep
 
 /*
-                     Check for an existing marker for this post, if it already exists don't add it again
+                     Check if you need to dowload the post
 */
-                    if (toKeep.get(post.getObjectId()) != null){
-                        Log.d("add photo","object already here");
-                        break;
-                    }
-                    Log.d("add photo","object not here");
+                    boolean needToAddThisPost = doYouNeedToAddThisPost(post);
+                    Log.d("add photo", String.valueOf(needToAddThisPost));
+                    if (needToAddThisPost == true) {
+
+
 
 
 /*
                     Retrieve the image from the server
 */
-                    // Set up the map marker's location
-                    ParseFile image = post.getImage();
-                    ParseFile thumbnail = image;
-                    final ImageView img = new ImageView(getActivity());
+                        // Set up the map marker's location
+                        ParseFile image = post.getImage();
+                        ParseFile thumbnail = image;
+                        final ImageView img = new ImageView(getActivity());
 
-                    if (thumbnail != null) {
-                        thumbnail.getDataInBackground(new GetDataCallback() {
+                        if (thumbnail != null) {
+                            thumbnail.getDataInBackground(new GetDataCallback() {
 
-                            @Override
-                            public void done(byte[] data, ParseException e) {
+                                @Override
+                                public void done(byte[] data, ParseException e) {
 
-                                if (e == null) {
+                                    if (e == null) {
 
-                                    final BitmapFactory.Options options = new BitmapFactory.Options();
-                                    options.inSampleSize = 4;
+                                        final BitmapFactory.Options options = new BitmapFactory.Options();
+                                        options.inSampleSize = 4;
 
-                                   Bitmap bmp =  BitmapFactory
-                                            .decodeByteArray(
-                                                    data, 0,
-                                                    data.length,options);
-                                    if (bmp != null) {
-                                        Log.e("parse file ok", " null");
+                                        Bitmap bmp = BitmapFactory
+                                                .decodeByteArray(
+                                                        data, 0,
+                                                        data.length, options);
+                                        if (bmp != null) {
+                                            Log.e("parse file ok", " null");
 
-                                        MyMarker newMarker = new MyMarker(post.getText(), "", post.getLocation().getLatitude(),
-                                                post.getLocation().getLongitude(), bmp);
-//                                        mMyMarkersArray.add(newMarker);
-                                        toKeep.put(post.getObjectId(),newMarker);
+                                            MyMarker newMarker = new MyMarker(post.getText(), "", post.getLocation().getLatitude(),
+                                                    post.getLocation().getLongitude(), bmp);
+                                            toKeep.put(post.getObjectId(), newMarker);
+                                            displayImage();
 
+
+                                        }
+                                    } else {
+                                        Log.e("paser after download", " null");
                                     }
-                                } else {  
-                                    Log.e("paser after downloade", " null");
                                 }
-                            }
-                        });
-                    } else {
-                        Log.e("parse file", " null");
-                    }
+                            });
+                        } else {
+                            Log.e("parse file", " null");
+                        }
                     }
                 }
+            }
 
         });
-        displayImage();
+//        displayImage();
 
     }
 
+    private boolean doYouNeedToAddThisPost(PhotonPost post) {
+
+        boolean needToAddThisPost = false;
+
+        /* Check if the post exist already in the hashMap */
+        if (toKeep.get(post.getObjectId()) == null){
+            Log.d("add photo","object " +post.getText() + " was not here");
+            needToAddThisPost = true;
+        }
+        else{
+            Log.d("add photo","object " +post.getText() + "already here");
+        }
+
+
+
+        /* But even if the object was not here maybe you dont want to download it if its not visible on the map*/
+        LatLngBounds mLatLngBounds = myMapFragment.getMap().getProjection().getVisibleRegion().latLngBounds;
+
+        ParseGeoPoint locationPost = post.getLocation();
+        LatLng northeast = mLatLngBounds.northeast ;
+        LatLng southwest = mLatLngBounds.southwest;
+        ParseGeoPoint southwestParseGeoPoint = new ParseGeoPoint(southwest.latitude,southwest.longitude);
+        ParseGeoPoint locatonCenterCamera = new ParseGeoPoint(0.5*(northeast.latitude + southwest.latitude),0.5*(northeast.longitude + southwest.longitude));
+        double distanceToPost = locatonCenterCamera.distanceInKilometersTo(locationPost);
+        double distanceToCorner = locatonCenterCamera.distanceInKilometersTo(southwestParseGeoPoint);
+
+        //post out of view
+        if(distanceToCorner<distanceToPost){
+            Log.d("add photo","object " +post.getText() + " too far");
+            needToAddThisPost =false;
+        }else{
+            Log.d("add photo","object " +post.getText() + "  close");
+            //So added only if not already exists : dont change the value of boolean
+        }
+
+        Log.d("add photo","object " +post.getText() + " "+needToAddThisPost+"  added");
+
+        return needToAddThisPost;
+    }
 
 
     /*
