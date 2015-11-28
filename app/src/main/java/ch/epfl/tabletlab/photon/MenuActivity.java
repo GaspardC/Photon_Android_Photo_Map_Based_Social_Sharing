@@ -86,7 +86,7 @@ public class MenuActivity extends FragmentActivity implements View.OnClickListen
             // attach to current activity;
             resideMenu = new ResideMenu(this);
             resideMenu.setUse3D(true);
-            resideMenu.setBackground(R.drawable.background);
+            resideMenu.setBackground(R.drawable.space_background);
             resideMenu.attachToActivity(this);
             resideMenu.setMenuListener(menuListener);
             //valid scale factor is between 0.0f and 1.0f. leftmenu'width is 150dip.

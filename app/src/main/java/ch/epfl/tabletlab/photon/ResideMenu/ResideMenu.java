@@ -21,12 +21,6 @@ import java.util.List;
 
 import ch.epfl.tabletlab.photon.R;
 
-/**
- * User: special
- * Date: 13-12-10
- * Time: 下午10:44
- * Mail: specialcyci@gmail.com
- */
 public class ResideMenu extends FrameLayout {
 
     public static final int DIRECTION_LEFT = 0;
@@ -145,12 +139,12 @@ public class ResideMenu extends FrameLayout {
         // enabled through setFitsSystemWindows(boolean)
         // in api14+ devices.
 
+        setFitsSystemWindows(true);
         // This is added to fix soft navigationBar's overlapping to content above LOLLIPOP
         int bottomPadding = viewActivity.getPaddingBottom() + insets.bottom;
         boolean hasBackKey = KeyCharacterMap.deviceHasKey(KeyEvent.KEYCODE_BACK);
         boolean hasHomeKey = KeyCharacterMap.deviceHasKey(KeyEvent.KEYCODE_HOME);
         if (!hasBackKey || !hasHomeKey) {//there's a navigation bar
-            bottomPadding += getNavigationBarHeight();
         }
 
         this.setPadding(viewActivity.getPaddingLeft() + insets.left,

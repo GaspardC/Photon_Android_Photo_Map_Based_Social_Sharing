@@ -7,14 +7,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import ch.epfl.tabletlab.photon.R;
-//import com.special.ResideMenu.R;
 
-/**
- * User: special
- * Date: 13-12-10
- * Time: 下午11:05
- * Mail: specialcyci@gmail.com
- */
+
 public class ResideMenuItem extends LinearLayout{
 
     /** menu item  icon  */
