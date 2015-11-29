@@ -90,7 +90,7 @@ public class HomeFragment extends Fragment {
     private static final float OFFSET_CALCULATION_ACCURACY = 0.01f;
 
     // Maximum results returned from a Parse query
-    private static int MAX_POST_SEARCH_RESULTS = 20;
+    private static int MAX_POST_SEARCH_RESULTS = 5;
 
     // Maximum post search radius for map in kilometers
     private static int MAX_POST_SEARCH_DISTANCE = 100;
