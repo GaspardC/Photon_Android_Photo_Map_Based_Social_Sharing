@@ -7,13 +7,13 @@
     android:paddingBottom="@dimen/com_parse_ui_vertical_margin"
     android:gravity="center"
     android:orientation="vertical"
-    android:background="@drawable/background"
+    android:background="@drawable/small_background_cloud"
     >
 
     <include
         layout="@layout/com_parse_ui_parse_login_app_logo"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_weight="0.5"/>
 
     <LinearLayout

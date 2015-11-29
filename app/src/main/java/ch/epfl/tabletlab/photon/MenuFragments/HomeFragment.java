@@ -133,7 +133,7 @@ public class HomeFragment extends Fragment {
         int seekbarValueInit = currentUser.getInt("numberDisplayed");
         if(0 != seekbarValueInit){
             seekBarNumber.setProgress(seekbarValueInit);
-            seekBarValue.setText("  Number of Photo displayed : " + String.valueOf(seekbarValueInit));
+            seekBarValue.setText("  N°" + String.valueOf(seekbarValueInit));
         }
 
         final int[] seekvalue = {0};
@@ -143,7 +143,7 @@ public class HomeFragment extends Fragment {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress,
                                           boolean fromUser) {
-                seekBarValue.setText("Number of Photo displayed : " + String.valueOf(progress));
+                seekBarValue.setText("  N°" + String.valueOf(progress));
                 seekvalue[0] = progress;
                 MAX_POST_SEARCH_RESULTS = seekvalue[0];
                 displayImage();

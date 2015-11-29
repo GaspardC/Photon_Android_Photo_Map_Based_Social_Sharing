@@ -7,7 +7,7 @@
     android:paddingBottom="@dimen/com_parse_ui_vertical_margin"
     android:gravity="center"
     android:orientation="horizontal"
-    android:background="@drawable/background">
+    android:background="@drawable/small_background_cloud">
 
     <include
         layout="@layout/com_parse_ui_parse_login_form"
