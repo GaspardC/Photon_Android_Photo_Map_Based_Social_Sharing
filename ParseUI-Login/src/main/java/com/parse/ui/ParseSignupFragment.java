@@ -33,6 +33,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 
 import com.parse.ParseException;
+import com.parse.ParseGeoPoint;
 import com.parse.ParseUser;
 import com.parse.SignUpCallback;
 
@@ -176,11 +177,13 @@ public class ParseSignupFragment extends ParseLoginFragmentBase implements OnCli
       showToast(R.string.com_parse_ui_no_name_toast);
     } else {
       ParseUser user = new ParseUser();
+      ParseGeoPoint tempLoc = new ParseGeoPoint(45.764043,4.835659);
 
       // Set standard fields
       user.setUsername(username);
       user.setPassword(password);
       user.setEmail(email);
+      user.put("Location", tempLoc);
 
       // Set additional custom fields only if the user filled it out
       if (name.length() != 0) {

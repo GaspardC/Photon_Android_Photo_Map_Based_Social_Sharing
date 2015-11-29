@@ -17,5 +17,8 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+    <color name="com_parse_ui_parse_login_button_order_now">#fbf9cb</color>
+    <color name="ColorPrimary">#e62117</color>
+
 
 </resources>

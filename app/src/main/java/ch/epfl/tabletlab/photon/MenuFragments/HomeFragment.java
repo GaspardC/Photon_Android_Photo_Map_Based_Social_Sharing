@@ -432,6 +432,12 @@ public class HomeFragment extends Fragment {
             if (location != null) {
                 updateWithNewLocation(location);
             }
+            else{
+                Location locationTemp = new Location("temp");
+                locationTemp.setLatitude(DataManager.getUserLocation().getLatitude());
+                locationTemp.setLongitude(DataManager.getUserLocation().getLongitude());
+                updateWithNewLocation(locationTemp);
+            }
         }
     }
 
