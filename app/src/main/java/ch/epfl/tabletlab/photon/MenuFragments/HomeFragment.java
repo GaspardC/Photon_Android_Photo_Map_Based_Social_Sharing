@@ -128,8 +128,7 @@ public class HomeFragment extends Fragment {
         parentView = inflater.inflate(R.layout.home, container, false);
         // Initialize the HashMap for Markers and MyMarker object
 //        mMarkersHashMap = new HashMap<Marker, MyMarker>();
-        seekBarNumber = (SeekBar)  parentView.findViewById(R.id.seekBarRestaurantDistance);
-        seekBarValue = (TextView)  parentView.findViewById(R.id.value_distance_restaurant);
+
         setUpViews();
         setUpMap();
         setSeekBar();
@@ -138,6 +137,8 @@ public class HomeFragment extends Fragment {
     }
 
     private void setSeekBar() {
+        seekBarNumber = (SeekBar)  parentView.findViewById(R.id.seekBarRestaurantDistance);
+        seekBarValue = (TextView)  parentView.findViewById(R.id.value_distance_restaurant);
         currentUser = DataManager.getUser();
         if (currentUser == null) return;
         int seekbarValueInit = currentUser.getInt("numberDisplayed");
@@ -288,7 +289,7 @@ public class HomeFragment extends Fragment {
         // Query Expiration
         Date d = new Date();
         Date todaysDate = new Date(d.getTime());
-        mapQuery.whereGreaterThanOrEqualTo( "expirationDate", todaysDate );
+        mapQuery.whereGreaterThanOrEqualTo("expirationDate", todaysDate);
 
         mapQuery.whereWithinKilometers("location", myPoint, MAX_POST_SEARCH_DISTANCE);
         mapQuery.include("user");

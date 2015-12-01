@@ -11,7 +11,6 @@ import android.widget.Toast;
 
 import com.parse.ParseUser;
 
-import ch.epfl.tabletlab.photon.MenuFragments.CalendarFragment;
 import ch.epfl.tabletlab.photon.MenuFragments.HomeFragment;
 import ch.epfl.tabletlab.photon.MenuFragments.SettingsFragment;
 import ch.epfl.tabletlab.photon.ResideMenu.ResideMenu;
@@ -109,7 +108,9 @@ public class MenuActivity extends FragmentActivity implements View.OnClickListen
             resideMenu.addMenuItem(itemSettings, ResideMenu.DIRECTION_LEFT);
 
             // You can disable a direction by setting ->
-             resideMenu.setSwipeDirectionDisable(ResideMenu.DIRECTION_RIGHT);
+/*
+            // resideMenu.setSwipeDirectionDisable(ResideMenu.DIRECTION_RIGHT);
+*/
 
             findViewById(R.id.title_bar_left_menu).setOnClickListener(new View.OnClickListener() {
                 @Override

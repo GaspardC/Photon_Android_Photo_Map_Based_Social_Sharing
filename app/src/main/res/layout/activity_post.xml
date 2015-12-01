@@ -19,7 +19,6 @@
         android:gravity="top" >
         <requestFocus />
     </EditText>
-
     <Button
         android:id="@+id/post_button"
         android:layout_width="wrap_content"
@@ -30,8 +29,22 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
         android:text="@string/post" />
-    
-	<TextView
+    <SeekBar
+        android:layout_marginBottom="10dp"
+        android:layout_above="@id/post_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/seekBarExpirationDate"
+        android:layout_gravity="center_horizontal"
+        android:scrollIndicators="right"
+        android:thumbTint="@color/colorLightBlue"
+        android:progressTint="@color/colorLightBlue"
+        android:progressBackgroundTint="@color/colorLightBlue"
+        android:max="48"
+        android:thumb="@android:drawable/btn_star_big_on"
+        android:layout_weight="5"/>
+
+    <TextView
         android:id="@+id/character_count_textview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -40,8 +53,28 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
         android:layout_marginBottom="@dimen/activity_vertical_margin"
-        android:layout_above="@id/post_button"
+        android:layout_above="@id/seekBarExpirationDate"
         android:text="@string/character_count_placeholder"
         android:textAppearance="?android:attr/textAppearanceSmall" />
+    <TextView
+        android:id="@+id/seekBarValueExpirationDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="right"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
+        android:layout_above="@id/seekBarExpirationDate"
+        android:text="48h"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+
+
+
+
+
+
     
 </RelativeLayout>
