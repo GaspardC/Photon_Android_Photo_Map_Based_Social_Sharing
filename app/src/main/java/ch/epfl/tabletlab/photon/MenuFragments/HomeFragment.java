@@ -169,7 +169,8 @@ public class HomeFragment extends Fragment {
                 currentUser.put("numberDisplayed", seekvalue[0]);
                 currentUser.saveInBackground();
                 MAX_POST_SEARCH_RESULTS = seekvalue[0];
-                displayImage();            }
+                displayImage();
+            }
         });
 
     }
@@ -287,14 +288,14 @@ public class HomeFragment extends Fragment {
         MAX_POST_SEARCH_DISTANCE = distanceForMapQuery();
 
         // Query Expiration
-        Date d = new Date();
-        Date todaysDate = new Date(d.getTime());
+        Date todaysDate = new Date(new Date().getTime());
         mapQuery.whereGreaterThanOrEqualTo("expirationDate", todaysDate);
 
         mapQuery.whereWithinKilometers("location", myPoint, MAX_POST_SEARCH_DISTANCE);
         mapQuery.include("user");
         mapQuery.orderByDescending("createdAt");
         mapQuery.setLimit(MAX_POST_SEARCH_RESULTS);
+
         // Kick off the query in the background
         mapQuery.findInBackground(new FindCallback<PhotonPost>() {
             @Override
@@ -314,22 +315,21 @@ public class HomeFragment extends Fragment {
                     return;
                 }
 
-                // Posts to show on the map
 
+                // Posts to show on the map
 
                 // Loop through the results of the search
                 for (final PhotonPost post : objects) {
                     // Add this post to the list of map pins to keep
 
 /*
-                     Check if you need to dowload the post
+                     Check if you need to download the post
+                     If you have already downloaded do not download it again return false
 */
                     boolean needToAddThisPost = doYouNeedToAddThisPost(post);
                     Log.d("add photo", String.valueOf(needToAddThisPost));
+
                     if (needToAddThisPost == true) {
-
-
-
 
 /*
                     Retrieve the image from the server
@@ -360,8 +360,6 @@ public class HomeFragment extends Fragment {
                                             MyMarker newMarker = new MyMarker(post.getText(), "", post.getLocation().getLatitude(),
                                                     post.getLocation().getLongitude(), bmp);
                                             toKeep.put(post.getObjectId(), newMarker);
-                                            displayImage();
-
 
                                         }
                                     } else {
@@ -374,10 +372,35 @@ public class HomeFragment extends Fragment {
                         }
                     }
                 }
+                displayImage();
+                cleanImagesIfTheyAreNotInTheServer(objects);
+            }
+        });
+    }
+
+    private void cleanImagesIfTheyAreNotInTheServer(List<PhotonPost> objects) {
+
+        //if some objects are in toKeep but not in objects delete them
+        // Loop through the results of the search
+        ArrayList<String> keyToRemove = new ArrayList();
+
+        for (String currentKey : toKeep.keySet()) {
+            boolean found = false;
+            for (final PhotonPost post : objects) {
+                if (post.getObjectId().equals(currentKey)) {
+                    found = true;
+                }
+            }
+            if (!found) {
+                keyToRemove.add(currentKey);
             }
 
-        });
+        }
+        for (String key : keyToRemove) {
+            toKeep.remove(key);
+        }
 
+        displayImage();
     }
 
     private boolean doYouNeedToAddThisPost(PhotonPost post) {
