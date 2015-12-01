@@ -1,24 +1,15 @@
 package ch.epfl.tabletlab.photon.MenuFragments;
 
 import android.Manifest;
-import android.app.Application;
-import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.RectF;
-import android.location.Address;
 import android.location.Criteria;
-import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.location.LocationProvider;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -30,7 +21,6 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -45,7 +35,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.mopub.volley.toolbox.ImageLoader;
 import com.parse.FindCallback;
 import com.parse.GetDataCallback;
 import com.parse.ParseException;
@@ -54,17 +43,10 @@ import com.parse.ParseGeoPoint;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
-import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.Set;
-import java.util.TimeZone;
 
 import ch.epfl.tabletlab.photon.PhotonPost;
 import ch.epfl.tabletlab.photon.MenuActivity;
@@ -72,9 +54,6 @@ import ch.epfl.tabletlab.photon.MyMarker;
 import ch.epfl.tabletlab.photon.PhotonApplication;
 import ch.epfl.tabletlab.photon.R;
 import ch.epfl.tabletlab.photon.ResideMenu.ResideMenu;
-
-import static android.widget.Toast.LENGTH_SHORT;
-import static java.util.TimeZone.getTimeZone;
 
 
 public class HomeFragment extends Fragment {
@@ -93,6 +72,7 @@ public class HomeFragment extends Fragment {
 
     // Accuracy for calculating the map bounds
     private static final float OFFSET_CALCULATION_ACCURACY = 0.01f;
+    private static boolean HASHTAG_QUERY = true;
 
     // Maximum results returned from a Parse query
     private static int MAX_POST_SEARCH_RESULTS = 5;
@@ -116,6 +96,7 @@ public class HomeFragment extends Fragment {
     private  TextView seekBarValue;
     private HashMap<String, Object> toKeep = new HashMap<>();
     private CameraPosition cameraPosition;
+    private ArrayList<String> hastags;
 
 /*
     public HomeFragment(MenuActivity menuActivity) {
@@ -137,8 +118,19 @@ public class HomeFragment extends Fragment {
         getActivity().findViewById(R.id.search_right_menu).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                EditText hastagsEditText = (EditText)  getActivity().findViewById(R.id.hashtags_text_view);
+                EditText hastagsEditText = (EditText) getActivity().findViewById(R.id.hashtags_text_view);
                 String text = String.valueOf(hastagsEditText.getText());
+                if (text.isEmpty()) {
+                    text = getString(R.string.slogan);
+                }
+                hastags = new ArrayList<String>();
+                text = text.replace(" ","");
+                String[] splitText = text.split("#");
+                for (int i = 1; i < splitText.length; i++) {
+                    hastags.add(splitText[i]);
+                }
+                HASHTAG_QUERY = true;
+                doMapQuery(HASHTAG_QUERY);
             }
         });
 
@@ -189,6 +181,7 @@ public class HomeFragment extends Fragment {
 //        // Initialize the HashMap for Markers and MyMarker object
         mMarkersHashMap = new HashMap<Marker, MyMarker>();
         mGoogleMap.clear();
+        Log.d("clear","clear");
 
         //TODO here get all images in the map and add them
         plotMarkers();
@@ -213,7 +206,14 @@ public class HomeFragment extends Fragment {
                     mMarkersHashMap.put(currentMarker, myMarker);
 
                     mGoogleMap.setInfoWindowAdapter(new MarkerInfoWindowAdapter());
-//                currentMarker.showInfoWindow();
+                    mGoogleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                        @Override
+                        public boolean onMarkerClick(Marker marker) {
+                            marker.showInfoWindow();
+                            return true;
+                        }
+                    });
+//                    currentMarker.showInfoWindow();
                 }
                 else{
                     break;
@@ -266,7 +266,8 @@ public class HomeFragment extends Fragment {
                 loc.setLongitude(position.target.longitude);
                 currentMapLocation = loc;
 
-                doMapQuery();
+                HASHTAG_QUERY = false;
+                doMapQuery(HASHTAG_QUERY);
             }
         });
 
@@ -275,7 +276,7 @@ public class HomeFragment extends Fragment {
     /*
        * Set up the query to update the map view
        */
-    private void doMapQuery() {
+    private void doMapQuery(boolean hashtagQuery) {
 
 
 
@@ -290,6 +291,28 @@ public class HomeFragment extends Fragment {
         }
         final ParseGeoPoint myPoint = geoPointFromLocation(myLoc);
         // Create the map Parse query
+        ParseQuery<PhotonPost> mapQuery = null;
+        if(hashtagQuery){
+            List<ParseQuery<PhotonPost>> queries = new ArrayList<ParseQuery<PhotonPost>>();
+
+            for(String k : hastags){
+                ParseQuery<PhotonPost> pQuery = setMapQuery(myPoint, "#"+k);
+                queries.add(pQuery);
+            }
+             mapQuery = ParseQuery.or(queries);
+             mapQuery.include("user");
+             mapQuery.orderByDescending("createdAt");
+             mapQuery.setLimit(MAX_POST_SEARCH_RESULTS);
+            Log.d("","");
+
+
+        }
+        else {
+            mapQuery = setMapQuery(myPoint, "");
+
+        }
+
+        /*// Create the map Parse query
         ParseQuery<PhotonPost> mapQuery = PhotonPost.getQuery();
         // Set up additional query filters
 
@@ -303,9 +326,11 @@ public class HomeFragment extends Fragment {
         mapQuery.whereWithinKilometers("location", myPoint, MAX_POST_SEARCH_DISTANCE);
         mapQuery.include("user");
         mapQuery.orderByDescending("createdAt");
-        mapQuery.setLimit(MAX_POST_SEARCH_RESULTS);
+        mapQuery.setLimit(MAX_POST_SEARCH_RESULTS);*/
+
 
         // Kick off the query in the background
+        assert mapQuery != null;
         mapQuery.findInBackground(new FindCallback<PhotonPost>() {
             @Override
             public void done(List<PhotonPost> objects, ParseException e) {
@@ -385,6 +410,30 @@ public class HomeFragment extends Fragment {
                 cleanImagesIfTheyAreNotInTheServer(objects);
             }
         });
+    }
+
+    private ParseQuery<PhotonPost> setMapQuery(ParseGeoPoint myPoint, String k) {
+
+        // Create the map Parse query
+        ParseQuery<PhotonPost> mapQuery = PhotonPost.getQuery();
+        // Set up additional query filters
+
+
+        MAX_POST_SEARCH_DISTANCE = distanceForMapQuery();
+
+        // Query Expiration
+        Date todaysDate = new Date(new Date().getTime());
+        mapQuery.whereGreaterThanOrEqualTo("expirationDate", todaysDate);
+
+        mapQuery.whereWithinKilometers("location", myPoint, MAX_POST_SEARCH_DISTANCE);
+//        mapQuery.include("user");
+//        mapQuery.orderByDescending("createdAt");
+//        mapQuery.setLimit(MAX_POST_SEARCH_RESULTS);
+        if(HASHTAG_QUERY){
+            mapQuery.whereContains("text", k);
+        }
+
+        return mapQuery;
     }
 
     private void cleanImagesIfTheyAreNotInTheServer(List<PhotonPost> objects) {
