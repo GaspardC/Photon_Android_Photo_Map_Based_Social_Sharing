@@ -145,7 +145,7 @@ public class HomeFragment extends Fragment {
         int seekbarValueInit = currentUser.getInt("numberDisplayed");
         if(0 != seekbarValueInit){
             seekBarNumber.setProgress(seekbarValueInit);
-            seekBarValue.setText("  N°" + String.valueOf(seekbarValueInit));
+            seekBarValue.setText(String.valueOf(seekbarValueInit)+ " displayed");
         }
 
         final int[] seekvalue = {0};
@@ -155,7 +155,7 @@ public class HomeFragment extends Fragment {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress,
                                           boolean fromUser) {
-                seekBarValue.setText("  N°" + String.valueOf(progress));
+                seekBarValue.setText(String.valueOf(progress)+ " displayed");
                 seekvalue[0] = progress;
                 MAX_POST_SEARCH_RESULTS = seekvalue[0];
                 displayImage();
@@ -311,23 +311,6 @@ public class HomeFragment extends Fragment {
             mapQuery = setMapQuery(myPoint, "");
 
         }
-
-        /*// Create the map Parse query
-        ParseQuery<PhotonPost> mapQuery = PhotonPost.getQuery();
-        // Set up additional query filters
-
-
-        MAX_POST_SEARCH_DISTANCE = distanceForMapQuery();
-
-        // Query Expiration
-        Date todaysDate = new Date(new Date().getTime());
-        mapQuery.whereGreaterThanOrEqualTo("expirationDate", todaysDate);
-
-        mapQuery.whereWithinKilometers("location", myPoint, MAX_POST_SEARCH_DISTANCE);
-        mapQuery.include("user");
-        mapQuery.orderByDescending("createdAt");
-        mapQuery.setLimit(MAX_POST_SEARCH_RESULTS);*/
-
 
         // Kick off the query in the background
         assert mapQuery != null;
