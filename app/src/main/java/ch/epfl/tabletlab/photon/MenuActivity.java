@@ -105,11 +105,11 @@ public class MenuActivity extends FragmentActivity implements View.OnClickListen
 
             resideMenu.addMenuItem(itemHome, ResideMenu.DIRECTION_LEFT);
             resideMenu.addMenuItem(itemProfile, ResideMenu.DIRECTION_LEFT);
-            resideMenu.addMenuItem(itemPost, ResideMenu.DIRECTION_RIGHT);
-            resideMenu.addMenuItem(itemSettings, ResideMenu.DIRECTION_RIGHT);
+            resideMenu.addMenuItem(itemPost, ResideMenu.DIRECTION_LEFT);
+            resideMenu.addMenuItem(itemSettings, ResideMenu.DIRECTION_LEFT);
 
             // You can disable a direction by setting ->
-            // resideMenu.setSwipeDirectionDisable(ResideMenu.DIRECTION_RIGHT);
+             resideMenu.setSwipeDirectionDisable(ResideMenu.DIRECTION_RIGHT);
 
             findViewById(R.id.title_bar_left_menu).setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -117,12 +117,12 @@ public class MenuActivity extends FragmentActivity implements View.OnClickListen
                     resideMenu.openMenu(ResideMenu.DIRECTION_LEFT);
                 }
             });
-            findViewById(R.id.title_bar_right_menu).setOnClickListener(new View.OnClickListener() {
+/*            findViewById(R.id.title_bar_right_menu).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     resideMenu.openMenu(ResideMenu.DIRECTION_RIGHT);
                 }
-            });
+            });*/
         }
 
         @Override
