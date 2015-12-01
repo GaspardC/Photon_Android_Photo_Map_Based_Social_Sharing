@@ -12,6 +12,8 @@ public class PhotonApplication extends android.app.Application {
   // Debugging switch
   public static final boolean APPDEBUG = false;
 
+  public static final int DAY_TO_KEEP_PHOTO_DISPLAYED = 5;
+
   // Debugging tag for the application
   public static final String APPTAG = "Photon";
 

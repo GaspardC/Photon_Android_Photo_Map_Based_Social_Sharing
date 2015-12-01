@@ -31,6 +31,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Date;
 
 import ch.epfl.tabletlab.photon.MenuFragments.DataManager;
 
@@ -38,7 +39,7 @@ import ch.epfl.tabletlab.photon.MenuFragments.DataManager;
  * Activity which displays a login screen to the user, offering registration as well.
  */
 public class PostActivity extends Activity {
-  // UI references.
+    // UI references.
   private EditText postEditText;
   private TextView characterCountTextView;
   private Button postButton;
@@ -104,6 +105,13 @@ public class PostActivity extends Activity {
       post.setLocation(geoPoint);
       post.setText(text);
       post.setUser(ParseUser.getCurrentUser());
+
+      //
+      Date d = new Date();
+
+      int time = (PhotonApplication.DAY_TO_KEEP_PHOTO_DISPLAYED * 24 * 3600 * 1000); // 5 jours d'ici par ex
+      Date expirationDate = new Date(d.getTime() + (time));
+      post.put("expirationDate", expirationDate);
 
       //USE TO GET PHoTO FROM DRAWABLE
 /*    Resources res = getResources();
