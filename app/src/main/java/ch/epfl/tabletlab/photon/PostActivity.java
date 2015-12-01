@@ -126,7 +126,9 @@ public class PostActivity extends Activity {
 
       ByteArrayOutputStream stream = new ByteArrayOutputStream();
       bmp.compress(Bitmap.CompressFormat.JPEG, 50, stream);
+      text =  text.replaceAll(" ", "#").toLowerCase();
       ParseFile pFile = new ParseFile(text+".jpg", stream.toByteArray());
+      pFile.saveInBackground();
 
 
     post.put("image", pFile);

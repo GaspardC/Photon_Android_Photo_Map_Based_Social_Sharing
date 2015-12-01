@@ -165,7 +165,7 @@ public class MenuActivity extends FragmentActivity implements View.OnClickListen
             }
         };
 
-        private void changeFragment(Fragment targetFragment){
+        public void changeFragment(Fragment targetFragment){
             resideMenu.clearIgnoredViewList();
             getSupportFragmentManager()
                     .beginTransaction()

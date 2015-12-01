@@ -21,7 +21,10 @@
 
 package ch.epfl.tabletlab.photon;
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -29,6 +32,10 @@ import android.widget.TextView;
 
 import com.parse.ParseUser;
 import com.parse.ui.ParseLoginBuilder;
+
+import ch.epfl.tabletlab.photon.MenuFragments.HomeFragment;
+
+import static android.app.PendingIntent.getActivity;
 
 /**
  * Shows the user profile. This simple activity can function regardless of whether the user
@@ -43,6 +50,7 @@ public class ProfileActivity extends Activity {
   private Button loginOrLogoutButton;
 
   private ParseUser currentUser;
+  private Button beginButton;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +61,7 @@ public class ProfileActivity extends Activity {
     emailTextView = (TextView) findViewById(R.id.profile_email);
     nameTextView = (TextView) findViewById(R.id.profile_name);
     loginOrLogoutButton = (Button) findViewById(R.id.login_or_logout_button);
+    beginButton = (Button) findViewById(R.id.goToHome_Button);
     titleTextView.setText(R.string.profile_title_logged_in);
 
     loginOrLogoutButton.setOnClickListener(new OnClickListener() {
@@ -107,4 +116,11 @@ public class ProfileActivity extends Activity {
     nameTextView.setText("");
     loginOrLogoutButton.setText(R.string.profile_login_button_label);
   }
+
+  public void goToMapActivity(View v){
+    Intent homeIntent = new Intent(this,MenuActivity.class);
+    startActivity(homeIntent);
+
+  }
+
 }

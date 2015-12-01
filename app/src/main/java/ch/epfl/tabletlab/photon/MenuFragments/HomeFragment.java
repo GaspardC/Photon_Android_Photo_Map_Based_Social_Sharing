@@ -112,6 +112,12 @@ public class HomeFragment extends Fragment {
     private HashMap<String, Object> toKeep = new HashMap<>();
     private CameraPosition cameraPosition;
 
+/*
+    public HomeFragment(MenuActivity menuActivity) {
+         parentActivity = menuActivity;
+    }
+*/
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -244,7 +250,6 @@ public class HomeFragment extends Fragment {
                 loc.setLatitude(position.target.latitude);
                 loc.setLongitude(position.target.longitude);
                 currentMapLocation = loc;
-
 
                 doMapQuery();
             }
