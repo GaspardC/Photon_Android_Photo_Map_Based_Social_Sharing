@@ -5,7 +5,9 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.Matrix;
+import android.graphics.PorterDuff;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
@@ -18,6 +20,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.parse.ParseACL;
@@ -31,6 +34,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Date;
 
 import ch.epfl.tabletlab.photon.MenuFragments.DataManager;
 
@@ -38,10 +42,13 @@ import ch.epfl.tabletlab.photon.MenuFragments.DataManager;
  * Activity which displays a login screen to the user, offering registration as well.
  */
 public class PostActivity extends Activity {
-  // UI references.
+    // UI references.
   private EditText postEditText;
   private TextView characterCountTextView;
   private Button postButton;
+  private  TextView seekBarValue;
+  private SeekBar seekBarNumber;
+
 
     Bitmap bmp;
     Intent i;
@@ -49,8 +56,9 @@ public class PostActivity extends Activity {
 
   private int maxCharacterCount = PhotonApplication.getConfigHelper().getPostMaxCharacterCount();
   private ParseGeoPoint geoPoint;
+  private ParseUser currentUser;
 
-  @Override
+    @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
@@ -58,23 +66,8 @@ public class PostActivity extends Activity {
       launchCamera();
 
     geoPoint = DataManager.getUserLocation();
+    setTextEdit();
 
-    postEditText = (EditText) findViewById(R.id.post_edittext);
-    postEditText.addTextChangedListener(new TextWatcher() {
-      @Override
-      public void beforeTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
-      }
-
-      @Override
-      public void onTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
-      }
-
-      @Override
-      public void afterTextChanged(Editable s) {
-        updatePostButtonState();
-        updateCharacterCountTextViewText();
-      }
-    });
 
     characterCountTextView = (TextView) findViewById(R.id.character_count_textview);
 
@@ -87,9 +80,30 @@ public class PostActivity extends Activity {
 
     updatePostButtonState();
     updateCharacterCountTextViewText();
+    setSeekBar();
   }
 
-  private void post () {
+    private void setTextEdit() {
+
+        postEditText = (EditText) findViewById(R.id.post_edittext);
+        postEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                updatePostButtonState();
+                updateCharacterCountTextViewText();
+            }
+        });
+    }
+
+    private void post () {
     String text = postEditText.getText().toString().trim();
 
     // Set up a progress dialog
@@ -99,11 +113,19 @@ public class PostActivity extends Activity {
 
     // Create a post.
     PhotonPost post = new PhotonPost();
+    String hashtag = "#"+text.replaceAll(" ", " #").toLowerCase();
 
     // Set the location to the current user's location
       post.setLocation(geoPoint);
-      post.setText(text);
+      post.setText(hashtag);
       post.setUser(ParseUser.getCurrentUser());
+
+      //
+      Date d = new Date();
+
+      int time = (PhotonApplication.HOUR_TO_KEEP_PHOTO_DISPLAYED * 3600 * 1000); // 5 jours d'ici par ex
+      Date expirationDate = new Date(d.getTime() + (time));
+      post.put("expirationDate", expirationDate);
 
       //USE TO GET PHoTO FROM DRAWABLE
 /*    Resources res = getResources();
@@ -122,11 +144,11 @@ public class PostActivity extends Activity {
       }
 
       //rotate image if need : some constructors have rotated the image when it is taken by the front cam
-      rotateImage();
+      bmp = rotateImage();
 
       ByteArrayOutputStream stream = new ByteArrayOutputStream();
       bmp.compress(Bitmap.CompressFormat.JPEG, 50, stream);
-      text =  text.replaceAll(" ", "#").toLowerCase();
+      text =  text.replaceAll(" ", "").toLowerCase();
       ParseFile pFile = new ParseFile(text+".jpg", stream.toByteArray());
       pFile.saveInBackground();
 
@@ -149,7 +171,7 @@ public class PostActivity extends Activity {
     });
   }
 
-    private void rotateImage() {
+    private Bitmap rotateImage() {
 
 
         BitmapFactory.Options bounds = new BitmapFactory.Options();
@@ -175,7 +197,7 @@ public class PostActivity extends Activity {
 
         Matrix matrix = new Matrix();
         matrix.setRotate(rotationAngle, (float) bm.getWidth() / 2, (float) bm.getHeight() / 2);
-        bmp = Bitmap.createBitmap(bm, 0, 0, bounds.outWidth, bounds.outHeight, matrix, true);
+        return Bitmap.createBitmap(bm, 0, 0, bounds.outWidth, bounds.outHeight, matrix, true);
     }
 
     private void launchCamera() {
@@ -234,5 +256,53 @@ public class PostActivity extends Activity {
 
             }
         }
+    }
+
+    private void setSeekBar() {
+        seekBarNumber = (SeekBar)  findViewById(R.id.seekBarExpirationDate);
+        seekBarValue = (TextView)  findViewById(R.id.seekBarValueExpirationDate);
+        seekBarNumber.getThumb().setColorFilter(Color.YELLOW, PorterDuff.Mode.SRC_IN);
+
+        currentUser = DataManager.getUser();
+        if (currentUser == null) return;
+        int seekbarValueInit = currentUser.getInt("numberDisplayed");
+        if(0 != seekbarValueInit){
+            seekBarNumber.setProgress(seekbarValueInit);
+            seekBarValue.setText("  " + String.valueOf(seekbarValueInit)+ " h visible to the world");
+        }
+
+        final int[] seekvalue = {0};
+
+        seekBarNumber.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress,
+                                          boolean fromUser) {
+                seekBarValue.setText(
+                        "  " + String.valueOf(progress)+ " h visible to the world");
+                seekvalue[0] = progress;
+                PhotonApplication.HOUR_TO_KEEP_PHOTO_DISPLAYED = seekvalue[0];
+                if(seekvalue[0] == 48){
+                    seekBar.getProgressDrawable().setColorFilter(Color.YELLOW, PorterDuff.Mode.SRC_IN);
+
+                }
+                else{
+                    seekBar.getProgressDrawable().setColorFilter(getResources().getColor(R.color.colorLightBlue), PorterDuff.Mode.SRC_IN);
+
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                currentUser.put("numberDisplayed", seekvalue[0]);
+                currentUser.saveInBackground();
+                PhotonApplication.HOUR_TO_KEEP_PHOTO_DISPLAYED = seekvalue[0];
+            }
+        });
+
     }
 }

@@ -54,13 +54,16 @@ import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
+import java.util.TimeZone;
 
 import ch.epfl.tabletlab.photon.PhotonPost;
 import ch.epfl.tabletlab.photon.MenuActivity;
@@ -70,6 +73,7 @@ import ch.epfl.tabletlab.photon.R;
 import ch.epfl.tabletlab.photon.ResideMenu.ResideMenu;
 
 import static android.widget.Toast.LENGTH_SHORT;
+import static java.util.TimeZone.getTimeZone;
 
 
 public class HomeFragment extends Fragment {
@@ -124,8 +128,7 @@ public class HomeFragment extends Fragment {
         parentView = inflater.inflate(R.layout.home, container, false);
         // Initialize the HashMap for Markers and MyMarker object
 //        mMarkersHashMap = new HashMap<Marker, MyMarker>();
-        seekBarNumber = (SeekBar)  parentView.findViewById(R.id.seekBarRestaurantDistance);
-        seekBarValue = (TextView)  parentView.findViewById(R.id.value_distance_restaurant);
+
         setUpViews();
         setUpMap();
         setSeekBar();
@@ -134,6 +137,8 @@ public class HomeFragment extends Fragment {
     }
 
     private void setSeekBar() {
+        seekBarNumber = (SeekBar)  parentView.findViewById(R.id.seekBarRestaurantDistance);
+        seekBarValue = (TextView)  parentView.findViewById(R.id.value_distance_restaurant);
         currentUser = DataManager.getUser();
         if (currentUser == null) return;
         int seekbarValueInit = currentUser.getInt("numberDisplayed");
@@ -263,8 +268,7 @@ public class HomeFragment extends Fragment {
     private void doMapQuery() {
 
 
-//        //remove all markers on the map
-//        mGoogleMap.clear();
+
         final int myUpdateNumber = ++mostRecentMapUpdate;
         Location myLoc = (currentMapLocation == null) ? currentLocation : currentMapLocation;
 
@@ -278,7 +282,15 @@ public class HomeFragment extends Fragment {
         // Create the map Parse query
         ParseQuery<PhotonPost> mapQuery = PhotonPost.getQuery();
         // Set up additional query filters
-        distanceForMapQuery();
+
+
+        MAX_POST_SEARCH_DISTANCE = distanceForMapQuery();
+
+        // Query Expiration
+        Date d = new Date();
+        Date todaysDate = new Date(d.getTime());
+        mapQuery.whereGreaterThanOrEqualTo("expirationDate", todaysDate);
+
         mapQuery.whereWithinKilometers("location", myPoint, MAX_POST_SEARCH_DISTANCE);
         mapQuery.include("user");
         mapQuery.orderByDescending("createdAt");
@@ -385,7 +397,7 @@ public class HomeFragment extends Fragment {
         return needToAddThisPost;
     }
 
-    public void distanceForMapQuery(){
+    public int distanceForMapQuery(){
 
 
         /* But even if the object was not here maybe you dont want to download it if its not visible on the map*/
@@ -398,7 +410,7 @@ public class HomeFragment extends Fragment {
 
 
         double distanceToCorner = locatonCenterCamera.distanceInKilometersTo(southwestParseGeoPoint);
-        MAX_POST_SEARCH_DISTANCE = (int) distanceToCorner + 10;
+        return (int) distanceToCorner + 10;
         // to round number at the superior int and have a little margin if the user move the map quickly
     }
 

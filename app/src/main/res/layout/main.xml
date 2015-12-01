@@ -40,13 +40,13 @@
                     android:textColor="#999999"
                     android:layout_gravity="center"/>
 
-            <Button
-                    android:layout_width="28dp"
-                    android:layout_height="28dp"
-                    android:background="@drawable/titlebar_menu_selector"
-                    android:id="@+id/title_bar_right_menu"
-                    android:layout_gravity="right|center_vertical"
-                    android:layout_marginRight="10dp"/>
+            <!--<Button-->
+                    <!--android:layout_width="28dp"-->
+                    <!--android:layout_height="28dp"-->
+                    <!--android:background="@drawable/titlebar_menu_selector"-->
+                    <!--android:id="@+id/title_bar_right_menu"-->
+                    <!--android:layout_gravity="right|center_vertical"-->
+                    <!--android:layout_marginRight="10dp"/>-->
         </FrameLayout>
 
         <ImageView
@@ -62,22 +62,6 @@
             android:orientation="vertical"
             android:id="@+id/main_fragment">
     </FrameLayout>
-
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:background="@android:color/white"
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:backgroundTint="@color/colorLightBlue">
-        <Button
-            android:layout_width="772dp"
-            android:layout_height="70dp"
-            android:background="@drawable/titlebar_menu_selector"
-            android:id="@+id/title_bar_right"
-            android:layout_gravity="right|center_vertical"
-            android:layout_marginRight="10dp"
-            android:text="COUCOUCOUCOU" />
-    </LinearLayout>
 
 </LinearLayout>
 
