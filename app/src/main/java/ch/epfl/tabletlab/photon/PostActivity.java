@@ -100,10 +100,11 @@ public class PostActivity extends Activity {
 
     // Create a post.
     PhotonPost post = new PhotonPost();
+    String hashtag = "#"+text.replaceAll(" ", " #").toLowerCase();
 
     // Set the location to the current user's location
       post.setLocation(geoPoint);
-      post.setText(text);
+      post.setText(hashtag);
       post.setUser(ParseUser.getCurrentUser());
 
       //
