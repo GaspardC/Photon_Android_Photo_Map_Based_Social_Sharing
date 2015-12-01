@@ -46,8 +46,8 @@ public class PostActivity extends Activity {
   private EditText postEditText;
   private TextView characterCountTextView;
   private Button postButton;
-  private  TextView seekBarValue;
-  private SeekBar seekBarNumber;
+  private  TextView seekBarValueExpiration;
+  private SeekBar seekBarNumberExperiation;
 
 
     Bitmap bmp;
@@ -218,7 +218,9 @@ public class PostActivity extends Activity {
             BmpFileName = Uri.fromFile(photoFile);
             i = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             i.putExtra(MediaStore.EXTRA_OUTPUT, BmpFileName);
+            super.onResume();
             startActivityForResult(i, 0);
+
         }
     }
 
@@ -259,30 +261,28 @@ public class PostActivity extends Activity {
     }
 
     private void setSeekBar() {
-        seekBarNumber = (SeekBar)  findViewById(R.id.seekBarExpirationDate);
-        seekBarValue = (TextView)  findViewById(R.id.seekBarValueExpirationDate);
-        seekBarNumber.getThumb().setColorFilter(Color.YELLOW, PorterDuff.Mode.SRC_IN);
+        seekBarNumberExperiation = (SeekBar)  findViewById(R.id.seekBarExpirationDate);
+        seekBarValueExpiration = (TextView)  findViewById(R.id.seekBarValueExpirationDate);
+        seekBarNumberExperiation.getThumb().setColorFilter(Color.YELLOW, PorterDuff.Mode.SRC_IN);
 
         currentUser = DataManager.getUser();
         if (currentUser == null) return;
-        int seekbarValueInit = currentUser.getInt("numberDisplayed");
-        if(0 != seekbarValueInit){
-            seekBarNumber.setProgress(seekbarValueInit);
-            seekBarValue.setText("  " + String.valueOf(seekbarValueInit)+ " h visible to the world");
-        }
+            seekBarNumberExperiation.setProgress(24);
+            seekBarValueExpiration.setText("  " + String.valueOf(24)+ " h visible to the world");
 
-        final int[] seekvalue = {0};
 
-        seekBarNumber.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        final int[] seekvalueExpiration = {0};
+
+        seekBarNumberExperiation.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress,
                                           boolean fromUser) {
-                seekBarValue.setText(
+                seekBarValueExpiration.setText(
                         "  " + String.valueOf(progress)+ " h visible to the world");
-                seekvalue[0] = progress;
-                PhotonApplication.HOUR_TO_KEEP_PHOTO_DISPLAYED = seekvalue[0];
-                if(seekvalue[0] == 48){
+                seekvalueExpiration[0] = progress;
+                PhotonApplication.HOUR_TO_KEEP_PHOTO_DISPLAYED = seekvalueExpiration[0];
+                if(seekvalueExpiration[0] == 48){
                     seekBar.getProgressDrawable().setColorFilter(Color.YELLOW, PorterDuff.Mode.SRC_IN);
 
                 }
@@ -298,9 +298,9 @@ public class PostActivity extends Activity {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                currentUser.put("numberDisplayed", seekvalue[0]);
+                currentUser.put("numberDisplayed", seekvalueExpiration[0]);
                 currentUser.saveInBackground();
-                PhotonApplication.HOUR_TO_KEEP_PHOTO_DISPLAYED = seekvalue[0];
+                PhotonApplication.HOUR_TO_KEEP_PHOTO_DISPLAYED = seekvalueExpiration[0];
             }
         });
 
