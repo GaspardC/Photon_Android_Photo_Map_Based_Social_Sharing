@@ -20,6 +20,8 @@
                 android:background="#2ea3fe"/>
 
         <FrameLayout
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content">
 
@@ -30,15 +32,26 @@
                     android:id="@+id/title_bar_left_menu"
                     android:layout_gravity="left|center_vertical"
                     android:layout_marginLeft="10dp"/>
+            <Button
+                android:layout_width="33dp"
+                android:layout_height="33dp"
+                android:background="@drawable/search"
+                android:id="@+id/search_right_menu"
+                android:layout_gravity="right|center_vertical"
+                android:layout_marginRight="10dp"
+                />
 
-            <TextView
+            <EditText
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:padding="7dp"
-                    android:text="@string/slogan"
+                    android:id="@+id/hashtags_text_view"
+                    android:hint="@string/slogan"
                     android:textSize="24sp"
                     android:textColor="#999999"
-                    android:layout_gravity="center"/>
+                    android:layout_gravity="center"
+                    android:backgroundTint="@color/colorLightBlue"
+                    android:selectAllOnFocus="false"/>
 
             <!--<Button-->
                     <!--android:layout_width="28dp"-->

@@ -118,6 +118,8 @@ public class MenuActivity extends FragmentActivity implements View.OnClickListen
                     resideMenu.openMenu(ResideMenu.DIRECTION_LEFT);
                 }
             });
+
+
 /*            findViewById(R.id.title_bar_right_menu).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

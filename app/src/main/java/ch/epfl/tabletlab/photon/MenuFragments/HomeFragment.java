@@ -27,6 +27,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -132,6 +133,14 @@ public class HomeFragment extends Fragment {
         setUpViews();
         setUpMap();
         setSeekBar();
+
+        getActivity().findViewById(R.id.search_right_menu).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                EditText hastagsEditText = (EditText)  getActivity().findViewById(R.id.hashtags_text_view);
+                String text = String.valueOf(hastagsEditText.getText());
+            }
+        });
 
         return parentView;
     }
