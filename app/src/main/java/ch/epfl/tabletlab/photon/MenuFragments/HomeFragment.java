@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -18,6 +19,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -83,6 +85,7 @@ public class HomeFragment extends Fragment {
     private View parentView;
     private ResideMenu resideMenu;
     private GoogleMap mGoogleMap;
+    Button searchButton;
     FragmentManager fm;
     SupportMapFragment myMapFragment;
 
@@ -114,17 +117,27 @@ public class HomeFragment extends Fragment {
         setUpViews();
         setUpMap();
         setSeekBar();
+        setSearchButton();
 
-        getActivity().findViewById(R.id.search_right_menu).setOnClickListener(new View.OnClickListener() {
+
+        return parentView;
+    }
+
+    private void setSearchButton() {
+
+        searchButton= (Button) getActivity().findViewById(R.id.search_right_menu);
+        searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                searchButton.setBackground(getActivity().getDrawable(R.drawable.yellow_search));
                 EditText hastagsEditText = (EditText) getActivity().findViewById(R.id.hashtags_text_view);
                 String text = String.valueOf(hastagsEditText.getText());
                 if (text.isEmpty()) {
                     text = getString(R.string.slogan);
                 }
                 hastags = new ArrayList<String>();
-                text = text.replace(" ","");
+                text = text.replace(" ", "");
                 String[] splitText = text.split("#");
                 for (int i = 1; i < splitText.length; i++) {
                     hastags.add(splitText[i]);
@@ -133,8 +146,6 @@ public class HomeFragment extends Fragment {
                 doMapQuery(HASHTAG_QUERY);
             }
         });
-
-        return parentView;
     }
 
     private void setSeekBar() {
@@ -317,7 +328,12 @@ public class HomeFragment extends Fragment {
         mapQuery.findInBackground(new FindCallback<PhotonPost>() {
             @Override
             public void done(List<PhotonPost> objects, ParseException e) {
+                searchButton.setBackground(getActivity().getDrawable(R.drawable.search));
+
+
                 if (e != null) {
+
+
                     if (PhotonApplication.APPDEBUG) {
                         Log.d(PhotonApplication.APPTAG, "An error occurred while querying for map posts.", e);
                     }

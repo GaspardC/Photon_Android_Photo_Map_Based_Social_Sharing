@@ -35,10 +35,12 @@
             <Button
                 android:layout_width="33dp"
                 android:layout_height="33dp"
-                android:background="@drawable/search"
+                android:background="@drawable/search_button_selector"
                 android:id="@+id/search_right_menu"
                 android:layout_gravity="right|center_vertical"
                 android:layout_marginRight="10dp"
+
+
                 />
 
             <EditText
