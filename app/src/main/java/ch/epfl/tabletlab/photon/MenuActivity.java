@@ -94,7 +94,7 @@ public class MenuActivity extends FragmentActivity implements View.OnClickListen
             // create menu items;
             itemHome     = new ResideMenuItem(this, R.drawable.icon_home,     "Home");
             itemProfile  = new ResideMenuItem(this, R.drawable.icon_profile,  "Profile");
-            itemPost = new ResideMenuItem(this, R.drawable.icon_calendar, "Post");
+            itemPost = new ResideMenuItem(this, R.drawable.icon_camera, "Post");
             itemSettings = new ResideMenuItem(this, R.drawable.icon_settings, "Settings");
 
             itemHome.setOnClickListener(this);
