@@ -11,10 +11,13 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -100,6 +103,8 @@ public class HomeFragment extends Fragment {
     private HashMap<String, Object> toKeep = new HashMap<>();
     private CameraPosition cameraPosition;
     private ArrayList<String> hastags;
+    private EditText hastagsEditText;
+    private String EditTextReformated;
 
 /*
     public HomeFragment(MenuActivity menuActivity) {
@@ -117,33 +122,72 @@ public class HomeFragment extends Fragment {
         setUpViews();
         setUpMap();
         setSeekBar();
-        setSearchButton();
+        setSearchOptions();
 
 
         return parentView;
     }
 
-    private void setSearchButton() {
+    private void setSearchOptions() {
+
+
+        hastagsEditText = (EditText) getActivity().findViewById(R.id.hashtags_text_view);
+        hastagsEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence sequence, int start, int before, int count) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence sequence, int start, int before, int count) {
+
+               if(hastagsEditText.length()>40){
+                   sequence = hastagsEditText.getText().subSequence(0,40);
+               }
+                EditTextReformated = String.valueOf(sequence);
+                EditTextReformated = EditTextReformated.toLowerCase();
+                EditTextReformated = EditTextReformated.replaceAll(" "," #");
+                Log.d("searchtext", EditTextReformated);
+
+
+
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+//                        searchButton.performClick();
+            }
+        });
 
         searchButton= (Button) getActivity().findViewById(R.id.search_right_menu);
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                searchButton.setBackground(getActivity().getDrawable(R.drawable.yellow_search));
-                EditText hastagsEditText = (EditText) getActivity().findViewById(R.id.hashtags_text_view);
-                String text = String.valueOf(hastagsEditText.getText());
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    searchButton.setBackground(getActivity().getDrawable(R.drawable.yellow_search));
+                }
+
+
+
+
+                String text = String.valueOf(EditTextReformated);
                 if (text.isEmpty()) {
                     text = getString(R.string.slogan);
                 }
                 hastags = new ArrayList<String>();
                 text = text.replace(" ", "");
                 String[] splitText = text.split("#");
-                for (int i = 1; i < splitText.length; i++) {
-                    hastags.add(splitText[i]);
+                for (int i = 0; i < splitText.length; i++) {
+                    if(!splitText[i].equals("")){
+                        hastags.add(splitText[i]);
+                    }
                 }
-                HASHTAG_QUERY = true;
-                doMapQuery(HASHTAG_QUERY);
+                if(!hastags.isEmpty()){
+                    HASHTAG_QUERY = true;
+                    doMapQuery(HASHTAG_QUERY);
+                }
+
             }
         });
     }
@@ -328,12 +372,11 @@ public class HomeFragment extends Fragment {
         mapQuery.findInBackground(new FindCallback<PhotonPost>() {
             @Override
             public void done(List<PhotonPost> objects, ParseException e) {
-                searchButton.setBackground(getActivity().getDrawable(R.drawable.search));
-
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    searchButton.setBackground(getActivity().getDrawable(R.drawable.search));
+                }
 
                 if (e != null) {
-
-
                     if (PhotonApplication.APPDEBUG) {
                         Log.d(PhotonApplication.APPTAG, "An error occurred while querying for map posts.", e);
                     }
@@ -347,8 +390,6 @@ public class HomeFragment extends Fragment {
                 if (myUpdateNumber != mostRecentMapUpdate) {
                     return;
                 }
-
-
                 // Posts to show on the map
 
                 // Loop through the results of the search
