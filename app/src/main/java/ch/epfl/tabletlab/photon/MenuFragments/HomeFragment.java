@@ -22,6 +22,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -88,7 +90,8 @@ public class HomeFragment extends Fragment {
     private View parentView;
     private ResideMenu resideMenu;
     private GoogleMap mGoogleMap;
-    Button searchButton;
+    private Button searchButton;
+    private Button deleteButton;
     FragmentManager fm;
     SupportMapFragment myMapFragment;
 
@@ -105,6 +108,7 @@ public class HomeFragment extends Fragment {
     private ArrayList<String> hastags;
     private EditText hastagsEditText;
     private String EditTextReformated;
+    private boolean mapActive = true;
 
 /*
     public HomeFragment(MenuActivity menuActivity) {
@@ -123,9 +127,26 @@ public class HomeFragment extends Fragment {
         setUpMap();
         setSeekBar();
         setSearchOptions();
+        setDeleteButton();
 
 
         return parentView;
+    }
+
+    private void setDeleteButton() {
+        deleteButton = (Button) getActivity().findViewById(R.id.delete_right_menu);
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                hastagsEditText.setText("");
+                mapActive = true;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    deleteButton.setBackground(getActivity().getDrawable(R.drawable.delete));
+                }
+                hastagsEditText.setTextColor(getResources().getColor(R.color.grayColorTextHint));
+
+            }
+        });
     }
 
     private void setSearchOptions() {
@@ -139,7 +160,7 @@ public class HomeFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence sequence, int start, int before, int count) {
-
+                hastagsEditText.setTextColor(getResources().getColor(R.color.grayColorText));
                if(hastagsEditText.length()>40){
                    sequence = hastagsEditText.getText().subSequence(0,40);
                }
@@ -166,13 +187,14 @@ public class HomeFragment extends Fragment {
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     searchButton.setBackground(getActivity().getDrawable(R.drawable.yellow_search));
+                    deleteButton.setBackground(getActivity().getDrawable(R.drawable.delete_yellow));
                 }
 
 
 
 
                 String text = String.valueOf(EditTextReformated);
-                if (text.isEmpty()) {
+                if (text.isEmpty() || text.equals("null")) {
                     text = getString(R.string.slogan);
                 }
                 hastags = new ArrayList<String>();
@@ -184,6 +206,7 @@ public class HomeFragment extends Fragment {
                     }
                 }
                 if(!hastags.isEmpty()){
+                    mapActive = false;
                     HASHTAG_QUERY = true;
                     doMapQuery(HASHTAG_QUERY);
                 }
@@ -321,6 +344,7 @@ public class HomeFragment extends Fragment {
                 loc.setLongitude(position.target.longitude);
                 currentMapLocation = loc;
 
+                if(!mapActive) return; // if th mode search by keyword is active
                 HASHTAG_QUERY = false;
                 doMapQuery(HASHTAG_QUERY);
             }
@@ -373,7 +397,16 @@ public class HomeFragment extends Fragment {
             @Override
             public void done(List<PhotonPost> objects, ParseException e) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    //change color of search item
                     searchButton.setBackground(getActivity().getDrawable(R.drawable.search));
+
+                    // hide keyboard
+                    View view = getActivity().getCurrentFocus();
+                    if (view != null) {
+                        InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                    }
+
                 }
 
                 if (e != null) {

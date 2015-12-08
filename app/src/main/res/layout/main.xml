@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:background="@android:color/white"
+              android:background="@color/colorPrimary"
               android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:backgroundTint="@color/colorPrimary"
+
     >
 
     <LinearLayout
@@ -32,6 +34,38 @@
                     android:id="@+id/title_bar_left_menu"
                     android:layout_gravity="left|center_vertical"
                     android:layout_marginLeft="10dp"/>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/layout_middle_top"
+                android:layout_gravity="center|right"
+
+                >
+                <Button
+                    android:layout_width="33dp"
+                    android:layout_height="33dp"
+                    android:background="@drawable/delete"
+                    android:id="@+id/delete_right_menu"
+                    android:layout_gravity="left|center_vertical"
+                    android:layout_marginRight="10dp"
+                    />
+
+                <EditText
+                    android:layout_weight="5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="7dp"
+                    android:id="@+id/hashtags_text_view"
+                    android:hint="@string/slogan"
+                    android:textSize="24sp"
+                    android:textColor="@color/grayColorTextHint"
+                    android:layout_gravity="center"
+                    android:backgroundTint="@color/colorLightBlue"
+                    android:selectAllOnFocus="false"
+                    android:layout_marginRight="10dp"
+                    />
             <Button
                 android:layout_width="33dp"
                 android:layout_height="33dp"
@@ -39,21 +73,10 @@
                 android:id="@+id/search_right_menu"
                 android:layout_gravity="right|center_vertical"
                 android:layout_marginRight="10dp"
-
-
                 />
 
-            <EditText
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:padding="7dp"
-                    android:id="@+id/hashtags_text_view"
-                    android:hint="@string/slogan"
-                    android:textSize="24sp"
-                    android:textColor="#999999"
-                    android:layout_gravity="center"
-                    android:backgroundTint="@color/colorLightBlue"
-                    android:selectAllOnFocus="false"/>
+
+            </LinearLayout>
 
             <!--<Button-->
                     <!--android:layout_width="28dp"-->
