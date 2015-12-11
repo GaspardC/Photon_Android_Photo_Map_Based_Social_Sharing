@@ -1,36 +1,33 @@
 package ch.epfl.tabletlab.photon.MenuFragments;
 
 import android.Manifest;
-import android.app.Application;
-import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.RectF;
-import android.location.Address;
+import android.graphics.drawable.Drawable;
 import android.location.Criteria;
-import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.location.LocationProvider;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -45,7 +42,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.mopub.volley.toolbox.ImageLoader;
 import com.parse.FindCallback;
 import com.parse.GetDataCallback;
 import com.parse.ParseException;
@@ -54,17 +50,10 @@ import com.parse.ParseGeoPoint;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
-import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.Set;
-import java.util.TimeZone;
 
 import ch.epfl.tabletlab.photon.PhotonPost;
 import ch.epfl.tabletlab.photon.MenuActivity;
@@ -72,9 +61,6 @@ import ch.epfl.tabletlab.photon.MyMarker;
 import ch.epfl.tabletlab.photon.PhotonApplication;
 import ch.epfl.tabletlab.photon.R;
 import ch.epfl.tabletlab.photon.ResideMenu.ResideMenu;
-
-import static android.widget.Toast.LENGTH_SHORT;
-import static java.util.TimeZone.getTimeZone;
 
 
 public class HomeFragment extends Fragment {
@@ -93,6 +79,7 @@ public class HomeFragment extends Fragment {
 
     // Accuracy for calculating the map bounds
     private static final float OFFSET_CALCULATION_ACCURACY = 0.01f;
+    private static boolean HASHTAG_QUERY = true;
 
     // Maximum results returned from a Parse query
     private static int MAX_POST_SEARCH_RESULTS = 5;
@@ -103,6 +90,8 @@ public class HomeFragment extends Fragment {
     private View parentView;
     private ResideMenu resideMenu;
     private GoogleMap mGoogleMap;
+    private Button searchButton;
+    private Button deleteButton;
     FragmentManager fm;
     SupportMapFragment myMapFragment;
 
@@ -116,6 +105,10 @@ public class HomeFragment extends Fragment {
     private  TextView seekBarValue;
     private HashMap<String, Object> toKeep = new HashMap<>();
     private CameraPosition cameraPosition;
+    private ArrayList<String> hastags;
+    private EditText hastagsEditText;
+    private String EditTextReformated;
+    private boolean mapActive = true;
 
 /*
     public HomeFragment(MenuActivity menuActivity) {
@@ -133,16 +126,93 @@ public class HomeFragment extends Fragment {
         setUpViews();
         setUpMap();
         setSeekBar();
+        setSearchOptions();
+        setDeleteButton();
 
-        getActivity().findViewById(R.id.search_right_menu).setOnClickListener(new View.OnClickListener() {
+
+        return parentView;
+    }
+
+    private void setDeleteButton() {
+        deleteButton = (Button) getActivity().findViewById(R.id.delete_right_menu);
+        deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                EditText hastagsEditText = (EditText)  getActivity().findViewById(R.id.hashtags_text_view);
-                String text = String.valueOf(hastagsEditText.getText());
+                hastagsEditText.setText("");
+                mapActive = true;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    deleteButton.setBackground(getActivity().getDrawable(R.drawable.delete));
+                }
+                hastagsEditText.setTextColor(getResources().getColor(R.color.grayColorTextHint));
+
+            }
+        });
+    }
+
+    private void setSearchOptions() {
+
+
+        hastagsEditText = (EditText) getActivity().findViewById(R.id.hashtags_text_view);
+        hastagsEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence sequence, int start, int before, int count) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence sequence, int start, int before, int count) {
+                hastagsEditText.setTextColor(getResources().getColor(R.color.grayColorText));
+               if(hastagsEditText.length()>40){
+                   sequence = hastagsEditText.getText().subSequence(0,40);
+               }
+                EditTextReformated = String.valueOf(sequence);
+                EditTextReformated = EditTextReformated.toLowerCase();
+                EditTextReformated = EditTextReformated.replaceAll(" "," #");
+                Log.d("searchtext", EditTextReformated);
+
+
+
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+//                        searchButton.performClick();
             }
         });
 
-        return parentView;
+        searchButton= (Button) getActivity().findViewById(R.id.search_right_menu);
+        searchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    searchButton.setBackground(getActivity().getDrawable(R.drawable.yellow_search));
+                    deleteButton.setBackground(getActivity().getDrawable(R.drawable.delete_yellow));
+                }
+
+
+
+
+                String text = String.valueOf(EditTextReformated);
+                if (text.isEmpty() || text.equals("null")) {
+                    text = getString(R.string.slogan);
+                }
+                hastags = new ArrayList<String>();
+                text = text.replace(" ", "");
+                String[] splitText = text.split("#");
+                for (int i = 0; i < splitText.length; i++) {
+                    if(!splitText[i].equals("")){
+                        hastags.add(splitText[i]);
+                    }
+                }
+                if(!hastags.isEmpty()){
+                    mapActive = false;
+                    HASHTAG_QUERY = true;
+                    doMapQuery(HASHTAG_QUERY);
+                }
+
+            }
+        });
     }
 
     private void setSeekBar() {
@@ -153,7 +223,7 @@ public class HomeFragment extends Fragment {
         int seekbarValueInit = currentUser.getInt("numberDisplayed");
         if(0 != seekbarValueInit){
             seekBarNumber.setProgress(seekbarValueInit);
-            seekBarValue.setText("  N°" + String.valueOf(seekbarValueInit));
+            seekBarValue.setText(String.valueOf(seekbarValueInit)+ " displayed");
         }
 
         final int[] seekvalue = {0};
@@ -163,7 +233,7 @@ public class HomeFragment extends Fragment {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress,
                                           boolean fromUser) {
-                seekBarValue.setText("  N°" + String.valueOf(progress));
+                seekBarValue.setText(String.valueOf(progress)+ " displayed");
                 seekvalue[0] = progress;
                 MAX_POST_SEARCH_RESULTS = seekvalue[0];
                 displayImage();
@@ -189,6 +259,7 @@ public class HomeFragment extends Fragment {
 //        // Initialize the HashMap for Markers and MyMarker object
         mMarkersHashMap = new HashMap<Marker, MyMarker>();
         mGoogleMap.clear();
+        Log.d("clear","clear");
 
         //TODO here get all images in the map and add them
         plotMarkers();
@@ -213,7 +284,14 @@ public class HomeFragment extends Fragment {
                     mMarkersHashMap.put(currentMarker, myMarker);
 
                     mGoogleMap.setInfoWindowAdapter(new MarkerInfoWindowAdapter());
-//                currentMarker.showInfoWindow();
+                    mGoogleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                        @Override
+                        public boolean onMarkerClick(Marker marker) {
+                            marker.showInfoWindow();
+                            return true;
+                        }
+                    });
+//                    currentMarker.showInfoWindow();
                 }
                 else{
                     break;
@@ -266,7 +344,9 @@ public class HomeFragment extends Fragment {
                 loc.setLongitude(position.target.longitude);
                 currentMapLocation = loc;
 
-                doMapQuery();
+                if(!mapActive) return; // if th mode search by keyword is active
+                HASHTAG_QUERY = false;
+                doMapQuery(HASHTAG_QUERY);
             }
         });
 
@@ -275,7 +355,7 @@ public class HomeFragment extends Fragment {
     /*
        * Set up the query to update the map view
        */
-    private void doMapQuery() {
+    private void doMapQuery(boolean hashtagQuery) {
 
 
 
@@ -290,25 +370,45 @@ public class HomeFragment extends Fragment {
         }
         final ParseGeoPoint myPoint = geoPointFromLocation(myLoc);
         // Create the map Parse query
-        ParseQuery<PhotonPost> mapQuery = PhotonPost.getQuery();
-        // Set up additional query filters
+        ParseQuery<PhotonPost> mapQuery = null;
+        if(hashtagQuery){
+            List<ParseQuery<PhotonPost>> queries = new ArrayList<ParseQuery<PhotonPost>>();
+
+            for(String k : hastags){
+                ParseQuery<PhotonPost> pQuery = setMapQuery(myPoint, "#"+k);
+                queries.add(pQuery);
+            }
+             mapQuery = ParseQuery.or(queries);
+             mapQuery.include("user");
+             mapQuery.orderByDescending("createdAt");
+             mapQuery.setLimit(MAX_POST_SEARCH_RESULTS);
+            Log.d("","");
 
 
-        MAX_POST_SEARCH_DISTANCE = distanceForMapQuery();
+        }
+        else {
+            mapQuery = setMapQuery(myPoint, "");
 
-        // Query Expiration
-        Date todaysDate = new Date(new Date().getTime());
-        mapQuery.whereGreaterThanOrEqualTo("expirationDate", todaysDate);
-
-        mapQuery.whereWithinKilometers("location", myPoint, MAX_POST_SEARCH_DISTANCE);
-        mapQuery.include("user");
-        mapQuery.orderByDescending("createdAt");
-        mapQuery.setLimit(MAX_POST_SEARCH_RESULTS);
+        }
 
         // Kick off the query in the background
+        assert mapQuery != null;
         mapQuery.findInBackground(new FindCallback<PhotonPost>() {
             @Override
             public void done(List<PhotonPost> objects, ParseException e) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    //change color of search item
+                    searchButton.setBackground(getActivity().getDrawable(R.drawable.search));
+
+                    // hide keyboard
+                    View view = getActivity().getCurrentFocus();
+                    if (view != null) {
+                        InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                    }
+
+                }
+
                 if (e != null) {
                     if (PhotonApplication.APPDEBUG) {
                         Log.d(PhotonApplication.APPTAG, "An error occurred while querying for map posts.", e);
@@ -323,8 +423,6 @@ public class HomeFragment extends Fragment {
                 if (myUpdateNumber != mostRecentMapUpdate) {
                     return;
                 }
-
-
                 // Posts to show on the map
 
                 // Loop through the results of the search
@@ -385,6 +483,30 @@ public class HomeFragment extends Fragment {
                 cleanImagesIfTheyAreNotInTheServer(objects);
             }
         });
+    }
+
+    private ParseQuery<PhotonPost> setMapQuery(ParseGeoPoint myPoint, String k) {
+
+        // Create the map Parse query
+        ParseQuery<PhotonPost> mapQuery = PhotonPost.getQuery();
+        // Set up additional query filters
+
+
+        MAX_POST_SEARCH_DISTANCE = distanceForMapQuery();
+
+        // Query Expiration
+        Date todaysDate = new Date(new Date().getTime());
+        mapQuery.whereGreaterThanOrEqualTo("expirationDate", todaysDate);
+
+        mapQuery.whereWithinKilometers("location", myPoint, MAX_POST_SEARCH_DISTANCE);
+//        mapQuery.include("user");
+//        mapQuery.orderByDescending("createdAt");
+//        mapQuery.setLimit(MAX_POST_SEARCH_RESULTS);
+        if(HASHTAG_QUERY){
+            mapQuery.whereContains("text", k);
+        }
+
+        return mapQuery;
     }
 
     private void cleanImagesIfTheyAreNotInTheServer(List<PhotonPost> objects) {
