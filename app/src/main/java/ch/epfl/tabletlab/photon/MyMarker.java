@@ -5,18 +5,21 @@ import android.graphics.drawable.Drawable;
 import android.media.Image;
 import android.widget.ImageView;
 
+import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.Marker;
 
 /**
  * Created by Gasp on 14/11/2015.
  */
 public class MyMarker
+
 {
     private String mLabel;
     private String mIcon;
     private Double mLatitude;
     private Double mLongitude;
     private Bitmap bitmap;
+    private String id;
 
     public MyMarker(String label, String icon, Double latitude, Double longitude, Bitmap b)
     {
@@ -26,6 +29,7 @@ public class MyMarker
         this.mIcon = icon;
         this.bitmap = b;
     }
+
 
     public String getmLabel()
     {
@@ -70,5 +74,13 @@ public class MyMarker
 
     public Bitmap getImage() {
         return this.bitmap;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }

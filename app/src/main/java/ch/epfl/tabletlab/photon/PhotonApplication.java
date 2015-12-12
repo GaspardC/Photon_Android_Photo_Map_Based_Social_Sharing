@@ -20,6 +20,12 @@ public class PhotonApplication extends android.app.Application {
   // Used to pass location from MainActivity to PostActivity
   public static final String INTENT_EXTRA_LOCATION = "location";
 
+  // Maximum results returned from a Parse query
+  public static int MAX_POST_SEARCH_RESULTS = 5;
+
+  // Maximum post search radius for map in kilometers
+  public static int MAX_POST_SEARCH_DISTANCE = 100;
+
   // Key for saving the search distance preference
   private static final String KEY_SEARCH_DISTANCE = "searchDistance";
 

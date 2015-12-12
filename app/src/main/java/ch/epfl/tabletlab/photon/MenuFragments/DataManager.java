@@ -3,9 +3,15 @@ package ch.epfl.tabletlab.photon.MenuFragments;
 import android.location.Location;
 
 import com.parse.ParseGeoPoint;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
+
+import ch.epfl.tabletlab.photon.PhotonPost;
 
 /**
  * Created by Gasp on 15/11/2015.
@@ -49,5 +55,25 @@ import java.text.ParseException;
     public void pushPhotoToServer( ){
 //        userOrderInformations.setOrder(orderElement);
 //        userOrderInformations.saveInBackground();
+    }
+
+    /*
+* Helper method to get the Parse GEO point representation of a location
+*/
+    public static ParseGeoPoint geoPointFromLocation(Location loc) {
+        return new ParseGeoPoint(loc.getLatitude(), loc.getLongitude());
+    }
+
+
+    public static List<PhotonPost> getPosts(ParseQuery<PhotonPost> mapQuery) {
+
+        List<PhotonPost> posts = new ArrayList<>();
+        try {
+             posts = (List<PhotonPost>) mapQuery.findInBackground();
+        }
+        catch (Exception e) {
+            throw new IllegalStateException(e);
+        }
+        return posts;
     }
 }
