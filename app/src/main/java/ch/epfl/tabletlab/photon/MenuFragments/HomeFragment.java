@@ -7,8 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -16,7 +14,6 @@ import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Looper;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -27,7 +24,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -49,7 +45,6 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.parse.FindCallback;
-import com.parse.GetDataCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseGeoPoint;
@@ -57,7 +52,6 @@ import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -91,7 +85,7 @@ public class HomeFragment extends Fragment {
     private static boolean HASHTAG_QUERY = true;
 
     // Maximum results returned from a Parse query
-    public static int MAX_POST_SEARCH_RESULTS = 5;
+    public static int MAX_POST_SEARCH_RESULTS = 20;
 
     // Maximum post search radius for map in kilometers
     public static int MAX_POST_SEARCH_DISTANCE = 100;
@@ -471,7 +465,6 @@ public class HomeFragment extends Fragment {
                         ParseFile image = post.getImage();
                         ParseFile thumbnail = image;
 
-/*
                         new AsyncTask<Void, Void, Void>() {
                             @Override
                             protected Void doInBackground(Void... params) {
@@ -484,7 +477,7 @@ public class HomeFragment extends Fragment {
                                             with(getActivity()).
                                             load(image.getUrl()).
                                             asBitmap().
-                                            into(300, 300). // Width and height
+                                            into(500, 500). // Width and height
                                             get();
 
                                 } catch (InterruptedException e1) {
@@ -502,21 +495,17 @@ public class HomeFragment extends Fragment {
                                     MyMarker newMarker = new MyMarker(post.getText(), "", post.getLocation().getLatitude(),
                                             post.getLocation().getLongitude(), theBitmap);
                                     newMarker.setId(post.getObjectId());
-
                                     toKeep.put(post.getObjectId(), newMarker);
+                                    displayImage();
 
-                                    */
-/*image.setImageBitmap(theBitmap);
-                                    Log.d(TAG, "Image loaded");*//*
 
                                 };
                             }
                         }.execute();
 
-*/
 
 
-                       if (thumbnail != null) {
+                       /*if (thumbnail != null) {
                             thumbnail.getDataInBackground(new GetDataCallback() {
 
                                 @Override
@@ -548,18 +537,17 @@ public class HomeFragment extends Fragment {
                             });
                         } else {
                             Log.e("parse file", " null");
-                        }
+                        }*/
                     }
                 }
-                displayImage();
-                cleanImagesIfTheyAreNotInTheServer(objects);
+                displayAndCleanImagesIfTheyAreNotInTheServer(objects);
                         }
                     });
     }
 
 
 
-    private void cleanImagesIfTheyAreNotInTheServer(List<PhotonPost> objects) {
+    private void displayAndCleanImagesIfTheyAreNotInTheServer(List<PhotonPost> objects) {
 
         //if some objects are in toKeep but not in objects delete them
         // Loop through the results of the search

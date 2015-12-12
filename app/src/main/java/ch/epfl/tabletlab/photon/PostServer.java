@@ -17,8 +17,7 @@ import ch.epfl.tabletlab.photon.MenuFragments.DataManager;
  */
 public class PostServer {
 
-    static int MAX_POST_SEARCH_RESULTS = PhotonApplication.MAX_POST_SEARCH_RESULTS;
-    static int MAX_POST_SEARCH_DISTANCE = PhotonApplication.MAX_POST_SEARCH_DISTANCE;
+
 
     public static ParseQuery<PhotonPost> getQueryHashtagAtALocation(ArrayList<String> hastags, Location position) {
         ParseQuery<PhotonPost> mapQuery = null;
@@ -32,7 +31,7 @@ public class PostServer {
         mapQuery = ParseQuery.or(queries);
         mapQuery.include("user");
         mapQuery.orderByDescending("createdAt");
-        mapQuery.setLimit(MAX_POST_SEARCH_RESULTS);
+        mapQuery.setLimit(PhotonApplication.MAX_POST_SEARCH_RESULTS);
 
         return mapQuery;
     }
@@ -48,7 +47,7 @@ public class PostServer {
         Date todaysDate = new Date(new Date().getTime());
         mapQuery.whereGreaterThanOrEqualTo("expirationDate", todaysDate);
 
-        mapQuery.whereWithinKilometers("location", myPoint, MAX_POST_SEARCH_DISTANCE);
+        mapQuery.whereWithinKilometers("location", myPoint, PhotonApplication.MAX_POST_SEARCH_DISTANCE);
 
         if (!k.equals("")) {
             mapQuery.whereContains("text", k);
