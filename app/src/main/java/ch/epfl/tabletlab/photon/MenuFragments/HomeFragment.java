@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -57,6 +58,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import ch.epfl.tabletlab.photon.DetailsActivity;
 import ch.epfl.tabletlab.photon.PhotonPost;
 import ch.epfl.tabletlab.photon.MenuActivity;
 import ch.epfl.tabletlab.photon.MyMarker;
@@ -294,7 +296,7 @@ public class HomeFragment extends Fragment {
                 if(countMaxMarkerDisplayed<MAX_POST_SEARCH_RESULTS) {
 
                     countMaxMarkerDisplayed++;
-                    MyMarker myMarker = (MyMarker) toKeep.get(currentKey);
+                    final MyMarker myMarker = (MyMarker) toKeep.get(currentKey);
                     // Create user marker with custom icon and other options
                     MarkerOptions markerOption = new MarkerOptions().position(new LatLng(myMarker.getmLatitude(), myMarker.getmLongitude()));
                     markerOption.icon(BitmapDescriptorFactory.fromResource(R.drawable.currentlocation_icon));
@@ -314,7 +316,9 @@ public class HomeFragment extends Fragment {
                     mGoogleMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
                         @Override
                         public void onInfoWindowClick(Marker marker) {
-
+                            Intent intent = new Intent(getActivity(), DetailsActivity.class);
+                            intent.putExtra("markerId",myMarker.getId());
+                            startActivity(intent);
                         }
                     });
 //                    currentMarker.showInfoWindow();

@@ -4,7 +4,6 @@
     <string name="password_reset_text">Do you want to rest your password?</string>
 
 
-
     <string name="profile_logo_content_description">Logo</string>
     <string name="profile_title_logged_in">Your are logged in as</string>
     <string name="profile_logout_button_label">Log out</string>
@@ -36,7 +35,7 @@
     <string name="activity_post_title">Create a Post</string>
     <string name="character_count_placeholder">0/140</string>
     <string name="hello_world">hello_world</string>
-    <string name="google_maps_key" translatable="false" templateMergeStrategy="preserve">
+    <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">
         AIzaSyC_NPwXZ1HHsKdEy4IUnU-Oayrf1IkERwQ
     </string>
 
