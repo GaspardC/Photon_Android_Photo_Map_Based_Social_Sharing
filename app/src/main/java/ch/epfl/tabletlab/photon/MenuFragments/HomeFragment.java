@@ -318,6 +318,7 @@ public class HomeFragment extends Fragment {
                             Intent intent = new Intent(getActivity(), DetailsActivity.class);
                             MyMarker myMarker1 = mMarkersHashMap.get(marker);
                             intent.putExtra("markerId",myMarker1.getId());
+                            intent.putExtra("hashtags",myMarker1.getmHashtag());
                             startActivity(intent);
                         }
                     });
@@ -724,7 +725,7 @@ public class HomeFragment extends Fragment {
                     .crossFade()
                     .into(markerIcon);*/
 
-            markerLabel.setText(myMarker.getmLabel());
+            markerLabel.setText(myMarker.getmHashtag());
             markerOtherText.setText(myMarker.getmIcon());
             return v;
         }

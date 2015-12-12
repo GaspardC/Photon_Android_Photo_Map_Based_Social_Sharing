@@ -209,9 +209,6 @@ public class PostActivity extends Activity {
         bounds.inJustDecodeBounds = true;
         BitmapFactory.decodeFile(fileName, bounds);
 
-        int imageHeight = bounds.outHeight;
-        int imageWidth = bounds.outWidth;
-        String imageType = bounds.outMimeType;
 
 
         BitmapFactory.Options opts = new BitmapFactory.Options();

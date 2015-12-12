@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.parse.ParseFile;
@@ -18,6 +19,7 @@ public class DetailsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_details);
 
         ImageView imageViewDetailed = (ImageView) findViewById(R.id.imageViewDetailed);
+        TextView  textViewHashtags = (TextView) findViewById(R.id.textViewHashtagDetailed);
 
 
         Intent intent = getIntent();
@@ -29,9 +31,12 @@ public class DetailsActivity extends AppCompatActivity {
 
         Glide.with(this).load(url)
                 .centerCrop()
-                .placeholder(R.drawable.spinner_static)
                 .crossFade()
                 .into(imageViewDetailed);
+
+        String hashtags = intent.getExtras().getString("hashtags");
+        textViewHashtags.setText(hashtags);
+
 
 
 
