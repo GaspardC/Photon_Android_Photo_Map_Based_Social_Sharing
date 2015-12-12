@@ -13,8 +13,10 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Looper;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -35,6 +37,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -57,6 +60,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import ch.epfl.tabletlab.photon.DetailsActivity;
 import ch.epfl.tabletlab.photon.PhotonPost;
@@ -120,6 +124,7 @@ public class HomeFragment extends Fragment {
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE
     };
+    private Bitmap theBitmap;
 
 /*
     public HomeFragment(MenuActivity menuActivity) {
@@ -465,9 +470,53 @@ public class HomeFragment extends Fragment {
                         // Set up the map marker's location
                         ParseFile image = post.getImage();
                         ParseFile thumbnail = image;
-                        final ImageView img = new ImageView(getActivity());
 
-                        if (thumbnail != null) {
+/*
+                        new AsyncTask<Void, Void, Void>() {
+                            @Override
+                            protected Void doInBackground(Void... params) {
+//                                Looper.prepare();
+                                try {
+                                    ParseFile image = post.getImage();
+                                    ParseFile thumbnail = image;
+
+                                     theBitmap = Glide.
+                                            with(getActivity()).
+                                            load(image.getUrl()).
+                                            asBitmap().
+                                            into(300, 300). // Width and height
+                                            get();
+
+                                } catch (InterruptedException e1) {
+                                    e1.printStackTrace();
+                                } catch (ExecutionException e1) {
+                                    e1.printStackTrace();
+                                }
+                                return null;
+                            }
+                            @Override
+                            protected void onPostExecute(Void dummy) {
+                                if (null != theBitmap) {
+
+                                    // The full bitmap should be available here
+                                    MyMarker newMarker = new MyMarker(post.getText(), "", post.getLocation().getLatitude(),
+                                            post.getLocation().getLongitude(), theBitmap);
+                                    newMarker.setId(post.getObjectId());
+
+                                    toKeep.put(post.getObjectId(), newMarker);
+
+                                    */
+/*image.setImageBitmap(theBitmap);
+                                    Log.d(TAG, "Image loaded");*//*
+
+                                };
+                            }
+                        }.execute();
+
+*/
+
+
+                       if (thumbnail != null) {
                             thumbnail.getDataInBackground(new GetDataCallback() {
 
                                 @Override
@@ -676,6 +725,17 @@ public class HomeFragment extends Fragment {
 //            markerIcon.setImageResource(manageMarkerIcon(myMarker.getmIcon()));
 //            markerIcon.setImageResource(R.drawable.smallbeautifulimage);
             markerIcon.setImageBitmap(myMarker.getImage());
+/*
+            PhotonPost post = PostServer.getPhotonPost(myMarker.getId());
+            ParseFile parseFile = post.getImage();
+            String url = parseFile.getUrl();
+
+            Glide.with(getActivity()).load(url)
+                    .centerCrop()
+                    .placeholder(R.drawable.spinner_static)
+                    .crossFade()
+                    .into(markerIcon);*/
+
             markerLabel.setText(myMarker.getmLabel());
             markerOtherText.setText(myMarker.getmIcon());
             return v;
