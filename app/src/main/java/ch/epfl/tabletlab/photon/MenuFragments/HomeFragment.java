@@ -317,7 +317,8 @@ public class HomeFragment extends Fragment {
                         @Override
                         public void onInfoWindowClick(Marker marker) {
                             Intent intent = new Intent(getActivity(), DetailsActivity.class);
-                            intent.putExtra("markerId",myMarker.getId());
+                            MyMarker myMarker1 = mMarkersHashMap.get(marker);
+                            intent.putExtra("markerId",myMarker1.getId());
                             startActivity(intent);
                         }
                     });
