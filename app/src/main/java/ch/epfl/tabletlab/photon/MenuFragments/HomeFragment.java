@@ -61,6 +61,7 @@ import ch.epfl.tabletlab.photon.PhotonPost;
 import ch.epfl.tabletlab.photon.MenuActivity;
 import ch.epfl.tabletlab.photon.MyMarker;
 import ch.epfl.tabletlab.photon.PhotonApplication;
+import ch.epfl.tabletlab.photon.PostServer;
 import ch.epfl.tabletlab.photon.R;
 import ch.epfl.tabletlab.photon.ResideMenu.ResideMenu;
 
@@ -84,10 +85,10 @@ public class HomeFragment extends Fragment {
     private static boolean HASHTAG_QUERY = true;
 
     // Maximum results returned from a Parse query
-    private static int MAX_POST_SEARCH_RESULTS = 5;
+    public static int MAX_POST_SEARCH_RESULTS = 5;
 
     // Maximum post search radius for map in kilometers
-    private static int MAX_POST_SEARCH_DISTANCE = 100;
+    public static int MAX_POST_SEARCH_DISTANCE = 100;
 
     private View parentView;
     private ResideMenu resideMenu;
@@ -192,9 +193,6 @@ public class HomeFragment extends Fragment {
                 EditTextReformated = EditTextReformated.replaceAll(" "," #");
                 Log.d("searchtext", EditTextReformated);
 
-
-
-
             }
 
             @Override
@@ -214,8 +212,6 @@ public class HomeFragment extends Fragment {
                 }
 
 
-
-
                 String text = String.valueOf(EditTextReformated);
                 if (text.isEmpty() || text.equals("null")) {
                     text = getString(R.string.slogan);
@@ -224,11 +220,11 @@ public class HomeFragment extends Fragment {
                 text = text.replace(" ", "");
                 String[] splitText = text.split("#");
                 for (int i = 0; i < splitText.length; i++) {
-                    if(!splitText[i].equals("")){
+                    if (!splitText[i].equals("")) {
                         hastags.add(splitText[i]);
                     }
                 }
-                if(!hastags.isEmpty()){
+                if (!hastags.isEmpty()) {
                     mapActive = false;
                     HASHTAG_QUERY = true;
                     doMapQuery(HASHTAG_QUERY);
@@ -256,7 +252,7 @@ public class HomeFragment extends Fragment {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress,
                                           boolean fromUser) {
-                seekBarValue.setText(String.valueOf(progress)+ " displayed");
+                seekBarValue.setText(String.valueOf(progress) + " displayed");
                 seekvalue[0] = progress;
                 MAX_POST_SEARCH_RESULTS = seekvalue[0];
                 displayImage();
@@ -314,6 +310,13 @@ public class HomeFragment extends Fragment {
                             return true;
                         }
                     });
+
+                    mGoogleMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+                        @Override
+                        public void onInfoWindowClick(Marker marker) {
+
+                        }
+                    });
 //                    currentMarker.showInfoWindow();
                 }
                 else{
@@ -367,7 +370,7 @@ public class HomeFragment extends Fragment {
                 loc.setLongitude(position.target.longitude);
                 currentMapLocation = loc;
 
-                if(!mapActive) return; // if th mode search by keyword is active
+                if (!mapActive) return; // if th mode search by keyword is active
                 HASHTAG_QUERY = false;
                 doMapQuery(HASHTAG_QUERY);
             }
@@ -391,26 +394,16 @@ public class HomeFragment extends Fragment {
             Toast.makeText(this.getActivity(), "Unknown location", Toast.LENGTH_SHORT).show();
             return;
         }
-        final ParseGeoPoint myPoint = geoPointFromLocation(myLoc);
-        // Create the map Parse query
+        /*final ParseGeoPoint myPoint = DataManager.geoPointFromLocation(myLoc);
+        // Create the map Parse query*/
+
+        PhotonApplication.MAX_POST_SEARCH_DISTANCE = distanceForMapQuery();
         ParseQuery<PhotonPost> mapQuery = null;
-        if(hashtagQuery){
-            List<ParseQuery<PhotonPost>> queries = new ArrayList<ParseQuery<PhotonPost>>();
-
-            for(String k : hastags){
-                ParseQuery<PhotonPost> pQuery = setMapQuery(myPoint, "#"+k);
-                queries.add(pQuery);
-            }
-             mapQuery = ParseQuery.or(queries);
-             mapQuery.include("user");
-             mapQuery.orderByDescending("createdAt");
-             mapQuery.setLimit(MAX_POST_SEARCH_RESULTS);
-            Log.d("","");
-
-
+        if(hashtagQuery) {
+            mapQuery = PostServer.getQueryHashtagAtALocation(hastags, myLoc);
         }
-        else {
-            mapQuery = setMapQuery(myPoint, "");
+        else{
+            mapQuery = PostServer.setMapQuery(myLoc, "");
 
         }
 
@@ -426,10 +419,9 @@ public class HomeFragment extends Fragment {
                     // hide keyboard
                     View view = getActivity().getCurrentFocus();
                     if (view != null) {
-                        InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                     }
-
                 }
 
                 if (e != null) {
@@ -504,33 +496,11 @@ public class HomeFragment extends Fragment {
                 }
                 displayImage();
                 cleanImagesIfTheyAreNotInTheServer(objects);
-            }
-        });
+                        }
+                    });
     }
 
-    private ParseQuery<PhotonPost> setMapQuery(ParseGeoPoint myPoint, String k) {
 
-        // Create the map Parse query
-        ParseQuery<PhotonPost> mapQuery = PhotonPost.getQuery();
-        // Set up additional query filters
-
-
-        MAX_POST_SEARCH_DISTANCE = distanceForMapQuery();
-
-        // Query Expiration
-        Date todaysDate = new Date(new Date().getTime());
-        mapQuery.whereGreaterThanOrEqualTo("expirationDate", todaysDate);
-
-        mapQuery.whereWithinKilometers("location", myPoint, MAX_POST_SEARCH_DISTANCE);
-//        mapQuery.include("user");
-//        mapQuery.orderByDescending("createdAt");
-//        mapQuery.setLimit(MAX_POST_SEARCH_RESULTS);
-        if(HASHTAG_QUERY){
-            mapQuery.whereContains("text", k);
-        }
-
-        return mapQuery;
-    }
 
     private void cleanImagesIfTheyAreNotInTheServer(List<PhotonPost> objects) {
 
@@ -593,12 +563,7 @@ public class HomeFragment extends Fragment {
 
 
 
-    /*
- * Helper method to get the Parse GEO point representation of a location
- */
-    private ParseGeoPoint geoPointFromLocation(Location loc) {
-        return new ParseGeoPoint(loc.getLatitude(), loc.getLongitude());
-    }
+
     private void startMap() {
 
         mGoogleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
@@ -652,79 +617,9 @@ public class HomeFragment extends Fragment {
 
             // TO DO just do it at the beginning or on press compass
             new DataManager().setUserLocation(location);
-             cameraPosition = new CameraPosition.Builder().target(new LatLng(latitude, longitude)).zoom(17).build();
+            cameraPosition = new CameraPosition.Builder().target(new LatLng(latitude, longitude)).zoom(17).build();
             mGoogleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-
-//            mGoogleMap.clear();
-//            MarkerOptions markerOptions = new MarkerOptions();
-//            markerOptions.position(new LatLng(latitude, longitude));
-//            markerOptions.title("Here I am");
-//            markerOptions.snippet("(" + latitude + "," + longitude + ")");
-//            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.smallbeautifulimage));
-//            mGoogleMap.addMarker(markerOptions).showInfoWindow();
-
-//            mGoogleMap.clear();
-//            Bitmap.Config conf = Bitmap.Config.ARGB_8888;
-//            Bitmap bmp = Bitmap.createBitmap(80, 80, conf);
-//            Canvas canvas1 = new Canvas(bmp);
-//
-//// paint defines the text color,
-//// stroke width, size
-//            Paint color = new Paint();
-//            color.setTextSize(35);
-//            color.setColor(Color.BLACK);
-//
-////modify canvas
-//            canvas1.drawBitmap(BitmapFactory.decodeResource(getResources(),
-//                    R.drawable.smallbeautifulimage), 0,0, color);
-//            canvas1.drawText(ParseUser.getCurrentUser().getUsername(), 30, 40, color);
-//
-////add marker to Map
-//            mGoogleMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude))
-//                    .icon(BitmapDescriptorFactory.fromBitmap(bmp))
-//                            // Specifies the anchor to be at a particular point in the marker image.
-//                    .anchor(0.5f, 1));
-
-//            USE TO CREATE CUSTOM MARKER
-//            String text = "Here I am";
-//            int textSize = 30;
-//            Paint paint = new Paint();
-//            paint.setTextSize(textSize);
-//            paint.setColor(Color.WHITE);
-//            paint.setTextAlign(Paint.Align.LEFT);
-//            int width = (int) (paint.measureText(text) + 0.5f); // round
-//            float baseline = (int) (-paint.ascent() + 0.5f); // ascent() is negative
-//            int height = (int) (baseline + paint.descent() + 0.5f);
-//            Bitmap image = Bitmap.createBitmap(width+50, height+50, Bitmap.Config.ARGB_8888);
-//            Canvas canvas = new Canvas(image);
-//            Paint backPaint = new Paint();
-//            backPaint.setARGB(250, 0, 0, 255);
-//            backPaint.setAntiAlias(true);
-//            RectF backRect = new RectF(0, 0, width+50, height+50);
-//            canvas.drawRoundRect(backRect, 5, 5, backPaint);
-//            canvas.drawText(text, 0, baseline, paint);
-//            mGoogleMap.clear();
-//            MarkerOptions markerOptions = new MarkerOptions();
-//            markerOptions.position(new LatLng(latitude, longitude));
-//            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.smallbeautifulimage));
-//            mGoogleMap.addMarker(markerOptions).showInfoWindow();
-
-//            try {
-//                List<Address> addresses = gc.getFromLocation(latitude, longitude, 1);
-//                StringBuilder sb = new StringBuilder();
-//                if (addresses.size() > 0) {
-//                    Address address = addresses.get(0);
-//                    for (int i = 0; i <= address.getMaxAddressLineIndex(); i++) {
-//                        sb.append("\n").append(address.getAddressLine(i));
-//                    }
-//                    addressString = sb.toString();
-//                }
-//            } catch (IOException e) {
-//            }
-        }/* else {
-            latLongString = "No location found";
         }
-        myLocationText.setText("Your Current Position is: \n" + latLongString + "\n" + addressString);*/
     }
 
 
@@ -739,18 +634,12 @@ public class HomeFragment extends Fragment {
 
             updateWithNewLocation(null);
         }
-
         public void onProviderEnabled(String provider) {
         }
-
-        ;
-
         public void onStatusChanged(String provider, int status, Bundle extras) {
         }
 
-        ;
     };
-
 
     public class MarkerInfoWindowAdapter implements GoogleMap.InfoWindowAdapter
     {
@@ -776,16 +665,11 @@ public class HomeFragment extends Fragment {
             TextView markerLabel = (TextView)v.findViewById(R.id.marker_label);
             TextView markerOtherText = (TextView)v.findViewById(R.id.another_label);
 
-
 //            markerIcon.setImageResource(manageMarkerIcon(myMarker.getmIcon()));
 //            markerIcon.setImageResource(R.drawable.smallbeautifulimage);
             markerIcon.setImageBitmap(myMarker.getImage());
-
-
             markerLabel.setText(myMarker.getmLabel());
             markerOtherText.setText(myMarker.getmIcon());
-
-
             return v;
         }
     }

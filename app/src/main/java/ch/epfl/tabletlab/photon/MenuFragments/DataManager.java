@@ -50,4 +50,11 @@ import java.text.ParseException;
 //        userOrderInformations.setOrder(orderElement);
 //        userOrderInformations.saveInBackground();
     }
+
+    /*
+* Helper method to get the Parse GEO point representation of a location
+*/
+    public static ParseGeoPoint geoPointFromLocation(Location loc) {
+        return new ParseGeoPoint(loc.getLatitude(), loc.getLongitude());
+    }
 }

@@ -5,12 +5,14 @@ import android.graphics.drawable.Drawable;
 import android.media.Image;
 import android.widget.ImageView;
 
+import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.Marker;
 
 /**
  * Created by Gasp on 14/11/2015.
  */
 public class MyMarker
+
 {
     private String mLabel;
     private String mIcon;
