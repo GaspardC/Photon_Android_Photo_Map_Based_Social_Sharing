@@ -2,7 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="ch.epfl.tabletlab.photon"
     android:versionCode="1"
-    android:versionName="1.0" >
+    android:versionName="1.0"
+    android:largeHeap="true"
+
+    >
 
     <uses-sdk
         android:minSdkVersion="9"
@@ -93,8 +96,8 @@
         </activity>
 
         <meta-data
-            android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyC_NPwXZ1HHsKdEy4IUnU-Oayrf1IkERwQ" />
+            android:name="com.google.android.maps.v2.API_KEY"
+            android:value="@string/google_maps_key" />
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />

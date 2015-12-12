@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:background="@color/colorPrimary"
               android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              android:backgroundTint="@color/colorPrimary"
 
     >
 
@@ -33,7 +31,8 @@
                     android:background="@drawable/titlebar_menu_selector"
                     android:id="@+id/title_bar_left_menu"
                     android:layout_gravity="left|center_vertical"
-                    android:layout_marginLeft="10dp"/>
+                    android:layout_marginLeft="10dp"
+                    android:backgroundTint="@color/com_facebook_blue"/>
 
             <LinearLayout
                 android:orientation="horizontal"
@@ -50,6 +49,7 @@
                     android:id="@+id/delete_right_menu"
                     android:layout_gravity="left|center_vertical"
                     android:layout_marginRight="10dp"
+                    android:backgroundTint="@color/com_facebook_blue"
                     />
 
                 <EditText
@@ -73,6 +73,7 @@
                 android:id="@+id/search_right_menu"
                 android:layout_gravity="right|center_vertical"
                 android:layout_marginRight="10dp"
+                android:backgroundTint="@color/com_facebook_blue"
                 />
 
 
