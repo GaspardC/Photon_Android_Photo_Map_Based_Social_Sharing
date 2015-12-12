@@ -3,6 +3,7 @@ package ch.epfl.tabletlab.photon;
 import android.location.Location;
 
 import com.parse.ParseGeoPoint;
+import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
 import java.util.ArrayList;
@@ -36,7 +37,7 @@ public class PostServer {
         return mapQuery;
     }
 
-    static public ParseQuery<PhotonPost> setMapQuery(Location myLocation, String k) {
+    public static  ParseQuery<PhotonPost> setMapQuery(Location myLocation, String k) {
 
         ParseGeoPoint myPoint = DataManager.geoPointFromLocation(myLocation);
         // Create the map Parse query
@@ -55,6 +56,26 @@ public class PostServer {
 
         return mapQuery;
     }
+
+    public static PhotonPost getPhotonPost(String id) {
+        ParseQuery<PhotonPost> query = PhotonPost.getQuery();
+        query.whereEqualTo("objectId", id);
+
+        PhotonPost post;
+        try {
+            List<PhotonPost> posts =  query.find();
+            post = posts.get(0);
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        }
+
+        return post;
+
+    }
+
+
+
+
 
 
 }
