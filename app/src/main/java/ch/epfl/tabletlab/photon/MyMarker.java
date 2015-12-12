@@ -19,6 +19,7 @@ public class MyMarker
     private Double mLatitude;
     private Double mLongitude;
     private Bitmap bitmap;
+    private String id;
 
     public MyMarker(String label, String icon, Double latitude, Double longitude, Bitmap b)
     {
@@ -28,6 +29,7 @@ public class MyMarker
         this.mIcon = icon;
         this.bitmap = b;
     }
+
 
     public String getmLabel()
     {
@@ -72,5 +74,13 @@ public class MyMarker
 
     public Bitmap getImage() {
         return this.bitmap;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }

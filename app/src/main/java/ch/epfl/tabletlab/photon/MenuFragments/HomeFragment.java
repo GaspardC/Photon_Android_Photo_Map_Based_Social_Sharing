@@ -409,6 +409,7 @@ public class HomeFragment extends Fragment {
 
         // Kick off the query in the background
         assert mapQuery != null;
+
         mapQuery.findInBackground(new FindCallback<PhotonPost>() {
             @Override
             public void done(List<PhotonPost> objects, ParseException e) {
@@ -481,6 +482,8 @@ public class HomeFragment extends Fragment {
 
                                             MyMarker newMarker = new MyMarker(post.getText(), "", post.getLocation().getLatitude(),
                                                     post.getLocation().getLongitude(), bmp);
+                                            newMarker.setId(post.getObjectId());
+
                                             toKeep.put(post.getObjectId(), newMarker);
 
                                         }
