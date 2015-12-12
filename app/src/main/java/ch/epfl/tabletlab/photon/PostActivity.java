@@ -205,10 +205,14 @@ public class PostActivity extends Activity {
 
     private Bitmap rotateImage() {
 
-
         BitmapFactory.Options bounds = new BitmapFactory.Options();
         bounds.inJustDecodeBounds = true;
         BitmapFactory.decodeFile(fileName, bounds);
+
+        int imageHeight = bounds.outHeight;
+        int imageWidth = bounds.outWidth;
+        String imageType = bounds.outMimeType;
+
 
         BitmapFactory.Options opts = new BitmapFactory.Options();
         Bitmap bm = BitmapFactory.decodeFile(fileName, opts);
@@ -225,7 +229,6 @@ public class PostActivity extends Activity {
         if (orientation == ExifInterface.ORIENTATION_ROTATE_90) rotationAngle = 90;
         if (orientation == ExifInterface.ORIENTATION_ROTATE_180) rotationAngle = 180;
         if (orientation == ExifInterface.ORIENTATION_ROTATE_270) rotationAngle = 270;
-
         Matrix matrix = new Matrix();
         matrix.setRotate(rotationAngle, (float) bm.getWidth() / 2, (float) bm.getHeight() / 2);
         return Bitmap.createBitmap(bm, 0, 0, bounds.outWidth, bounds.outHeight, matrix, true);
