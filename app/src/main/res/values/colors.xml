@@ -8,6 +8,11 @@
     <color name="grayColorTextHint">#dfd4df</color>
     <color name="grayColorText">#1C0030</color>
 
+    <color name="bright_foreground_light_disabled">#80000000</color>
+    <color name="background_dark">#ff000000</color>
+
+
+
 
 
 </resources>

@@ -100,6 +100,7 @@ public class ProfileActivity extends Activity {
   private void showProfileLoggedIn() {
     titleTextView.setText(R.string.profile_title_logged_in);
     emailTextView.setText(currentUser.getEmail());
+    beginButton.setVisibility(View.VISIBLE);
     String fullName = currentUser.getString("name");
     if (fullName != null) {
       nameTextView.setText(fullName);
@@ -114,6 +115,7 @@ public class ProfileActivity extends Activity {
     titleTextView.setText(R.string.profile_title_logged_out);
     emailTextView.setText("");
     nameTextView.setText("");
+    beginButton.setVisibility(View.GONE);
     loginOrLogoutButton.setText(R.string.profile_login_button_label);
   }
 

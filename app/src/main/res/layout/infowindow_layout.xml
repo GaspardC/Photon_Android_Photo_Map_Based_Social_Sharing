@@ -18,12 +18,14 @@
         android:layout_height="wrap_content"
         android:textStyle="bold" />
 
-<!--    <TextView
-        android:id="@+id/marker_text"
+    <TextView
+        android:id="@+id/author_post"
         android:layout_marginLeft="0dp"
         android:layout_width="70dp"
         android:layout_height="wrap_content"
-        />-->
+        android:textColor="@color/colorPrimary"
+        android:textStyle="italic"
+        />
 
 
 </LinearLayout>

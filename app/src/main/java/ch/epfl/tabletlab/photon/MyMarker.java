@@ -17,6 +17,7 @@ public class MyMarker
     private Bitmap bitmap;
     private String id;
     private String hashtags;
+    private String author;
 
     public MyMarker(String label, String icon, Double latitude, Double longitude, Bitmap b)
     {
@@ -87,5 +88,13 @@ public class MyMarker
 
     public void setHashtags(String hashtags) {
         this.hashtags = hashtags;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
     }
 }
