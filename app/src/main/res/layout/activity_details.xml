@@ -11,17 +11,24 @@
     tools:context="ch.epfl.tabletlab.photon.DetailsActivity">
 
     <ImageView
-        android:layout_weight="7"
+        android:layout_weight="14"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:id="@+id/imageViewDetailed"
         android:layout_gravity="center"
         android:background="@drawable/ic_launcher_photon"         />
 
-    <TextView
-        android:layout_weight="3"
+    <LinearLayout
+        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_weight="3"
+        >
+    <TextView
+        android:layout_marginTop="20dp"
+        android:layout_weight="12"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Large Text"
         android:id="@+id/textViewHashtagDetailed"
@@ -29,6 +36,65 @@
         android:layout_marginLeft="10dp"
         android:layout_marginEnd="77dp"
         android:textStyle="bold"
+        android:layout_gravity="center"
+        />
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            >
+
+            <Button
+                android:layout_marginRight="5dp"
+                android:layout_weight="4"
+                style="?android:attr/buttonStyleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:text="+1"
+                android:onClick="addLike"
+                android:layout_gravity="center"
+                android:background="@drawable/photon_like_button"
+                android:id="@+id/button" />
+        <TextView
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="@string/likes"
+            android:id="@+id/textViewLikes"
+            android:textSize="12sp"
+            android:layout_marginRight="5dp"
+            android:layout_gravity="center"
+            android:gravity="center"
+            />
+            <TextView
+                android:layout_weight="2"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text=""
+                android:textSize="12sp"
+                android:layout_marginRight="5dp"
+                android:layout_gravity="center"
+                android:gravity="center"
+
+                />
+
+        </LinearLayout>
+
+    </LinearLayout>
+    <TextView
+        android:layout_weight="4"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Large Text"
+        android:id="@+id/textViewTextDetailed"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginEnd="77dp"
         android:layout_gravity="center"
         />
 </LinearLayout>

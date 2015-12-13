@@ -25,7 +25,7 @@ public class PostServer {
         List<ParseQuery<PhotonPost>> queries = new ArrayList<ParseQuery<PhotonPost>>();
 
         for (String k : hastags) {
-            ParseQuery<PhotonPost> pQuery = setMapQuery(position, "#" + k);
+            ParseQuery<PhotonPost> pQuery = setMapQuery(position,k);
             queries.add(pQuery);
         }
         mapQuery = ParseQuery.or(queries);
@@ -49,8 +49,9 @@ public class PostServer {
 
         mapQuery.whereWithinKilometers("location", myPoint, PhotonApplication.MAX_POST_SEARCH_DISTANCE);
 
+        // To differenciate the 2 case research by hashtag or by moving the map
         if (!k.equals("")) {
-            mapQuery.whereContains("text", k);
+            mapQuery.whereContains("hashtags",k);
         }
 
         return mapQuery;

@@ -33,11 +33,14 @@ import com.parse.ParseGeoPoint;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
+import org.json.JSONArray;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 import ch.epfl.tabletlab.photon.MenuFragments.DataManager;
@@ -69,6 +72,7 @@ public class PostActivity extends Activity {
             Manifest.permission.WRITE_EXTERNAL_STORAGE
     };
     private String fileName;
+    private PhotonPost post;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -125,6 +129,7 @@ public class PostActivity extends Activity {
 
             @Override
             public void onTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
+                //TODO change the color if hashtag detected
             }
 
             @Override
@@ -144,18 +149,24 @@ public class PostActivity extends Activity {
         dialog.show();
 
         // Create a post.
-        PhotonPost post = new PhotonPost();
-        String hashtag = "#" + text.replaceAll(" ", " #").toLowerCase();
+        post = new PhotonPost();
+        String hashtags = findHashtags(text);
+        post.setHashtags(hashtags);
+
+//        String textPost = "#" + text.replaceAll(" ", " #").toLowerCase();
+
 
         // Set the location to the current user's location
         post.setLocation(geoPoint);
-        post.setText(hashtag);
+        post.setText(text);
         post.setUser(ParseUser.getCurrentUser());
+        post.setLikes(0);
+
 
         //
         Date d = new Date();
 
-        int time = (PhotonApplication.HOUR_TO_KEEP_PHOTO_DISPLAYED * 3600 * 1000); // 5 jours d'ici par ex
+        int time = (PhotonApplication.HOUR_TO_KEEP_PHOTO_DISPLAYED * 3600 * 1000); // dans 24h  par ex
         Date expirationDate = new Date(d.getTime() + (time));
         post.put("expirationDate", expirationDate);
 
@@ -179,13 +190,37 @@ public class PostActivity extends Activity {
         bmp = rotateImage();
 
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        bmp.compress(Bitmap.CompressFormat.JPEG, 50, stream);
-        text = text.replaceAll(" ", "").toLowerCase();
+        bmp.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+        text = text.replaceAll(" ", "_").toLowerCase();
+        text = text.replaceAll("#", "_").toLowerCase();
+
         ParseFile pFile = new ParseFile(text + ".jpg", stream.toByteArray());
-        pFile.saveInBackground();
-
-
         post.put("image", pFile);
+
+        pFile.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+
+                ParseACL acl = new ParseACL();
+                // Give public read access
+                acl.setPublicReadAccess(true);
+                acl.setPublicWriteAccess(true);
+                post.setACL(acl);
+
+                // Save the post
+                post.saveInBackground(new SaveCallback() {
+                    @Override
+                    public void done(ParseException e) {
+                        dialog.dismiss();
+                        finish();
+                    }
+                });
+
+            }
+        });
+
+
+        /*post.put("image", pFile);
 
         ParseACL acl = new ParseACL();
 
@@ -200,7 +235,23 @@ public class PostActivity extends Activity {
                 dialog.dismiss();
                 finish();
             }
-        });
+        });*/
+    }
+
+    private String findHashtags(String text) {
+        String hashtags = "";
+        String[] s = text.split("#");
+        int i = 0;
+        for (String value : s) {
+            i++;
+            if(i!=1){
+                String[] s2 = value.split(" ");
+                if(!s2[0].equals(null)){
+                    hashtags = hashtags + " #" +(s2[0]);
+                }
+            }
+        }
+        return hashtags;
     }
 
     private Bitmap rotateImage() {
@@ -209,9 +260,6 @@ public class PostActivity extends Activity {
         bounds.inJustDecodeBounds = true;
         BitmapFactory.decodeFile(fileName, bounds);
 
-        int imageHeight = bounds.outHeight;
-        int imageWidth = bounds.outWidth;
-        String imageType = bounds.outMimeType;
 
 
         BitmapFactory.Options opts = new BitmapFactory.Options();

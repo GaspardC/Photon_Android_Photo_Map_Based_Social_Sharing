@@ -3,25 +3,27 @@
     android:id="@+id/marker_layout"
     android:orientation="vertical"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    >
 
     <ImageView
         android:id="@+id/marker_icon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="70dp"
+        android:layout_height="120dp"
         android:layout_gravity="center"/>
+    <TextView
+        android:id="@+id/marker_hashtags"
+        android:layout_marginLeft="0dp"
+        android:layout_width="70dp"
+        android:layout_height="wrap_content"
+        android:textStyle="bold" />
 
-    <TextView
-        android:id="@+id/marker_label"
+<!--    <TextView
+        android:id="@+id/marker_text"
         android:layout_marginLeft="0dp"
-        android:layout_width="wrap_content"
+        android:layout_width="70dp"
         android:layout_height="wrap_content"
-        android:textStyle="bold" />
-    <TextView
-        android:id="@+id/another_label"
-        android:layout_marginLeft="0dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textStyle="bold" />
+        />-->
+
 
 </LinearLayout>

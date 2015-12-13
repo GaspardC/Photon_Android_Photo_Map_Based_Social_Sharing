@@ -7,6 +7,8 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
+import org.json.JSONArray;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -25,6 +27,14 @@ public class PhotonPost extends ParseObject {
 
     public void setText(String value) {
         put("text", value);
+    }
+
+    public String getHashtags() {
+        return getString("hashtags");
+    }
+
+    public void setHashtags(String hash) {
+        put("hashtags", hash);
     }
 
     public ParseUser getUser() {
@@ -56,5 +66,11 @@ public class PhotonPost extends ParseObject {
     }
 
 
+    public void setLikes(int like) {
+        put("likes", like);
+    }
 
+    public int getLikes() {
+        return (int) get("likes");
+    }
 }
