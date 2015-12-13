@@ -7,6 +7,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Matrix;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -29,7 +37,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -49,11 +56,12 @@ import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseQuery;
-import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
 import ch.epfl.tabletlab.photon.DetailsActivity;
@@ -114,7 +122,8 @@ public class HomeFragment extends Fragment {
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE
     };
-    private Bitmap theBitmap;
+
+    private Bitmap bmOverlay;
 
 /*
     public HomeFragment(MenuActivity menuActivity) {
@@ -183,12 +192,12 @@ public class HomeFragment extends Fragment {
             @Override
             public void onTextChanged(CharSequence sequence, int start, int before, int count) {
                 hastagsEditText.setTextColor(getResources().getColor(R.color.grayColorText));
-               if(hastagsEditText.length()>40){
-                   sequence = hastagsEditText.getText().subSequence(0,40);
-               }
+                if (hastagsEditText.length() > 40) {
+                    sequence = hastagsEditText.getText().subSequence(0, 40);
+                }
                 EditTextReformated = String.valueOf(sequence);
                 EditTextReformated = EditTextReformated.toLowerCase();
-                EditTextReformated = EditTextReformated.replaceAll(" "," #");
+                EditTextReformated = EditTextReformated.replaceAll(" ", " #");
                 Log.d("searchtext", EditTextReformated);
 
             }
@@ -258,7 +267,11 @@ public class HomeFragment extends Fragment {
                     final MyMarker myMarker = (MyMarker) toKeep.get(currentKey);
                     // Create user marker with custom icon and other options
                     MarkerOptions markerOption = new MarkerOptions().position(new LatLng(myMarker.getmLatitude(), myMarker.getmLongitude()));
-                    markerOption.icon(BitmapDescriptorFactory.fromResource(R.drawable.currentlocation_icon));
+
+//                    markerOption.icon(BitmapDescriptorFactory.fromResource(R.drawable.currentlocation_icon));
+
+                    markerOption.icon(BitmapDescriptorFactory.fromBitmap(myMarker.getImage()));
+
 
                     Marker currentMarker = mGoogleMap.addMarker(markerOption);
                     mMarkersHashMap.put(currentMarker, myMarker);
@@ -267,7 +280,13 @@ public class HomeFragment extends Fragment {
                     mGoogleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                         @Override
                         public boolean onMarkerClick(Marker marker) {
-                            marker.showInfoWindow();
+                            Intent intent = new Intent(getActivity(), DetailsActivity.class);
+                            MyMarker myMarker1 = mMarkersHashMap.get(marker);
+                            intent.putExtra("markerId",myMarker1.getId());
+                            intent.putExtra("text",myMarker1.getText());
+                            intent.putExtra("hashtags",myMarker1.getHashtags());
+
+                            startActivity(intent);
                             return true;
                         }
                     });
@@ -432,16 +451,38 @@ public class HomeFragment extends Fragment {
                             @Override
                             protected Void doInBackground(Void... params) {
 //                                Looper.prepare();
-                                try {
-                                    ParseFile image = post.getImage();
-                                    ParseFile thumbnail = image;
+                                ParseFile image = post.getImage();
 
-                                     theBitmap = Glide.
-                                            with(getActivity()).
-                                            load(image.getUrl()).
-                                            asBitmap().
-                                            into(500, 500). // Width and height
-                                            get();
+
+                                Bitmap cadre = BitmapFactory.decodeResource(getActivity().getResources(),
+                                        R.drawable.canvas_marker);
+
+                                int width = cadre.getWidth();
+                                int height = cadre.getHeight();
+
+                                int myWidth = 100;
+                                int myHeight = 100;
+
+                                try {
+                                    Bitmap bitmapPhoto = Glide
+                                            .with(getActivity().getApplicationContext()) // could be an issue!
+                                            .load(image.getUrl())
+                                            .asBitmap()
+                                            .into(100, 100)
+                                            .get();
+
+                                    Bitmap photo = Bitmap.createScaledBitmap(bitmapPhoto, 145, 114, false);
+                                    Bitmap roundPhoto = getRoundedCornerBitmap(photo, 10);
+
+                                    int widthPhoto = photo.getWidth();
+                                    int heightPhoto = photo.getHeight();
+
+
+                                    bmOverlay = Bitmap.createBitmap(cadre.getWidth(), cadre.getHeight(), cadre.getConfig());
+                                    Canvas canvas = new Canvas(bmOverlay);
+                                    canvas.drawBitmap(cadre, new Matrix(), null);
+                                    canvas.drawBitmap(roundPhoto, 8, 8, null);
+
 
                                 } catch (InterruptedException e1) {
                                     e1.printStackTrace();
@@ -450,13 +491,14 @@ public class HomeFragment extends Fragment {
                                 }
                                 return null;
                             }
+
                             @Override
                             protected void onPostExecute(Void dummy) {
-                                if (null != theBitmap) {
+                                if (null != bmOverlay) {
 
                                     // The full bitmap should be available here
                                     MyMarker newMarker = new MyMarker(post.getText(), "", post.getLocation().getLatitude(),
-                                            post.getLocation().getLongitude(), theBitmap);
+                                            post.getLocation().getLongitude(), bmOverlay);
                                     newMarker.setId(post.getObjectId());
                                     newMarker.setHashtags(post.getHashtags());
                                     newMarker.setAuthor(post.getAuthor());
@@ -464,7 +506,8 @@ public class HomeFragment extends Fragment {
                                     displayImage();
 
 
-                                };
+                                }
+                                ;
                             }
                         }.execute();
 
@@ -506,8 +549,30 @@ public class HomeFragment extends Fragment {
                     }
                 }
                 displayAndCleanImagesIfTheyAreNotInTheServer(objects);
-                        }
-                    });
+            }
+        });
+    }
+
+    public static Bitmap getRoundedCornerBitmap(Bitmap bitmap, int pixels) {
+        Bitmap output = Bitmap.createBitmap(bitmap.getWidth(), bitmap
+                .getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(output);
+
+        final int color = 0xff424242;
+        final Paint paint = new Paint();
+        final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
+        final RectF rectF = new RectF(rect);
+        final float roundPx = pixels;
+
+        paint.setAntiAlias(true);
+        canvas.drawARGB(0, 0, 0, 0);
+        paint.setColor(color);
+        canvas.drawRoundRect(rectF, roundPx, roundPx, paint);
+
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+        canvas.drawBitmap(bitmap, rect, rect, paint);
+
+        return output;
     }
 
 
@@ -527,14 +592,28 @@ public class HomeFragment extends Fragment {
             }
             if (!found) {
                 keyToRemove.add(currentKey);
+                Marker markerToRemove = getKeyByValue(mMarkersHashMap, (MyMarker) toKeep.get(currentKey));
+                if(markerToRemove!= null){
+                    markerToRemove.remove();
+                }
             }
 
         }
+
         for (String key : keyToRemove) {
             toKeep.remove(key);
         }
 
-        displayImage();
+//        displayImage();
+        //not needed anymore
+    }
+    public static <T, E> T getKeyByValue(Map<T, E> map, E value) {
+        for (Map.Entry<T, E> entry : map.entrySet()) {
+            if (Objects.equals(value, entry.getValue())) {
+                return entry.getKey();
+            }
+        }
+        return null;
     }
 
     private boolean doYouNeedToAddThisPost(PhotonPost post) {
@@ -577,12 +656,19 @@ public class HomeFragment extends Fragment {
     private void startMap() {
 
         mGoogleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-// Showing/hiding your current location mGoogleMap.setMyLocationEnabled(true);
-// Enable/disable zooming controls mGoogleMap.getUiSettings().setZoomControlsEnabled(false); // Enable/disable my location button
+        // Showing/hiding your current location
+        mGoogleMap.setMyLocationEnabled(true);
+        // Enable/disable zooming controls
+        mGoogleMap.getUiSettings().setZoomControlsEnabled(false);
+        // Enable/disable my location button
         mGoogleMap.getUiSettings().setMyLocationButtonEnabled(true);
-// Enable/disable compass icon
+        // Enable/disable compass icon
         mGoogleMap.getUiSettings().setCompassEnabled(true);
-// Enable/disable rotate gesture mGoogleMap.getUiSettings().setRotateGesturesEnabled(true); // Enable/disable zooming functionality mGoogleMap.getUiSettings().setZoomGesturesEnabled(true);
+        // Enable/disable rotate gesture
+        mGoogleMap.getUiSettings().setRotateGesturesEnabled(true);
+
+        // Enable/disable zooming functionality
+//        mGoogleMap.getUiSettings().setZoomGesturesEnabled(true);
 
         String context = Context.LOCATION_SERVICE;
         locationManager = (LocationManager) getActivity().getSystemService(context);
@@ -627,7 +713,7 @@ public class HomeFragment extends Fragment {
 
             // TO DO just do it at the beginning or on press compass
             new DataManager().setUserLocation(location);
-            cameraPosition = new CameraPosition.Builder().target(new LatLng(latitude, longitude)).zoom(17).build();
+            cameraPosition = new CameraPosition.Builder().target(new LatLng(latitude, longitude)).zoom(10).build();
             mGoogleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
         }
     }
@@ -660,12 +746,6 @@ public class HomeFragment extends Fragment {
         @Override
         public View getInfoWindow(Marker marker)
         {
-            return null;
-        }
-
-        @Override
-        public View getInfoContents(Marker marker)
-        {
             View v  = getActivity().getLayoutInflater().inflate(R.layout.infowindow_layout, null);
 
             MyMarker myMarker = mMarkersHashMap.get(marker);
@@ -694,7 +774,17 @@ public class HomeFragment extends Fragment {
             markerAuthor.setText("by @" + myMarker.getAuthor());
             return v;
         }
+
+        @Override
+        public View getInfoContents(Marker marker)
+        {
+            return  null;
+        }
     }
+
+
+
+
 
 
 
