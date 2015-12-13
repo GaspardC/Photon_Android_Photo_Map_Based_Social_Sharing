@@ -84,8 +84,6 @@ public class HomeFragment extends Fragment {
     private static final float OFFSET_CALCULATION_ACCURACY = 0.01f;
     private static boolean HASHTAG_QUERY = true;
 
-    // Maximum results returned from a Parse query
-    public static int MAX_POST_SEARCH_RESULTS = 20;
 
     // Maximum post search radius for map in kilometers
     public static int MAX_POST_SEARCH_DISTANCE = 100;
@@ -103,15 +101,13 @@ public class HomeFragment extends Fragment {
     private Location currentLocation;
     private android.location.LocationManager locationManager;
     private Location currentMapLocation;
-    private SeekBar seekBarNumber;
-    private ParseUser currentUser;
-    private  TextView seekBarValue;
     private HashMap<String, Object> toKeep = new HashMap<>();
     private CameraPosition cameraPosition;
     private ArrayList<String> hastags;
     private EditText hastagsEditText;
     private String EditTextReformated;
     private boolean mapActive = true;
+
     // Storage Permissions
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
     private static String[] PERMISSIONS_STORAGE = {
@@ -135,10 +131,11 @@ public class HomeFragment extends Fragment {
 
         setUpViews();
         setUpMap();
-        setSeekBar();
         setSearchOptions();
         setDeleteButton();
         verifyStoragePermissions(getActivity());
+        resideMenu.setSwipeDirectionDisable(ResideMenu.DIRECTION_RIGHT);
+
 
 
 
@@ -235,44 +232,7 @@ public class HomeFragment extends Fragment {
         });
     }
 
-    private void setSeekBar() {
-        seekBarNumber = (SeekBar)  parentView.findViewById(R.id.seekBarRestaurantDistance);
-        seekBarValue = (TextView)  parentView.findViewById(R.id.value_distance_restaurant);
-        currentUser = DataManager.getUser();
-        if (currentUser == null) return;
-        int seekbarValueInit = currentUser.getInt("numberDisplayed");
-        if(0 != seekbarValueInit){
-            seekBarNumber.setProgress(seekbarValueInit);
-            seekBarValue.setText(String.valueOf(seekbarValueInit)+ " displayed");
-        }
 
-        final int[] seekvalue = {0};
-
-        seekBarNumber.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress,
-                                          boolean fromUser) {
-                seekBarValue.setText(String.valueOf(progress) + " displayed");
-                seekvalue[0] = progress;
-                MAX_POST_SEARCH_RESULTS = seekvalue[0];
-                displayImage();
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                currentUser.put("numberDisplayed", seekvalue[0]);
-                currentUser.saveInBackground();
-                MAX_POST_SEARCH_RESULTS = seekvalue[0];
-                displayImage();
-            }
-        });
-
-    }
 
     private void displayImage() {
         //TODO utiliser la reele position de la personne
@@ -292,7 +252,7 @@ public class HomeFragment extends Fragment {
             int countMaxMarkerDisplayed = 0;
             for(String currentKey :  toKeep.keySet())
             {
-                if(countMaxMarkerDisplayed<MAX_POST_SEARCH_RESULTS) {
+                if(countMaxMarkerDisplayed<PhotonApplication.MAX_POST_SEARCH_RESULTS) {
 
                     countMaxMarkerDisplayed++;
                     final MyMarker myMarker = (MyMarker) toKeep.get(currentKey);

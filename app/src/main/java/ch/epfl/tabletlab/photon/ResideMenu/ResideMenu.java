@@ -85,6 +85,7 @@ public class ResideMenu extends FrameLayout {
                       int customRightMenuId) {
         super(context);
         initViews(context, customLeftMenuId, customRightMenuId);
+
     }
 
     private void initViews(Context context, int customLeftMenuId,

@@ -23,7 +23,7 @@ public class PhotonApplication extends android.app.Application {
   public static final String INTENT_EXTRA_LOCATION = "location";
 
   // Maximum results returned from a Parse query
-  public static int MAX_POST_SEARCH_RESULTS = 5;
+  public static int MAX_POST_SEARCH_RESULTS = 20;
 
   // Maximum post search radius for map in kilometers
   public static int MAX_POST_SEARCH_DISTANCE = 100;

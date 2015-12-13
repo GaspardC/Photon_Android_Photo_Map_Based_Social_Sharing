@@ -3,14 +3,51 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:orientation="vertical"
               android:layout_width="match_parent"
-              android:layout_height="match_parent">
+              android:layout_height="match_parent"
+              android:paddingRight="20dp"
+              android:paddingLeft="20dp"
+              android:paddingTop="20dp">
+
 
     <TextView
-            android:layout_width="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Settings"
+        style="@style/fragment_text"
+        android:layout_gravity="center"
+        android:id="@+id/textView"/>
+
+    <LinearLayout
+        android:layout_alignBottom="@+id/myMap"
+        android:layout_width="match_parent"
+        android:id="@+id/LoginLinearLayoutForSetSeekBar"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal">
+        <SeekBar
+            android:layout_marginBottom="10dp"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Settings"
-            style="@style/fragment_text"
-            android:layout_gravity="center"
-            android:id="@+id/textView"/>
+            android:id="@+id/seekBarRestaurantDistance"
+            android:layout_gravity="center_horizontal"
+            android:scrollIndicators="right"
+            android:thumbTint="@color/colorLightBlue"
+            android:progressTint="@color/colorLightBlue"
+            android:progressBackgroundTint="@color/colorLightBlue"
+            android:max="48"
+            android:thumb="@android:drawable/btn_star_big_on"
+            android:layout_weight="4"/>
+        <TextView
+            android:layout_marginLeft="5dp"
+            android:layout_marginBottom="10dp"
+            android:layout_weight="1"
+            android:id="@+id/value_distance_restaurant"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            style="@style/PhotonMaxPhotoDisplayed.TextView"
+            />
+    </LinearLayout>
+
+
 
 </FrameLayout>
