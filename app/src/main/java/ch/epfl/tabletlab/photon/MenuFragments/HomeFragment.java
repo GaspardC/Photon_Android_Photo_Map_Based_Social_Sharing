@@ -454,8 +454,12 @@ public class HomeFragment extends Fragment {
                                 ParseFile image = post.getImage();
 
 
-                                Bitmap cadre = BitmapFactory.decodeResource(getActivity().getResources(),
+                                Bitmap cadrePhoto = BitmapFactory.decodeResource(getActivity().getResources(),
                                         R.drawable.canvas_marker);
+
+                                //these width and height depends on the photo , do not change them (or independently)
+                                Bitmap cadre = Bitmap.createScaledBitmap(cadrePhoto, 160, 160, false);
+
 
                                 int width = cadre.getWidth();
                                 int height = cadre.getHeight();
