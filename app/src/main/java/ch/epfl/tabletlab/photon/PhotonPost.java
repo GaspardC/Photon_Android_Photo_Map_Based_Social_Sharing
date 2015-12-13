@@ -20,6 +20,7 @@ import java.util.List;
 public class PhotonPost extends ParseObject {
 
 
+    private ParseUser author;
 
     public String getText() {
         return getString("text");
@@ -72,5 +73,12 @@ public class PhotonPost extends ParseObject {
 
     public int getLikes() {
         return (int) get("likes");
+    }
+
+    public void setAuthor(String author) {
+        put("author", author);
+    }
+    public String getAuthor(){
+        return getString("author");
     }
 }

@@ -26,7 +26,6 @@ import android.app.Application;
 import com.parse.Parse;
 import com.parse.ParseFacebookUtils;
 import com.parse.ParseTwitterUtils;
-import com.parse.ParseTwitterUtils;
 
 //import ch.epfl.tabletlab.photon.R;
 

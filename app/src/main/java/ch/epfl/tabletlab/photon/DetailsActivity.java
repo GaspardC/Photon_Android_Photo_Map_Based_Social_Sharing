@@ -1,16 +1,19 @@
 package ch.epfl.tabletlab.photon;
 
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.parse.ParseException;
 import com.parse.ParseFile;
+import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
 import java.io.File;
@@ -27,15 +30,21 @@ public class DetailsActivity extends AppCompatActivity {
     private TextView likeText;
     private int numberLikes = 0;
     private PhotonPost post;
+    boolean isImageFitToScreen = false;
+    private ImageView imageViewDetailed;
+    private String url;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
-        ImageView imageViewDetailed = (ImageView) findViewById(R.id.imageViewDetailed);
+        imageViewDetailed = (ImageView) findViewById(R.id.imageViewDetailed);
         TextView  textViewHashtags = (TextView) findViewById(R.id.textViewHashtagDetailed);
         TextView  textViewText = (TextView) findViewById(R.id.textViewTextDetailed);
+        TextView  textViewAuthor = (TextView) findViewById(R.id.textViewAuthorDetailed);
         likeText = (TextView) findViewById(R.id.textViewLikes);
 
 
@@ -46,7 +55,7 @@ public class DetailsActivity extends AppCompatActivity {
 
         post = PostServer.getPhotonPost(markerId);
         ParseFile parseFile = post.getImage();
-        String url = parseFile.getUrl();
+        url = parseFile.getUrl();
 
         Glide.with(this).load(url)
                 .centerCrop()
@@ -62,6 +71,8 @@ public class DetailsActivity extends AppCompatActivity {
         numberLikes = post.getLikes();
         likeText.setText(numberLikes + " likes");
 
+        textViewAuthor.setText("by @" + post.getAuthor());
+
 
 
     }
@@ -71,8 +82,35 @@ public class DetailsActivity extends AppCompatActivity {
 
         Map<String, String> hashMap = new HashMap<String, String>();
         File path = this.getFilesDir();
+        File idPhotoFile = new File(path,"liked.photos");
 
-        File yourFile = new File(path,"liked.photos");
+        //load all the id this user has liked
+        hashMap = loadHashmap(hashMap,idPhotoFile);
+
+        // if the user has not already liked it +1
+        if(!hashMap.containsKey(post.getObjectId())) {
+
+            hashMap.put(post.getObjectId(), "1");
+            writeHashmap((HashMap<String, String>) hashMap,idPhotoFile);
+            numberLikes++;
+            likeText.setText(numberLikes + " likes");
+            post.setLikes(numberLikes);
+            post.saveInBackground();
+    }
+        else{
+            hashMap.remove(post.getObjectId());
+            writeHashmap((HashMap<String, String>) hashMap, idPhotoFile);
+            numberLikes--;
+            likeText.setText(numberLikes + " likes");
+            post.setLikes(numberLikes);
+            post.saveInBackground();
+        }
+
+
+    }
+
+    private Map<String, String> loadHashmap(Map<String, String> hashMap, File yourFile) throws IOException {
+
         if(!yourFile.exists()) {
             yourFile.createNewFile();
         }
@@ -83,27 +121,7 @@ public class DetailsActivity extends AppCompatActivity {
         for (String key : properties.stringPropertyNames()) {
             hashMap.put(key, properties.get(key).toString());
         }
-
-
-        if(!hashMap.containsKey(post.getObjectId())) {
-
-            hashMap.put(post.getObjectId(), "1");
-            writeHashmap((HashMap<String, String>) hashMap,yourFile);
-            numberLikes++;
-            likeText.setText(numberLikes + " likes");
-            post.setLikes(numberLikes);
-            post.saveInBackground();
-    }
-        else{
-            hashMap.remove(post.getObjectId());
-            writeHashmap((HashMap<String, String>) hashMap, yourFile);
-            numberLikes--;
-            likeText.setText(numberLikes + " likes");
-            post.setLikes(numberLikes);
-            post.saveInBackground();
-        }
-
-
+        return hashMap;
     }
 
     private void writeHashmap(HashMap<String, String> hashMap, File yourFile) throws IOException {
@@ -116,4 +134,12 @@ public class DetailsActivity extends AppCompatActivity {
 
         properties.store(new FileOutputStream(yourFile), null);
     }
+
+    public void displayImageFullScreen(View view) {
+
+        Intent intent = new Intent(this,FullScreenActivity.class);
+        intent.putExtra("url",url);
+        startActivity(intent);
+        }
+
 }

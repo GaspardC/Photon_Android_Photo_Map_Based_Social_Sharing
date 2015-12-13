@@ -51,9 +51,6 @@ import com.parse.ParseGeoPoint;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -502,6 +499,7 @@ public class HomeFragment extends Fragment {
                                             post.getLocation().getLongitude(), theBitmap);
                                     newMarker.setId(post.getObjectId());
                                     newMarker.setHashtags(post.getHashtags());
+                                    newMarker.setAuthor(post.getAuthor());
                                     toKeep.put(post.getObjectId(), newMarker);
                                     displayImage();
 
@@ -714,7 +712,7 @@ public class HomeFragment extends Fragment {
 
             ImageView markerIcon = (ImageView) v.findViewById(R.id.marker_icon);
 
-//            TextView markerText = (TextView)v.findViewById(R.id.marker_text);
+            TextView markerAuthor = (TextView)v.findViewById(R.id.author_post);
             TextView markerHashtags = (TextView)v.findViewById(R.id.marker_hashtags);
 
             String hashtagsTextDisplayed = myMarker.getHashtags();
@@ -733,7 +731,7 @@ public class HomeFragment extends Fragment {
 
             markerIcon.setImageBitmap(myMarker.getImage());
 
-//            markerText.setText(myMarker.getText());
+            markerAuthor.setText("by @" + myMarker.getAuthor());
             return v;
         }
     }

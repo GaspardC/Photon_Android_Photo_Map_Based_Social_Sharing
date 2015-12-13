@@ -161,6 +161,7 @@ public class PostActivity extends Activity {
         post.setText(text);
         post.setUser(ParseUser.getCurrentUser());
         post.setLikes(0);
+        post.setAuthor(DataManager.getUser().getString("name"));
 
 
         //
