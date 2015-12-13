@@ -1,9 +1,11 @@
 package ch.epfl.tabletlab.photon;
 
+import android.app.ActionBar;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -33,6 +35,7 @@ public class DetailsActivity extends AppCompatActivity {
     boolean isImageFitToScreen = false;
     private ImageView imageViewDetailed;
     private String url;
+    private Toolbar toolbar;
 
 
     @Override
@@ -73,7 +76,12 @@ public class DetailsActivity extends AppCompatActivity {
 
         textViewAuthor.setText("by @" + post.getAuthor());
 
+        toolbar = (Toolbar) findViewById(R.id.detail_toolbar);
+        setSupportActionBar(toolbar);
 
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
     }
 
