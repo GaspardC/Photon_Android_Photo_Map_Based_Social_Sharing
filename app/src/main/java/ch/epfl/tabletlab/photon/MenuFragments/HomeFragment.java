@@ -51,6 +51,9 @@ import com.parse.ParseGeoPoint;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -318,7 +321,9 @@ public class HomeFragment extends Fragment {
                             Intent intent = new Intent(getActivity(), DetailsActivity.class);
                             MyMarker myMarker1 = mMarkersHashMap.get(marker);
                             intent.putExtra("markerId",myMarker1.getId());
-                            intent.putExtra("hashtags",myMarker1.getmHashtag());
+                            intent.putExtra("text",myMarker1.getText());
+                            intent.putExtra("hashtags",myMarker1.getHashtags());
+
                             startActivity(intent);
                         }
                     });
@@ -496,6 +501,7 @@ public class HomeFragment extends Fragment {
                                     MyMarker newMarker = new MyMarker(post.getText(), "", post.getLocation().getLatitude(),
                                             post.getLocation().getLongitude(), theBitmap);
                                     newMarker.setId(post.getObjectId());
+                                    newMarker.setHashtags(post.getHashtags());
                                     toKeep.put(post.getObjectId(), newMarker);
                                     displayImage();
 
@@ -708,25 +714,26 @@ public class HomeFragment extends Fragment {
 
             ImageView markerIcon = (ImageView) v.findViewById(R.id.marker_icon);
 
-            TextView markerLabel = (TextView)v.findViewById(R.id.marker_label);
-            TextView markerOtherText = (TextView)v.findViewById(R.id.another_label);
+//            TextView markerText = (TextView)v.findViewById(R.id.marker_text);
+            TextView markerHashtags = (TextView)v.findViewById(R.id.marker_hashtags);
 
-//            markerIcon.setImageResource(manageMarkerIcon(myMarker.getmIcon()));
-//            markerIcon.setImageResource(R.drawable.smallbeautifulimage);
+            String hashtagsTextDisplayed = myMarker.getHashtags();
+/*            String hashtagsArr = myMarker.getHashtags();
+            if ( hashtagsArr!= null) {
+                for (int i = 0; i < hashtagsArr.length(); i++) {
+                    try {
+                        hashtagsTextDisplayed = hashtagsTextDisplayed + " #" + hashtagsArr.getString(i);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }*/
+
+            markerHashtags.setText(hashtagsTextDisplayed);
+
             markerIcon.setImageBitmap(myMarker.getImage());
-/*
-            PhotonPost post = PostServer.getPhotonPost(myMarker.getId());
-            ParseFile parseFile = post.getImage();
-            String url = parseFile.getUrl();
 
-            Glide.with(getActivity()).load(url)
-                    .centerCrop()
-                    .placeholder(R.drawable.spinner_static)
-                    .crossFade()
-                    .into(markerIcon);*/
-
-            markerLabel.setText(myMarker.getmHashtag());
-            markerOtherText.setText(myMarker.getmIcon());
+//            markerText.setText(myMarker.getText());
             return v;
         }
     }

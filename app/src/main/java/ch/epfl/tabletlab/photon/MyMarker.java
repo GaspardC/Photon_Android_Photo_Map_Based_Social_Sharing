@@ -2,22 +2,25 @@ package ch.epfl.tabletlab.photon;
 
 import android.graphics.Bitmap;
 
+import org.json.JSONArray;
+
 /**
  * Created by Gasp on 14/11/2015.
  */
 public class MyMarker
 
 {
-    private String mHashtag;
+    private String text;
     private String mIcon;
     private Double mLatitude;
     private Double mLongitude;
     private Bitmap bitmap;
     private String id;
+    private String hashtags;
 
     public MyMarker(String label, String icon, Double latitude, Double longitude, Bitmap b)
     {
-        this.mHashtag = label;
+        this.text = label;
         this.mLatitude = latitude;
         this.mLongitude = longitude;
         this.mIcon = icon;
@@ -25,14 +28,14 @@ public class MyMarker
     }
 
 
-    public String getmHashtag()
+    public String getText()
     {
-        return mHashtag;
+        return text;
     }
 
-    public void setmHashtag(String mHashtag)
+    public void setText(String text)
     {
-        this.mHashtag = mHashtag;
+        this.text = text;
     }
 
     public String getmIcon()
@@ -76,5 +79,13 @@ public class MyMarker
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getHashtags() {
+        return hashtags;
+    }
+
+    public void setHashtags(String hashtags) {
+        this.hashtags = hashtags;
     }
 }
