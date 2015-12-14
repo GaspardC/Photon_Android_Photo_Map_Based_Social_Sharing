@@ -67,6 +67,7 @@ import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 import ch.epfl.tabletlab.photon.DetailsActivity;
+import ch.epfl.tabletlab.photon.MyMergeMarker;
 import ch.epfl.tabletlab.photon.PhotonPost;
 import ch.epfl.tabletlab.photon.MenuActivity;
 import ch.epfl.tabletlab.photon.MyMarker;
@@ -288,7 +289,8 @@ public class HomeFragment extends Fragment {
             HashSet hasMerged = new HashSet();
             HashSet<MyMarker> needToMerge = new HashSet<>();
 
-            float mergeDistance = (float) (Math.pow(8,10)* 2500 / Math.pow(8,cameraPositionListener.zoom));
+            float mergeDistance = 1500 + (float) (Math.pow(2.5,10)* 2500 / Math.pow(2.5,cameraPositionListener.zoom));
+            Log.d("distance", " dist merge "+ (int) mergeDistance/1000);
             for(String currentKey :  toKeep.keySet())
             {
                 if(countMaxMarkerDisplayed0<PhotonApplication.MAX_POST_SEARCH_RESULTS) {
@@ -371,7 +373,7 @@ public class HomeFragment extends Fragment {
             for(MyMarker currentMarker :  markerNormal) {
                 if (countMaxMarkerDisplayed3 < PhotonApplication.MAX_POST_SEARCH_RESULTS) {
                     countMaxMarkerDisplayed3++;
-                    displayNormal(currentMarker,currentMarker.getImage());
+                    displayNormal(currentMarker);
                 }
                 else{
                     break;
@@ -379,12 +381,16 @@ public class HomeFragment extends Fragment {
             }
 
             for(Object idGroup: markersMerge.keySet()){
-                HashSet<MyMarker> hashmap = (HashSet<MyMarker>) markersMerge.get(idGroup);
-                Log.d("bl","h");
-                for(MyMarker marker : hashmap){
-                    displayNormal(marker,mergeMarkerImage);
+                countMaxMarkerDisplayed3++;
+                if (countMaxMarkerDisplayed3 < PhotonApplication.MAX_POST_SEARCH_RESULTS) {
+                    HashSet<MyMarker> hashmap = (HashSet<MyMarker>) markersMerge.get(idGroup);
+                    MyMergeMarker mergeMarker = new MyMergeMarker("","",0.0,0.0,mergeMarkerImage,hashmap);
+                    displayNormal(mergeMarker);
+                }
+                else{
                     break;
                 }
+
 
             }
 
@@ -444,13 +450,13 @@ public class HomeFragment extends Fragment {
         }
     }
 
-    private void displayNormal(MyMarker myMarker, Bitmap image) {
+    private void displayNormal(MyMarker myMarker) {
         MarkerOptions markerOption = new MarkerOptions().position(new LatLng(myMarker.getmLatitude(), myMarker.getmLongitude()));
 
 //                    markerOption.icon(BitmapDescriptorFactory.fromResource(R.drawable.currentlocation_icon));
 
 
-        markerOption.icon(BitmapDescriptorFactory.fromBitmap(image));
+        markerOption.icon(BitmapDescriptorFactory.fromBitmap(myMarker.getImage()));
 
 
         Marker currentMarker = mGoogleMap.addMarker(markerOption);
@@ -555,7 +561,7 @@ public class HomeFragment extends Fragment {
                 HASHTAG_QUERY = false;
                 doMapQuery(HASHTAG_QUERY);
                 if(position.zoom != previousZoom){ // the zoom change plot markers to merge them if needed
-                    plotMarkers();
+                    displayImage();
                     previousZoom = position.zoom;
                 }
             }

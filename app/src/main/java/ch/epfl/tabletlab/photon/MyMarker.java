@@ -73,6 +73,9 @@ public class MyMarker
     public Bitmap getImage() {
         return this.bitmap;
     }
+    public void setImage(Bitmap bitmap){
+        this.bitmap = bitmap;
+    }
 
     public String getId() {
         return id;
