@@ -23,8 +23,10 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.parse.ParseACL;
 import com.parse.ParseException;
@@ -49,12 +51,15 @@ import ch.epfl.tabletlab.photon.MenuFragments.DataManager;
  * Activity which displays a login screen to the user, offering registration as well.
  */
 public class PostActivity extends Activity {
+    private static final int REQUEST_TAKE_PHOTO = 0;
     // UI references.
     private EditText postEditText;
     private TextView characterCountTextView;
     private Button postButton;
     private TextView seekBarValueExpiration;
     private SeekBar seekBarNumberExperiation;
+    private static final String BITMAP_STORAGE_KEY = "viewbitmap";
+    private static final String IMAGEVIEW_VISIBILITY_STORAGE_KEY = "imageviewvisibility";
 
 
     Bitmap bmp;
@@ -188,7 +193,7 @@ public class PostActivity extends Activity {
         }
 
         //rotate image if need : some constructors have rotated the image when it is taken by the front cam
-        bmp = rotateImage();
+        bmp =   rotateImage();
 
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         bmp.compress(Bitmap.CompressFormat.JPEG, 100, stream);
@@ -202,6 +207,11 @@ public class PostActivity extends Activity {
             @Override
             public void done(ParseException e) {
 
+                if(e!= null){
+                    Toast.makeText(PostActivity.this,"there was a problem" + e.toString(), Toast.LENGTH_LONG).show();
+                    return;
+                }
+
                 ParseACL acl = new ParseACL();
                 // Give public read access
                 acl.setPublicReadAccess(true);
@@ -212,6 +222,10 @@ public class PostActivity extends Activity {
                 post.saveInBackground(new SaveCallback() {
                     @Override
                     public void done(ParseException e) {
+                        if(e!= null){
+                            Toast.makeText(PostActivity.this,"there was a problem" + e.toString(), Toast.LENGTH_LONG).show();
+                            return;
+                        }
                         dialog.dismiss();
                         finish();
                     }
@@ -279,7 +293,8 @@ public class PostActivity extends Activity {
         if (orientation == ExifInterface.ORIENTATION_ROTATE_180) rotationAngle = 180;
         if (orientation == ExifInterface.ORIENTATION_ROTATE_270) rotationAngle = 270;
         Matrix matrix = new Matrix();
-        matrix.setRotate(rotationAngle, (float) bm.getWidth() / 2, (float) bm.getHeight() / 2);
+        matrix.postRotate(rotationAngle);
+//        matrix.setRotate(rotationAngle, (float) bm.getWidth() / 2, (float) bm.getHeight() / 2);
         return Bitmap.createBitmap(bm, 0, 0, bounds.outWidth, bounds.outHeight, matrix, true);
     }
 
@@ -288,23 +303,26 @@ public class PostActivity extends Activity {
         String storageState = Environment.getExternalStorageState();
         if (storageState.equals(Environment.MEDIA_MOUNTED)) {
 
-            /*File photoFile = new File(Environment.getExternalStorageDirectory(), "dir/photo");
-            try {
-                if (photoFile.exists() == false) {
-                    photoFile.getParentFile().mkdir();
-                    photoFile.createNewFile();
-                }
-            } catch (IOException e) {
-                Log.e("DocumentActivity", "Could not create file.", e);
-            }*/
-
             File photoFile = createImageFile();
 //            Log.i("DocumentActivity", path);
             BmpFileName = Uri.fromFile(photoFile);
-            i = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+/*            i = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             i.putExtra(MediaStore.EXTRA_OUTPUT, BmpFileName);
             super.onResume();
-            startActivityForResult(i, 0);
+            startActivityForResult(i, 0);*/
+
+
+
+            Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+// Ensure that there's a camera activity to handle the intent
+            if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+                // Create the File where the photo should go
+                if (photoFile != null) {
+                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,
+                            Uri.fromFile(photoFile));
+                    startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
+                }
+            }
 
         }
     }
@@ -350,7 +368,10 @@ public class PostActivity extends Activity {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
             try {
-                bmp = MediaStore.Images.Media.getBitmap(this.getContentResolver(), BmpFileName);
+                bmp = MediaStore.Images.Media.getBitmap( this.getContentResolver(), BmpFileName);
+                BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+                bmOptions.inJustDecodeBounds = true;
+                Bitmap bitmap1 = BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
             } catch (FileNotFoundException e) {
 // TODO Auto-generated catch block
                 e.printStackTrace();
@@ -408,5 +429,18 @@ public class PostActivity extends Activity {
             }
         });
 
+    }
+
+    // Some lifecycle callbacks so that the image can survive orientation change
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putParcelable(BITMAP_STORAGE_KEY, bmp);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        bmp = savedInstanceState.getParcelable(BITMAP_STORAGE_KEY);
     }
 }
