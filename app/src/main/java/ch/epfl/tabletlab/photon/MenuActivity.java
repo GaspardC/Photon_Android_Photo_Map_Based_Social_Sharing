@@ -181,4 +181,5 @@ public class MenuActivity extends FragmentActivity implements View.OnClickListen
         public ResideMenu getResideMenu(){
             return resideMenu;
         }
-    }
+
+}

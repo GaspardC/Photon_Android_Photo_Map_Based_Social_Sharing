@@ -3,6 +3,7 @@ package ch.epfl.tabletlab.photon;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.google.android.gms.maps.GoogleMap;
 import com.parse.Parse;
 import com.parse.ParseFacebookUtils;
 import com.parse.ParseObject;
@@ -13,6 +14,7 @@ import com.parse.ParseTwitterUtils;
 public class PhotonApplication extends android.app.Application {
   // Debugging switch
   public static final boolean APPDEBUG = false;
+  public static int MAP_TYPE = GoogleMap.MAP_TYPE_NORMAL;
 
   public static int HOUR_TO_KEEP_PHOTO_DISPLAYED = 5;
 

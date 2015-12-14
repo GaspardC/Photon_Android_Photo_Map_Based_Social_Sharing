@@ -659,7 +659,7 @@ public class HomeFragment extends Fragment {
 
     private void startMap() {
 
-        mGoogleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+        mGoogleMap.setMapType(PhotonApplication.MAP_TYPE);
         // Showing/hiding your current location
         mGoogleMap.setMyLocationEnabled(true);
         // Enable/disable zooming controls

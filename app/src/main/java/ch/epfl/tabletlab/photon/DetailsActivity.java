@@ -8,11 +8,13 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.maps.GoogleMap;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseUser;
@@ -36,6 +38,7 @@ public class DetailsActivity extends AppCompatActivity {
     private ImageView imageViewDetailed;
     private String url;
     private Toolbar toolbar;
+    private Button likeButton;
 
 
     @Override
@@ -49,6 +52,7 @@ public class DetailsActivity extends AppCompatActivity {
         TextView  textViewText = (TextView) findViewById(R.id.textViewTextDetailed);
         TextView  textViewAuthor = (TextView) findViewById(R.id.textViewAuthorDetailed);
         likeText = (TextView) findViewById(R.id.textViewLikes);
+        likeButton = (Button) findViewById(R.id.buttonLike);
 
 
 
@@ -105,8 +109,9 @@ public class DetailsActivity extends AppCompatActivity {
         if(!hashMap.containsKey(post.getObjectId())) {
 
             hashMap.put(post.getObjectId(), "1");
-            writeHashmap((HashMap<String, String>) hashMap,idPhotoFile);
+            writeHashmap((HashMap<String, String>) hashMap, idPhotoFile);
             numberLikes++;
+            likeButton.setText(-1);
             likeText.setText(numberLikes + " likes");
             post.setLikes(numberLikes);
             post.saveInBackground();
@@ -115,6 +120,7 @@ public class DetailsActivity extends AppCompatActivity {
             hashMap.remove(post.getObjectId());
             writeHashmap((HashMap<String, String>) hashMap, idPhotoFile);
             numberLikes--;
+            likeButton.setText(+1);
             likeText.setText(numberLikes + " likes");
             post.setLikes(numberLikes);
             post.saveInBackground();
@@ -155,5 +161,6 @@ public class DetailsActivity extends AppCompatActivity {
         intent.putExtra("url",url);
         startActivity(intent);
         }
+
 
 }

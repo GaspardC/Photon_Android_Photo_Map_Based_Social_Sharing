@@ -6,8 +6,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SeekBar;
+import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
+import com.google.android.gms.maps.GoogleMap;
 import com.parse.ParseUser;
 
 import ch.epfl.tabletlab.photon.MenuActivity;
@@ -26,12 +29,33 @@ public class SettingsFragment extends Fragment {
     private View parentView;
     private ResideMenu resideMenu;
 
+    private boolean mapNormalMode = true;
+    private Switch mapSwithch;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         parentView =  inflater.inflate(R.layout.settings, container, false);
+        setUpSwitchMap();
         setSeekBar();
         return parentView;
+    }
+
+    private void setUpSwitchMap() {
+        mapSwithch = (Switch) parentView.findViewById(R.id.switchMapType);
+        mapSwithch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(mapNormalMode){
+                    mapNormalMode = false;
+                    PhotonApplication.MAP_TYPE = GoogleMap.MAP_TYPE_SATELLITE;
+                }
+                else{
+                    mapNormalMode = true;
+                    PhotonApplication.MAP_TYPE = GoogleMap.MAP_TYPE_NORMAL;
+                }
+            }
+        });
     }
 
 
@@ -77,5 +101,6 @@ public class SettingsFragment extends Fragment {
         });
 
     }
+
 
 }
