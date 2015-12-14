@@ -67,6 +67,8 @@ public class DetailsActivity extends AppCompatActivity {
         Glide.with(this).load(url)
                 .centerCrop()
                 .crossFade()
+                .thumbnail(0.1f)
+                .error(R.drawable.load)
                 .into(imageViewDetailed);
 
         String hashtags = intent.getExtras().getString("hashtags");
@@ -111,7 +113,7 @@ public class DetailsActivity extends AppCompatActivity {
             hashMap.put(post.getObjectId(), "1");
             writeHashmap((HashMap<String, String>) hashMap, idPhotoFile);
             numberLikes++;
-            likeButton.setText(-1);
+            likeButton.setText("-1");
             likeText.setText(numberLikes + " likes");
             post.setLikes(numberLikes);
             post.saveInBackground();
@@ -120,7 +122,7 @@ public class DetailsActivity extends AppCompatActivity {
             hashMap.remove(post.getObjectId());
             writeHashmap((HashMap<String, String>) hashMap, idPhotoFile);
             numberLikes--;
-            likeButton.setText(+1);
+            likeButton.setText("+1");
             likeText.setText(numberLikes + " likes");
             post.setLikes(numberLikes);
             post.saveInBackground();
