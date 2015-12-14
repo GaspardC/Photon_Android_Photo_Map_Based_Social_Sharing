@@ -59,9 +59,11 @@ import com.parse.ParseQuery;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 import ch.epfl.tabletlab.photon.DetailsActivity;
@@ -110,7 +112,7 @@ public class HomeFragment extends Fragment {
     private android.location.LocationManager locationManager;
     private Location currentMapLocation;
     private HashMap<String, Object> toKeep = new HashMap<>();
-    private CameraPosition cameraPosition;
+    private CameraPosition cameraPosition; // just to initialize
     private ArrayList<String> hastags;
     private EditText hastagsEditText;
     private String EditTextReformated;
@@ -124,6 +126,11 @@ public class HomeFragment extends Fragment {
     };
 
     private Bitmap bmOverlay;
+    private Bitmap cadre;
+    private Bitmap mergeMarkerImage;
+    private float previousZoom = 10;
+    private CameraPosition cameraPositionListener;
+
 
 /*
     public HomeFragment(MenuActivity menuActivity) {
@@ -142,6 +149,7 @@ public class HomeFragment extends Fragment {
         setUpMap();
         setSearchOptions();
         setDeleteButton();
+        setMarkerMergeImage();
         verifyStoragePermissions(getActivity());
         resideMenu.setSwipeDirectionDisable(ResideMenu.DIRECTION_RIGHT);
 
@@ -150,6 +158,17 @@ public class HomeFragment extends Fragment {
 
         return parentView;
     }
+
+    private void setMarkerMergeImage() {
+
+        Bitmap mergeMarker = BitmapFactory.decodeResource(getActivity().getResources(),
+                R.drawable.merge_photos);
+
+        //these width and height depends on the photo , do not change them (or independently)
+        mergeMarkerImage = Bitmap.createScaledBitmap(mergeMarker, 80, 80, false);
+
+    }
+
     public static void verifyStoragePermissions(Activity activity) {
         // Check if we have write permission
         int permission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
@@ -258,6 +277,118 @@ public class HomeFragment extends Fragment {
     {
         if(toKeep.size() > 0)
         {
+//            algodePartiotonnement(toKeep);
+
+            HashMap markersMerge = new HashMap<String,HashMap<String,MyMarker>>();
+            HashSet<MyMarker> markerNormal = new HashSet<MyMarker>();
+
+            int countMaxMarkerDisplayed0 = 0;
+            int countMaxMarkerDisplayed1 = 0;
+
+            HashSet hasMerged = new HashSet();
+            HashSet<MyMarker> needToMerge = new HashSet<>();
+
+            float mergeDistance = (float) (Math.pow(8,10)* 2500 / Math.pow(8,cameraPositionListener.zoom));
+            for(String currentKey :  toKeep.keySet())
+            {
+                if(countMaxMarkerDisplayed0<PhotonApplication.MAX_POST_SEARCH_RESULTS) {
+
+                    countMaxMarkerDisplayed0++;
+                    final MyMarker myMarker1 = (MyMarker) toKeep.get(currentKey);
+
+                    Location loc1 = new Location("");
+                    loc1.setLatitude(myMarker1.getmLatitude());
+                    loc1.setLongitude(myMarker1.getmLongitude());
+
+                    for (String currentKey2 : toKeep.keySet()) {
+                        MyMarker myMarker2 = (MyMarker) toKeep.get(currentKey2);
+                        Location loc2 = new Location("");
+                        loc2.setLatitude(myMarker2.getmLatitude());
+                        loc2.setLongitude(myMarker2.getmLongitude());
+
+                        double distanceInMeters = loc1.distanceTo(loc2);
+                        if (distanceInMeters != 0 && distanceInMeters < mergeDistance) {//TODO prendre en compte le zoom de la Google map
+
+                            needToMerge.add(myMarker1);//only done once
+                            needToMerge.add(myMarker2);
+                        }
+
+                    }
+                }
+            }
+            for(String currentKey :  toKeep.keySet())
+            {
+                if(countMaxMarkerDisplayed1<PhotonApplication.MAX_POST_SEARCH_RESULTS) {
+
+                    countMaxMarkerDisplayed1++;//TODO reutiliser le 1 pas utiliser 2 variables
+                    final MyMarker myMarker1 = (MyMarker) toKeep.get(currentKey);
+
+                    if (needToMerge.contains(myMarker1)) {
+
+                        HashSet<MyMarker> subHashMapMerge = new HashSet<MyMarker>();
+
+                        for (String currentKey2 : toKeep.keySet()) {
+
+                            MyMarker myMarker2 = (MyMarker) toKeep.get(currentKey2);
+                            if (needToMerge.contains(myMarker2)) {
+                                if (!myMarker1.getId().equals(myMarker2.getId())) {
+
+                                    Location loc1 = new Location("");
+                                    loc1.setLatitude(myMarker1.getmLatitude());
+                                    loc1.setLongitude(myMarker1.getmLongitude());
+                                    Location loc2 = new Location("");
+                                    loc2.setLatitude(myMarker2.getmLatitude());
+                                    loc2.setLongitude(myMarker2.getmLongitude());
+
+                                    double distanceInMeters = loc1.distanceTo(loc2);
+                                    if (distanceInMeters != 0 && distanceInMeters < mergeDistance) {//TODO prendre en compte le zoom de la Google map
+
+                                        if (!subHashMapMerge.contains(myMarker2) && !hasMerged.contains(myMarker2)) {
+                                            if (needToMerge.contains(myMarker1) && needToMerge.contains(myMarker2)) {
+                                                subHashMapMerge.add(myMarker1);
+                                                subHashMapMerge.add(myMarker2);
+                                                hasMerged.add(myMarker1);
+                                                hasMerged.add(myMarker2);
+
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        if (!subHashMapMerge.isEmpty()) {
+                            markersMerge.put(myMarker1.getId(), subHashMapMerge);
+                        }
+                    }
+                    else{
+                        markerNormal.add(myMarker1);
+                    }
+
+                }
+            }
+
+            int countMaxMarkerDisplayed3 = 0;
+            for(MyMarker currentMarker :  markerNormal) {
+                if (countMaxMarkerDisplayed3 < PhotonApplication.MAX_POST_SEARCH_RESULTS) {
+                    countMaxMarkerDisplayed3++;
+                    displayNormal(currentMarker,currentMarker.getImage());
+                }
+                else{
+                    break;
+                }
+            }
+
+            for(Object idGroup: markersMerge.keySet()){
+                HashSet<MyMarker> hashmap = (HashSet<MyMarker>) markersMerge.get(idGroup);
+                Log.d("bl","h");
+                for(MyMarker marker : hashmap){
+                    displayNormal(marker,mergeMarkerImage);
+                    break;
+                }
+
+            }
+
+/*
             int countMaxMarkerDisplayed = 0;
             for(String currentKey :  toKeep.keySet())
             {
@@ -269,6 +400,7 @@ public class HomeFragment extends Fragment {
                     MarkerOptions markerOption = new MarkerOptions().position(new LatLng(myMarker.getmLatitude(), myMarker.getmLongitude()));
 
 //                    markerOption.icon(BitmapDescriptorFactory.fromResource(R.drawable.currentlocation_icon));
+
 
                     markerOption.icon(BitmapDescriptorFactory.fromBitmap(myMarker.getImage()));
 
@@ -296,9 +428,9 @@ public class HomeFragment extends Fragment {
                         public void onInfoWindowClick(Marker marker) {
                             Intent intent = new Intent(getActivity(), DetailsActivity.class);
                             MyMarker myMarker1 = mMarkersHashMap.get(marker);
-                            intent.putExtra("markerId",myMarker1.getId());
-                            intent.putExtra("text",myMarker1.getText());
-                            intent.putExtra("hashtags",myMarker1.getHashtags());
+                            intent.putExtra("markerId", myMarker1.getId());
+                            intent.putExtra("text", myMarker1.getText());
+                            intent.putExtra("hashtags", myMarker1.getHashtags());
 
                             startActivity(intent);
                         }
@@ -308,8 +440,69 @@ public class HomeFragment extends Fragment {
                 else{
                     break;
                 }
-            }
+            }*/
         }
+    }
+
+    private void displayNormal(MyMarker myMarker, Bitmap image) {
+        MarkerOptions markerOption = new MarkerOptions().position(new LatLng(myMarker.getmLatitude(), myMarker.getmLongitude()));
+
+//                    markerOption.icon(BitmapDescriptorFactory.fromResource(R.drawable.currentlocation_icon));
+
+
+        markerOption.icon(BitmapDescriptorFactory.fromBitmap(image));
+
+
+        Marker currentMarker = mGoogleMap.addMarker(markerOption);
+        mMarkersHashMap.put(currentMarker, myMarker);
+
+        mGoogleMap.setInfoWindowAdapter(new MarkerInfoWindowAdapter());
+        mGoogleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                Intent intent = new Intent(getActivity(), DetailsActivity.class);
+                MyMarker myMarker1 = mMarkersHashMap.get(marker);
+                intent.putExtra("markerId",myMarker1.getId());
+                intent.putExtra("text",myMarker1.getText());
+                intent.putExtra("hashtags",myMarker1.getHashtags());
+
+                startActivity(intent);
+                return true;
+            }
+        });
+
+        mGoogleMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+            @Override
+            public void onInfoWindowClick(Marker marker) {
+                Intent intent = new Intent(getActivity(), DetailsActivity.class);
+                MyMarker myMarker1 = mMarkersHashMap.get(marker);
+                intent.putExtra("markerId",myMarker1.getId());
+                intent.putExtra("text",myMarker1.getText());
+                intent.putExtra("hashtags",myMarker1.getHashtags());
+
+                startActivity(intent);
+            }
+        });
+
+    }
+
+    private void algodePartiotonnement(HashMap<String, Object> map) {
+        int size = map.size();
+
+        //creation of an array list with the markers
+        ArrayList<MyMarker> list = new ArrayList<MyMarker>();
+        for (String key:map.keySet()){
+            list.add((MyMarker) map.get(key));
+        }
+
+        // take 2 randomly
+        int rand1 = (int) Math.random()*(size-1);
+        int rand2 = (int) Math.random()*(size-1);
+
+
+
+
+
     }
 
     private void setUpViews() {
@@ -355,10 +548,16 @@ public class HomeFragment extends Fragment {
                 loc.setLatitude(position.target.latitude);
                 loc.setLongitude(position.target.longitude);
                 currentMapLocation = loc;
+                cameraPositionListener = position;
+
 
                 if (!mapActive) return; // if th mode search by keyword is active
                 HASHTAG_QUERY = false;
                 doMapQuery(HASHTAG_QUERY);
+                if(position.zoom != previousZoom){ // the zoom change plot markers to merge them if needed
+                    plotMarkers();
+                    previousZoom = position.zoom;
+                }
             }
         });
 
@@ -458,7 +657,7 @@ public class HomeFragment extends Fragment {
                                         R.drawable.canvas_marker);
 
                                 //these width and height depends on the photo , do not change them (or independently)
-                                Bitmap cadre = Bitmap.createScaledBitmap(cadrePhoto, 160, 160, false);
+                                cadre = Bitmap.createScaledBitmap(cadrePhoto, 160, 160, false);
 
 
                                 int width = cadre.getWidth();
