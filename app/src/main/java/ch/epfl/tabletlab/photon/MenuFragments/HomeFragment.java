@@ -297,7 +297,6 @@ public class HomeFragment extends Fragment {
 
                     countMaxMarkerDisplayed0++;
                     final MyMarker myMarker1 = (MyMarker) toKeep.get(currentKey);
-
                     Location loc1 = new Location("");
                     loc1.setLatitude(myMarker1.getmLatitude());
                     loc1.setLongitude(myMarker1.getmLongitude());
@@ -309,7 +308,7 @@ public class HomeFragment extends Fragment {
                         loc2.setLongitude(myMarker2.getmLongitude());
 
                         double distanceInMeters = loc1.distanceTo(loc2);
-                        if (distanceInMeters != 0 && distanceInMeters < mergeDistance) {//TODO prendre en compte le zoom de la Google map
+                        if (distanceInMeters != 0 && distanceInMeters < mergeDistance) {
 
                             needToMerge.add(myMarker1);//only done once
                             needToMerge.add(myMarker2);
@@ -325,33 +324,38 @@ public class HomeFragment extends Fragment {
                     countMaxMarkerDisplayed1++;//TODO reutiliser le 1 pas utiliser 2 variables
                     final MyMarker myMarker1 = (MyMarker) toKeep.get(currentKey);
 
-                    if (needToMerge.contains(myMarker1)) {
+                    if (needToMerge.contains(myMarker1) ) {
+
+                    if(!hasMerged.contains(myMarker1)){
 
                         HashSet<MyMarker> subHashMapMerge = new HashSet<MyMarker>();
 
                         for (String currentKey2 : toKeep.keySet()) {
 
                             MyMarker myMarker2 = (MyMarker) toKeep.get(currentKey2);
+
                             if (needToMerge.contains(myMarker2)) {
                                 if (!myMarker1.getId().equals(myMarker2.getId())) {
+                                    if (!hasMerged.contains(myMarker2)) {
 
-                                    Location loc1 = new Location("");
-                                    loc1.setLatitude(myMarker1.getmLatitude());
-                                    loc1.setLongitude(myMarker1.getmLongitude());
-                                    Location loc2 = new Location("");
-                                    loc2.setLatitude(myMarker2.getmLatitude());
-                                    loc2.setLongitude(myMarker2.getmLongitude());
+                                        Location loc1 = new Location("");
+                                        loc1.setLatitude(myMarker1.getmLatitude());
+                                        loc1.setLongitude(myMarker1.getmLongitude());
+                                        Location loc2 = new Location("");
+                                        loc2.setLatitude(myMarker2.getmLatitude());
+                                        loc2.setLongitude(myMarker2.getmLongitude());
 
-                                    double distanceInMeters = loc1.distanceTo(loc2);
-                                    if (distanceInMeters != 0 && distanceInMeters < mergeDistance) {//TODO prendre en compte le zoom de la Google map
+                                        double distanceInMeters = loc1.distanceTo(loc2);
+                                        if (distanceInMeters != 0 && distanceInMeters < mergeDistance) {
 
-                                        if (!subHashMapMerge.contains(myMarker2) && !hasMerged.contains(myMarker2)) {
-                                            if (needToMerge.contains(myMarker1) && needToMerge.contains(myMarker2)) {
-                                                subHashMapMerge.add(myMarker1);
-                                                subHashMapMerge.add(myMarker2);
-                                                hasMerged.add(myMarker1);
-                                                hasMerged.add(myMarker2);
+                                            if (!subHashMapMerge.contains(myMarker2)) {
+                                                if (needToMerge.contains(myMarker1) && needToMerge.contains(myMarker2)) {
+                                                    subHashMapMerge.add(myMarker1);
+                                                    subHashMapMerge.add(myMarker2);
+                                                    hasMerged.add(myMarker1);
+                                                    hasMerged.add(myMarker2);
 
+                                                }
                                             }
                                         }
                                     }
@@ -360,6 +364,15 @@ public class HomeFragment extends Fragment {
                         }
                         if (!subHashMapMerge.isEmpty()) {
                             markersMerge.put(myMarker1.getId(), subHashMapMerge);
+                        }
+                    }
+                        // it means that we tried to add in a cluster but the near point was already taken by another cluster so it is alone again
+                        if (needToMerge.contains(myMarker1) ) {
+
+                            if(!hasMerged.contains(myMarker1)){
+                                markerNormal.add(myMarker1);
+
+                            }
                         }
                     }
                     else{
@@ -384,6 +397,7 @@ public class HomeFragment extends Fragment {
                 countMaxMarkerDisplayed3++;
                 if (countMaxMarkerDisplayed3 < PhotonApplication.MAX_POST_SEARCH_RESULTS) {
                     HashSet<MyMarker> hashmap = (HashSet<MyMarker>) markersMerge.get(idGroup);
+                    Log.d("marker", countMaxMarkerDisplayed3 + mMarkersHashMap.toString());
                     MyMergeMarker mergeMarker = new MyMergeMarker("","",0.0,0.0,mergeMarkerImage,hashmap);
                     displayNormal(mergeMarker);
                 }
@@ -866,7 +880,7 @@ public class HomeFragment extends Fragment {
 
         mGoogleMap.setMapType(PhotonApplication.MAP_TYPE);
         // Showing/hiding your current location
-        mGoogleMap.setMyLocationEnabled(true);
+//        mGoogleMap.setMyLocationEnabled(true);
         // Enable/disable zooming controls
         mGoogleMap.getUiSettings().setZoomControlsEnabled(false);
         // Enable/disable my location button
