@@ -1,4 +1,4 @@
-package ch.epfl.tabletlab.photon.GroupePhotos;
+package ch.epfl.tabletlab.photon.GroupPhotos;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -20,7 +20,7 @@ import java.util.ArrayList;
 
 import ch.epfl.tabletlab.photon.R;
 
-public class DetailActivity extends AppCompatActivity {
+public class DetailSwipeActivity extends AppCompatActivity {
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide

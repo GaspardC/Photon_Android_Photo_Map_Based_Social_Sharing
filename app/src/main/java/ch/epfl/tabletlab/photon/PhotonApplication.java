@@ -21,7 +21,7 @@ public class PhotonApplication extends android.app.Application {
   // Debugging tag for the application
   public static final String APPTAG = "Photon";
 
-  // Used to pass location from MainActivity to PostActivity
+  // Used to pass location from DetailGroupPhotoActivity to PostActivity
   public static final String INTENT_EXTRA_LOCATION = "location";
 
   // Maximum results returned from a Parse query

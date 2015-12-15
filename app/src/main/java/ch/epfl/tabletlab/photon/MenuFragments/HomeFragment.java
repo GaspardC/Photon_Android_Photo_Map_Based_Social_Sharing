@@ -22,7 +22,6 @@ import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Parcel;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -64,11 +63,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 import ch.epfl.tabletlab.photon.DetailsActivity;
-import ch.epfl.tabletlab.photon.GroupePhotos.MainActivity;
+import ch.epfl.tabletlab.photon.GroupPhotos.DetailGroupPhotoActivity;
 import ch.epfl.tabletlab.photon.LightMarker;
 import ch.epfl.tabletlab.photon.MyMergeMarker;
 import ch.epfl.tabletlab.photon.PhotonPost;
@@ -488,7 +486,7 @@ public class HomeFragment extends Fragment {
                 MyMarker myMarker1 = mMarkersHashMap.get(marker);
 
                 if (myMarker1 instanceof MyMergeMarker){
-                    Intent intent = new Intent(getActivity(), MainActivity.class);
+                    Intent intent = new Intent(getActivity(), DetailGroupPhotoActivity.class);
                     HashSet<MyMarker> hashSet = ((MyMergeMarker) myMarker1).getMarkers();
                     HashSet<LightMarker> lightHashSetMarker = new HashSet<LightMarker>();
 

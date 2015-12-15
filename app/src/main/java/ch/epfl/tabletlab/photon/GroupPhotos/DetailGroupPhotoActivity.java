@@ -1,4 +1,4 @@
-package ch.epfl.tabletlab.photon.GroupePhotos;
+package ch.epfl.tabletlab.photon.GroupPhotos;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,10 +14,9 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 import ch.epfl.tabletlab.photon.LightMarker;
-import ch.epfl.tabletlab.photon.MyMarker;
 import ch.epfl.tabletlab.photon.R;
 
-public class MainActivity extends AppCompatActivity {
+public class DetailGroupPhotoActivity extends AppCompatActivity {
 
     Toolbar mToolbar;
     RecyclerView mRecyclerView;
@@ -86,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onItemClick(View view, int position) {
 
-                        Intent intent = new Intent(MainActivity.this, DetailActivity.class);
+                        Intent intent = new Intent(DetailGroupPhotoActivity.this, DetailSwipeActivity.class);
                         intent.putParcelableArrayListExtra("data", data);
                         intent.putExtra("pos", position);
                         startActivity(intent);

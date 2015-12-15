@@ -1,4 +1,4 @@
-package ch.epfl.tabletlab.photon.GroupePhotos;
+package ch.epfl.tabletlab.photon.GroupPhotos;
 
 import android.support.v4.view.ViewPager;
 import android.view.View;

@@ -1,4 +1,4 @@
-package ch.epfl.tabletlab.photon.GroupePhotos;
+package ch.epfl.tabletlab.photon.GroupPhotos;
 
 import android.graphics.Rect;
 import android.support.v7.widget.RecyclerView;

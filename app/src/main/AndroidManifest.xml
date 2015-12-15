@@ -102,8 +102,8 @@
 
         <activity android:name=".DetailsActivity"></activity>
         <activity android:name=".FullScreenActivity"></activity>
-        <activity android:name=".GroupePhotos.MainActivity"></activity>
-        <activity android:name=".GroupePhotos.DetailActivity"></activity>
+        <activity android:name=".GroupPhotos.DetailGroupPhotoActivity"></activity>
+        <activity android:name=".GroupPhotos.DetailSwipeActivity"></activity>
 
 
     </application>
