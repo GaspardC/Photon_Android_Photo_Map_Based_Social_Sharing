@@ -13,6 +13,7 @@ import android.view.View;
 import java.util.ArrayList;
 import java.util.HashSet;
 
+import ch.epfl.tabletlab.photon.LightMarker;
 import ch.epfl.tabletlab.photon.MyMarker;
 import ch.epfl.tabletlab.photon.R;
 
@@ -24,19 +25,24 @@ public class MainActivity extends AppCompatActivity {
 
     ArrayList<ImageModel> data = new ArrayList<>();
 
-    public static String IMGS[];
+    public  ArrayList<String> imgs = new ArrayList<>();
     private MasonryAdapter madapter;
+    private  ArrayList<String> hashatgs = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         Intent intent = getIntent();
-        HashSet<MyMarker> hashSet = (HashSet<MyMarker>) intent.getExtras().get("markers");
-        int k = 0;
-        for(MyMarker marker : hashSet){
-            IMGS[k] = marker.getUrl();
-            k++;
+        HashSet<LightMarker> hashSet = (HashSet<LightMarker>) intent.getExtras().get("markers");
+        for(LightMarker marker : hashSet){
+            imgs.add(marker.getUrl());
+            if((marker.getHashtags()) != null){
+                hashatgs.add(marker.getHashtags());
+            }
+            else{
+                hashatgs.add("");
+            }
         }
         setContentView(R.layout.activity_main);
 
@@ -44,15 +50,22 @@ public class MainActivity extends AppCompatActivity {
 
         if (mToolbar != null) {
             setSupportActionBar(mToolbar);
-            getSupportActionBar().setTitle("Staggered Grid");
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+            mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onBackPressed();
+                }
+            });
         }
 
 
-        for (int i = 0; i < IMGS.length; i++) {
+        for (int i = 0; i < imgs.size(); i++) {
 
             ImageModel imageModel = new ImageModel();
-            imageModel.setName("Image " + i);
-            imageModel.setUrl(IMGS[i]);
+            imageModel.setName(hashatgs.get(i));
+            imageModel.setUrl(imgs.get(i));
             data.add(imageModel);
         }
 

@@ -22,6 +22,7 @@ import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcel;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -68,6 +69,7 @@ import java.util.concurrent.ExecutionException;
 
 import ch.epfl.tabletlab.photon.DetailsActivity;
 import ch.epfl.tabletlab.photon.GroupePhotos.MainActivity;
+import ch.epfl.tabletlab.photon.LightMarker;
 import ch.epfl.tabletlab.photon.MyMergeMarker;
 import ch.epfl.tabletlab.photon.PhotonPost;
 import ch.epfl.tabletlab.photon.MenuActivity;
@@ -399,7 +401,8 @@ public class HomeFragment extends Fragment {
                 if (countMaxMarkerDisplayed3 < PhotonApplication.MAX_POST_SEARCH_RESULTS) {
                     HashSet<MyMarker> hashmap = (HashSet<MyMarker>) markersMerge.get(idGroup);
                     Log.d("marker", countMaxMarkerDisplayed3 + mMarkersHashMap.toString());
-                    MyMergeMarker mergeMarker = new MyMergeMarker("","",0.0,0.0,mergeMarkerImage,hashmap);
+                    MyMergeMarker mergeMarker = new MyMergeMarker("","",0.0,0.0,hashmap);
+                    mergeMarker.setImage(mergeMarkerImage);
                     displayNormal(mergeMarker);
                 }
                 else{
@@ -487,7 +490,12 @@ public class HomeFragment extends Fragment {
                 if (myMarker1 instanceof MyMergeMarker){
                     Intent intent = new Intent(getActivity(), MainActivity.class);
                     HashSet<MyMarker> hashSet = ((MyMergeMarker) myMarker1).getMarkers();
-                    intent.putExtra("markers",hashSet);
+                    HashSet<LightMarker> lightHashSetMarker = new HashSet<LightMarker>();
+
+                    for (MyMarker marks : hashSet){
+                        lightHashSetMarker.add(new LightMarker(marks));
+                    }
+                    intent.putExtra("markers", lightHashSetMarker);
                     startActivity(intent);
 
                 }
@@ -734,7 +742,8 @@ public class HomeFragment extends Fragment {
 
                                     // The full bitmap should be available here
                                     MyMarker newMarker = new MyMarker(post.getText(), "", post.getLocation().getLatitude(),
-                                            post.getLocation().getLongitude(), bmOverlay);
+                                            post.getLocation().getLongitude());
+                                    newMarker.setImage(bmOverlay);
                                     newMarker.setId(post.getObjectId());
                                     newMarker.setHashtags(post.getHashtags());
                                     newMarker.setAuthor(post.getAuthor());

@@ -23,16 +23,23 @@ public class MasonryAdapter extends RecyclerView.Adapter<MasonryAdapter.MasonryV
 
     private Context context;
     List<ImageModel> data = new ArrayList<>();
+    List<String> nameList= new ArrayList<>();
 
 
 
-    String[] nameList = {"One", "Two", "Three", "Four", "Five", "Six",
-            "Seven", "Eight", "Nine", "Ten"};
+
 
     public MasonryAdapter(Context context, ArrayList<ImageModel> data) {
         this.context = context;
         this.data = data;
+        setNameList(data);
+    }
 
+    private void setNameList(ArrayList<ImageModel> data) {
+
+        for (int position = 0; position<data.size();position++){
+            nameList.add(data.get(position).getName());
+        }
     }
 
     @Override
@@ -44,7 +51,7 @@ public class MasonryAdapter extends RecyclerView.Adapter<MasonryAdapter.MasonryV
 
     @Override
     public void onBindViewHolder(MasonryView holder, int position) {
-        holder.textView.setText(nameList[position]);
+        holder.textView.setText(nameList.get(position));
 
         Glide.with(context).load(data.get(position).getUrl())
                 .thumbnail(0.5f)
@@ -56,7 +63,7 @@ public class MasonryAdapter extends RecyclerView.Adapter<MasonryAdapter.MasonryV
 
     @Override
     public int getItemCount() {
-        return nameList.length;
+        return nameList.size();
     }
 
     class MasonryView extends RecyclerView.ViewHolder {

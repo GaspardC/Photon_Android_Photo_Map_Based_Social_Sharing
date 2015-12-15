@@ -16,15 +16,16 @@ public class MyMergeMarker extends MyMarker {
 
 
     private final HashSet<MyMarker> markers;
+    private final int size;
 
 
-    public MyMergeMarker(String label, String icon, Double latitude, Double longitude, Bitmap b, HashSet<MyMarker> markers) {
-        super(label, icon, latitude, longitude, b);
+    public MyMergeMarker(String label, String icon, Double latitude, Double longitude, HashSet<MyMarker> markers) {
+        super(label, icon, latitude, longitude);
 
         this.markers = markers;
 
 
-        int size = markers.size();
+        size = markers.size();
         double lat = 0.0;
         double lon = 0.0;
 
@@ -35,10 +36,18 @@ public class MyMergeMarker extends MyMarker {
         }
         super.setmLatitude(lat / size);
         super.setmLongitude(lon / size);
-        Bitmap copyBimap = b.copy(b.getConfig(), true);
+        /*Bitmap copyBimap = b.copy(b.getConfig(), true);
         Bitmap bitmampWithNumber = drawNumber(copyBimap,size);
-         super.setImage(bitmampWithNumber);
+         super.setImage(bitmampWithNumber);*/
 
+    }
+
+    @Override
+    public void setImage(Bitmap bitmap) {
+        super.setImage(bitmap);
+        Bitmap copyBimap = bitmap.copy(bitmap.getConfig(), true);
+        Bitmap bitmampWithNumber = drawNumber(copyBimap,size);
+        super.setImage(bitmampWithNumber);
     }
 
     private Bitmap drawNumber(Bitmap bitmap, int number) {
