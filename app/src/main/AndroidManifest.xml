@@ -102,6 +102,10 @@
 
         <activity android:name=".DetailsActivity"></activity>
         <activity android:name=".FullScreenActivity"></activity>
+        <activity android:name=".GroupePhotos.MainActivity"></activity>
+        <activity android:name=".GroupePhotos.DetailActivity"></activity>
+
+
     </application>
 
 </manifest>

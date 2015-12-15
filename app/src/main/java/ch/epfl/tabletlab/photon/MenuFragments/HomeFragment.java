@@ -67,6 +67,7 @@ import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 import ch.epfl.tabletlab.photon.DetailsActivity;
+import ch.epfl.tabletlab.photon.GroupePhotos.MainActivity;
 import ch.epfl.tabletlab.photon.MyMergeMarker;
 import ch.epfl.tabletlab.photon.PhotonPost;
 import ch.epfl.tabletlab.photon.MenuActivity;
@@ -480,13 +481,25 @@ public class HomeFragment extends Fragment {
         mGoogleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
-                Intent intent = new Intent(getActivity(), DetailsActivity.class);
-                MyMarker myMarker1 = mMarkersHashMap.get(marker);
-                intent.putExtra("markerId",myMarker1.getId());
-                intent.putExtra("text",myMarker1.getText());
-                intent.putExtra("hashtags",myMarker1.getHashtags());
 
-                startActivity(intent);
+                MyMarker myMarker1 = mMarkersHashMap.get(marker);
+
+                if (myMarker1 instanceof MyMergeMarker){
+                    Intent intent = new Intent(getActivity(), MainActivity.class);
+                    HashSet<MyMarker> hashSet = ((MyMergeMarker) myMarker1).getMarkers();
+                    intent.putExtra("markers",hashSet);
+                    startActivity(intent);
+
+                }
+                else{
+                    Intent intent = new Intent(getActivity(), DetailsActivity.class);
+                    intent.putExtra("markerId", myMarker1.getId());
+                    intent.putExtra("text", myMarker1.getText());
+                    intent.putExtra("hashtags", myMarker1.getHashtags());
+
+                    startActivity(intent);
+                }
+
                 return true;
             }
         });
@@ -496,9 +509,9 @@ public class HomeFragment extends Fragment {
             public void onInfoWindowClick(Marker marker) {
                 Intent intent = new Intent(getActivity(), DetailsActivity.class);
                 MyMarker myMarker1 = mMarkersHashMap.get(marker);
-                intent.putExtra("markerId",myMarker1.getId());
-                intent.putExtra("text",myMarker1.getText());
-                intent.putExtra("hashtags",myMarker1.getHashtags());
+                intent.putExtra("markerId", myMarker1.getId());
+                intent.putExtra("text", myMarker1.getText());
+                intent.putExtra("hashtags", myMarker1.getHashtags());
 
                 startActivity(intent);
             }
@@ -725,6 +738,7 @@ public class HomeFragment extends Fragment {
                                     newMarker.setId(post.getObjectId());
                                     newMarker.setHashtags(post.getHashtags());
                                     newMarker.setAuthor(post.getAuthor());
+                                    newMarker.setUrl(post.getImage().getUrl());
                                     toKeep.put(post.getObjectId(), newMarker);
                                     displayImage();
 
