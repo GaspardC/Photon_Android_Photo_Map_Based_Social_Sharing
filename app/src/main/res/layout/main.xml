@@ -42,54 +42,52 @@
                 android:layout_gravity="center|right"
 
                 >
-                <Button
-                    android:layout_width="33dp"
-                    android:layout_height="33dp"
-                    android:background="@drawable/delete"
-                    android:id="@+id/delete_right_menu"
-                    android:layout_gravity="left|center_vertical"
-                    android:layout_marginRight="10dp"
-                    android:backgroundTint="@color/com_facebook_blue"
-                    />
-
-                <EditText
-                    android:layout_weight="5"
-                    android:layout_width="wrap_content"
+                <FrameLayout
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:padding="7dp"
-                    android:id="@+id/hashtags_text_view"
-                    android:hint="@string/slogan"
-                    android:textSize="24sp"
-                    android:textColor="@color/grayColorTextHint"
-                    android:layout_gravity="center"
-                    android:backgroundTint="@color/colorLightBlue"
-                    android:selectAllOnFocus="false"
-                    android:layout_marginRight="10dp"
-                    android:inputType="text"
-                    android:singleLine="true"
-                    android:imeOptions="actionSearch"
+                    android:layout_marginTop="9dp"
+                    android:padding="5dp"
+                    android:layout_weight="5"
+                    >
 
-                />
-            <Button
-                android:layout_width="33dp"
-                android:layout_height="33dp"
-                android:background="@drawable/search_button_selector"
-                android:id="@+id/search_right_menu"
-                android:layout_gravity="right|center_vertical"
-                android:layout_marginRight="10dp"
-                android:backgroundTint="@color/com_facebook_blue"
-                />
+
+                    <EditText
+                        android:layout_marginLeft="10dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="7dp"
+                        android:id="@+id/hashtags_text_view"
+                        android:hint="@string/slogan"
+                        android:textSize="24sp"
+                        android:textColor="@color/grayColorTextHint"
+                        android:backgroundTint="@color/colorLightBlue"
+                        android:selectAllOnFocus="false"
+                        android:layout_marginRight="55dp"
+                        android:inputType="text"
+                        android:singleLine="true"
+                        android:imeOptions="actionSearch"
+
+                        />
+                    <Button
+                        android:layout_width="35dp"
+                        android:layout_height="35dp"
+                        android:background="@drawable/delete"
+                        android:id="@+id/delete_right_menu"
+                        android:layout_gravity="right|center_vertical"
+                        android:layout_marginRight="15dp"
+                        android:backgroundTint="@color/com_facebook_blue"
+                        />
+
+
+                </FrameLayout>
+
+
+
+
 
 
             </LinearLayout>
 
-            <!--<Button-->
-                    <!--android:layout_width="28dp"-->
-                    <!--android:layout_height="28dp"-->
-                    <!--android:background="@drawable/titlebar_menu_selector"-->
-                    <!--android:id="@+id/title_bar_right_menu"-->
-                    <!--android:layout_gravity="right|center_vertical"-->
-                    <!--android:layout_marginRight="10dp"/>-->
         </FrameLayout>
 
         <ImageView

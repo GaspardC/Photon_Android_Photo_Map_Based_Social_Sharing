@@ -105,7 +105,6 @@ public class HomeFragment extends Fragment {
     private View parentView;
     private ResideMenu resideMenu;
     private GoogleMap mGoogleMap;
-    private Button searchButton;
     private Button deleteButton;
     FragmentManager fm;
     SupportMapFragment myMapFragment;
@@ -241,22 +240,13 @@ public class HomeFragment extends Fragment {
                 return false;
             }
         });
-
-
-        searchButton= (Button) getActivity().findViewById(R.id.search_right_menu);
-        searchButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                performSearch();
-            }
-        });
     }
 
+
+
+
     private void performSearch() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            searchButton.setBackground(getActivity().getDrawable(R.drawable.yellow_search));
-            deleteButton.setBackground(getActivity().getDrawable(R.drawable.delete_yellow));
-        }
+
 
 
         String text = String.valueOf(EditTextReformated);
@@ -654,9 +644,7 @@ public class HomeFragment extends Fragment {
         mapQuery.findInBackground(new FindCallback<PhotonPost>() {
             @Override
             public void done(List<PhotonPost> objects, ParseException e) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     //change color of search item
-                    searchButton.setBackground(getActivity().getDrawable(R.drawable.search));
 
                     // hide keyboard
                     View view = getActivity().getCurrentFocus();
@@ -664,7 +652,7 @@ public class HomeFragment extends Fragment {
                         InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                     }
-                }
+
 
                 if (e != null) {
                     if (PhotonApplication.APPDEBUG) {
