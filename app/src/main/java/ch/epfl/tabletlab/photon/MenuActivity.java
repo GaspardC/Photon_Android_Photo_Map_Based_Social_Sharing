@@ -119,13 +119,14 @@ public class MenuActivity extends FragmentActivity implements View.OnClickListen
                 }
             });
 
+        findViewById(R.id.camera_post).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MenuActivity.this, PostActivity.class);
+                startActivity(intent);
+            }
+        });
 
-/*            findViewById(R.id.title_bar_right_menu).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    resideMenu.openMenu(ResideMenu.DIRECTION_RIGHT);
-                }
-            });*/
         }
 
         @Override

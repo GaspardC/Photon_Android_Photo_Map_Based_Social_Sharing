@@ -214,8 +214,10 @@ public class HomeFragment extends Fragment {
             @Override
             public void onTextChanged(CharSequence sequence, int start, int before, int count) {
                 hastagsEditText.setTextColor(getResources().getColor(R.color.grayColorText));
-                if (hastagsEditText.length() > 40) {
-                    sequence = hastagsEditText.getText().subSequence(0, 40);
+                if (hastagsEditText.length() > 20) {
+                    sequence = hastagsEditText.getText().subSequence(0, 20);
+                    Toast.makeText(getActivity(),"Do not enter to many keywords please !",Toast.LENGTH_SHORT).show();
+                    hastagsEditText.setText(sequence);
                 }
                 EditTextReformated = String.valueOf(sequence);
                 EditTextReformated = EditTextReformated.toLowerCase();
@@ -581,6 +583,7 @@ public class HomeFragment extends Fragment {
                 dialog.dismiss();
                 startMap();
                 displayImage();
+
             }
         });
 //        mGoogleMap = ((SupportMapFragment) getFragmentManager().findFragmentById(
@@ -600,7 +603,7 @@ public class HomeFragment extends Fragment {
                 if (!mapActive) return; // if th mode search by keyword is active
                 HASHTAG_QUERY = false;
                 doMapQuery(HASHTAG_QUERY);
-                if(position.zoom != previousZoom){ // the zoom change plot markers to merge them if needed
+                if (position.zoom != previousZoom) { // the zoom change plot markers to merge them if needed
                     displayImage();
                     previousZoom = position.zoom;
                 }
@@ -647,11 +650,13 @@ public class HomeFragment extends Fragment {
                     //change color of search item
 
                     // hide keyboard
+                if(getActivity()!=null) {
                     View view = getActivity().getCurrentFocus();
                     if (view != null) {
                         InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                     }
+                }
 
 
                 if (e != null) {
@@ -890,18 +895,23 @@ public class HomeFragment extends Fragment {
     public int distanceForMapQuery(){
 
 
+        if(myMapFragment!= null) { // its possible for a short moment if hte user change the orientation
+
+
         /* But even if the object was not here maybe you dont want to download it if its not visible on the map*/
-        LatLngBounds mLatLngBounds = myMapFragment.getMap().getProjection().getVisibleRegion().latLngBounds;
+            LatLngBounds mLatLngBounds = myMapFragment.getMap().getProjection().getVisibleRegion().latLngBounds;
 
-        LatLng northeast = mLatLngBounds.northeast ;
-        LatLng southwest = mLatLngBounds.southwest;
-        ParseGeoPoint southwestParseGeoPoint = new ParseGeoPoint(southwest.latitude,southwest.longitude);
-        ParseGeoPoint locatonCenterCamera = new ParseGeoPoint(0.5*(northeast.latitude + southwest.latitude),0.5*(northeast.longitude + southwest.longitude));
+            LatLng northeast = mLatLngBounds.northeast;
+            LatLng southwest = mLatLngBounds.southwest;
+            ParseGeoPoint southwestParseGeoPoint = new ParseGeoPoint(southwest.latitude, southwest.longitude);
+            ParseGeoPoint locatonCenterCamera = new ParseGeoPoint(0.5 * (northeast.latitude + southwest.latitude), 0.5 * (northeast.longitude + southwest.longitude));
 
 
-        double distanceToCorner = locatonCenterCamera.distanceInKilometersTo(southwestParseGeoPoint);
-        return (int) distanceToCorner + 10;
-        // to round number at the superior int and have a little margin if the user move the map quickly
+            double distanceToCorner = locatonCenterCamera.distanceInKilometersTo(southwestParseGeoPoint);
+            return (int) distanceToCorner + 10;
+            // to round number at the superior int and have a little margin if the user move the map quickly
+        }
+        return 10;
     }
 
 
@@ -1037,7 +1047,17 @@ public class HomeFragment extends Fragment {
     }
 
 
+    @Override
+     public void onResume() {
+        super.onResume();
+        if(myMapFragment.isVisible()){// if the map is ready
+            if (!mapActive) return; // if th mode search by keyword is active
+            HASHTAG_QUERY = false;
+            doMapQuery(HASHTAG_QUERY);
 
+        }
+
+    }
 
 
 
