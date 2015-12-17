@@ -1,5 +1,6 @@
 package ch.epfl.tabletlab.photon.GroupPhotos;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -18,6 +19,7 @@ import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 
+import ch.epfl.tabletlab.photon.FullScreenActivity;
 import ch.epfl.tabletlab.photon.ImageModel;
 import ch.epfl.tabletlab.photon.R;
 
@@ -168,6 +170,7 @@ public class DetailSwipeActivity extends AppCompatActivity {
         private static final String ARG_SECTION_NUMBER = "section_number";
         private static final String ARG_IMG_TITLE = "image_title";
         private static final String ARG_IMG_URL = "image_url";
+        private Toolbar toolbar;
 
         @Override
         public void setArguments(Bundle args) {
@@ -206,6 +209,17 @@ public class DetailSwipeActivity extends AppCompatActivity {
             View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
 
             final ImageView imageView = (ImageView) rootView.findViewById(R.id.detail_image);
+            ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
+
+                    /*    imageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(getActivity(),FullScreenActivity.class);
+                    intent.putExtra("url",url);
+                    startActivity(intent);
+                }
+            });*/
+
 
             Glide.with(getActivity()).load(url).thumbnail(0.1f).into(imageView);
 

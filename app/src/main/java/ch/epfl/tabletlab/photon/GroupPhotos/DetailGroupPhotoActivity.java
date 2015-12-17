@@ -13,6 +13,7 @@ import android.view.View;
 import java.util.ArrayList;
 import java.util.HashSet;
 
+import ch.epfl.tabletlab.photon.DetailsActivity;
 import ch.epfl.tabletlab.photon.ImageModel;
 import ch.epfl.tabletlab.photon.R;
 
@@ -24,9 +25,10 @@ public class DetailGroupPhotoActivity extends AppCompatActivity {
 
     ArrayList<ImageModel> data = new ArrayList<>();
 
-    public  ArrayList<String> imgs = new ArrayList<>();
+    public  ArrayList<String> url = new ArrayList<>();
     private MasonryAdapter madapter;
     private  ArrayList<String> hashatgs = new ArrayList<>();
+    private ArrayList<String> postId = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +38,8 @@ public class DetailGroupPhotoActivity extends AppCompatActivity {
         HashSet<ImageModel> hashSet = (HashSet<ImageModel>) intent.getExtras().get("markers");
 
         for(ImageModel image : hashSet){
-            imgs.add(image.getUrl());
+            url.add(image.getUrl());
+            postId.add(image.getId());
             if((image.getHashtags()) != null){
                 hashatgs.add(image.getHashtags());
             }
@@ -61,11 +64,12 @@ public class DetailGroupPhotoActivity extends AppCompatActivity {
         }
 
 
-        for (int i = 0; i < imgs.size(); i++) {
+        for (int i = 0; i < url.size(); i++) {
 
             ImageModel imageModel = new ImageModel();
             imageModel.setHashtags(hashatgs.get(i));
-            imageModel.setUrl(imgs.get(i));
+            imageModel.setUrl(url.get(i));
+            imageModel.setId(postId.get(i));
             data.add(imageModel);
         }
 
@@ -86,7 +90,13 @@ public class DetailGroupPhotoActivity extends AppCompatActivity {
                     @Override
                     public void onItemClick(View view, int position) {
 
-                        Intent intent = new Intent(DetailGroupPhotoActivity.this, DetailSwipeActivity.class);
+/*                        Intent intent = new Intent(DetailGroupPhotoActivity.this, DetailSwipeActivity.class);
+                        intent.putParcelableArrayListExtra("data", data);
+                        intent.putExtra("pos", position);
+                        startActivity(intent);*/
+
+                        Intent intent = new Intent(DetailGroupPhotoActivity.this, DetailsActivity.class);
+                        intent.putExtra("origin","groupPhotos");
                         intent.putParcelableArrayListExtra("data", data);
                         intent.putExtra("pos", position);
                         startActivity(intent);

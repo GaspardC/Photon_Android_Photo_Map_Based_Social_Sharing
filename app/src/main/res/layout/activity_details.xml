@@ -23,7 +23,6 @@
         android:layout_height="0dp"
         android:id="@+id/imageViewDetailed"
         android:layout_gravity="center"
-        android:onClick="displayImageFullScreen"
         />
 
     <LinearLayout

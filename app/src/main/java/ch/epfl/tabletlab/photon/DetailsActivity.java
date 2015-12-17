@@ -3,6 +3,7 @@ package ch.epfl.tabletlab.photon;
 import android.app.ActionBar;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -25,9 +26,13 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+
+import ch.epfl.tabletlab.photon.GroupPhotos.DetailGroupPhotoActivity;
+import ch.epfl.tabletlab.photon.GroupPhotos.DetailSwipeActivity;
 
 public class DetailsActivity extends AppCompatActivity {
 
@@ -39,6 +44,9 @@ public class DetailsActivity extends AppCompatActivity {
     private String url;
     private Toolbar toolbar;
     private Button likeButton;
+    private String origin;
+    private ArrayList<ImageModel> data;
+    private int pos;
 
 
     @Override
@@ -48,6 +56,12 @@ public class DetailsActivity extends AppCompatActivity {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         imageViewDetailed = (ImageView) findViewById(R.id.imageViewDetailed);
+        imageViewDetailed.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                displayImageFullScreen(v);
+            }
+        });
         TextView  textViewHashtags = (TextView) findViewById(R.id.textViewHashtagDetailed);
         TextView  textViewText = (TextView) findViewById(R.id.textViewTextDetailed);
         TextView  textViewAuthor = (TextView) findViewById(R.id.textViewAuthorDetailed);
@@ -58,11 +72,30 @@ public class DetailsActivity extends AppCompatActivity {
 
 
         Intent intent = getIntent();
-        String markerId = intent.getExtras().getString("markerId");
+        origin = intent.getExtras().getString("origin");
+        String markerId = null;
+        String hashtags = null;
+        String text = null;
+        String url = null;
+
+        assert origin != null;
+        if(origin.equals("singlePhotos")){
+             markerId = intent.getExtras().getString("markerId");
+             hashtags = intent.getExtras().getString("hashtags");
+             text = intent.getExtras().getString("text");
+             url = intent.getExtras().getString("url");
+        }
+        if(origin.equals("groupPhotos")){
+            data = getIntent().getParcelableArrayListExtra("data");
+            pos = getIntent().getIntExtra("pos", 0);
+            ImageModel img = data.get(pos);
+            hashtags = img.getHashtags();
+            text = img.getText();
+            url = img.getUrl();
+            markerId = img.getId();
+        }
 
         post = PostServer.getPhotonPost(markerId);
-        ParseFile parseFile = post.getImage();
-        url = parseFile.getUrl();
 
         Glide.with(this).load(url)
                 .centerCrop()
@@ -71,9 +104,7 @@ public class DetailsActivity extends AppCompatActivity {
                 .error(R.drawable.load)
                 .into(imageViewDetailed);
 
-        String hashtags = intent.getExtras().getString("hashtags");
         textViewHashtags.setText(hashtags);
-        String text = intent.getExtras().getString("text");
         textViewText.setText(text);
 
 
@@ -158,9 +189,18 @@ public class DetailsActivity extends AppCompatActivity {
 
     public void displayImageFullScreen(View view) {
 
-        Intent intent = new Intent(this,FullScreenActivity.class);
-        intent.putExtra("url",url);
-        startActivity(intent);
+        if(origin.equals("singlePhotos")){
+            Intent intent = new Intent(this,FullScreenActivity.class);
+            intent.putExtra("url",url);
+            startActivity(intent);
+        }
+        if(origin.equals("groupPhotos")){
+            Intent intent = new Intent(DetailsActivity.this, DetailSwipeActivity.class);
+            intent.putParcelableArrayListExtra("data", data);
+            intent.putExtra("pos", pos);
+            startActivity(intent);
+        }
+
         }
 
 

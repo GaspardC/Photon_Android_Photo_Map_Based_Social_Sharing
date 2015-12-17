@@ -40,6 +40,8 @@
     </string>
     <string name="likes">0 likes</string>
     <string name="map_type_sattelite">Satellite map</string>
+    <string name="singlePhoto">singlePhoto</string>
+    <string name="groupPhotos">groupPhoto</string>
 
 
 </resources>

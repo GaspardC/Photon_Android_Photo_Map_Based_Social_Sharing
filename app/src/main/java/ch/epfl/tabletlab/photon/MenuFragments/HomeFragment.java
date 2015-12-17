@@ -499,9 +499,11 @@ public class HomeFragment extends Fragment {
                 }
                 else{
                     Intent intent = new Intent(getActivity(), DetailsActivity.class);
+                    intent.putExtra("origin","singlePhotos");
                     intent.putExtra("markerId", myMarker1.getId());
                     intent.putExtra("text", myMarker1.getText());
                     intent.putExtra("hashtags", myMarker1.getHashtags());
+                    intent.putExtra("url",myMarker1.getUrl());
 
                     startActivity(intent);
                 }

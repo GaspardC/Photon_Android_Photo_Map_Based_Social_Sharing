@@ -24,7 +24,7 @@ public class FullScreenActivity extends AppCompatActivity {
 
         ImageView image = (ImageView) findViewById(R.id.fullscreen_image);
         Glide.with(this).load(url)
-                .thumbnail(0.3f)
+                .thumbnail(0.1f)
                 .into(image);
 
 
