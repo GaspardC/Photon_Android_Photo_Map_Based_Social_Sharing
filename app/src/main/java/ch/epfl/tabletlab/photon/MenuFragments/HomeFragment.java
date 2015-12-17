@@ -29,9 +29,11 @@ import android.support.v4.content.ContextCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -229,39 +231,52 @@ public class HomeFragment extends Fragment {
             }
         });
 
+        hastagsEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                    performSearch();
+                    return true;
+                }
+                return false;
+            }
+        });
+
+
         searchButton= (Button) getActivity().findViewById(R.id.search_right_menu);
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    searchButton.setBackground(getActivity().getDrawable(R.drawable.yellow_search));
-                    deleteButton.setBackground(getActivity().getDrawable(R.drawable.delete_yellow));
-                }
-
-
-                String text = String.valueOf(EditTextReformated);
-                if (text.isEmpty() || text.equals("null")) {
-                    text = getString(R.string.slogan);
-                }
-                hastags = new ArrayList<String>();
-                text = text.replace(" ", "");
-                String[] splitText = text.split("#");
-                for (int i = 0; i < splitText.length; i++) {
-                    if (!splitText[i].equals("")) {
-                        hastags.add(splitText[i]);
-                    }
-                }
-                if (!hastags.isEmpty()) {
-                    mapActive = false;
-                    HASHTAG_QUERY = true;
-                    doMapQuery(HASHTAG_QUERY);
-                }
-
+                performSearch();
             }
         });
     }
 
+    private void performSearch() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            searchButton.setBackground(getActivity().getDrawable(R.drawable.yellow_search));
+            deleteButton.setBackground(getActivity().getDrawable(R.drawable.delete_yellow));
+        }
+
+
+        String text = String.valueOf(EditTextReformated);
+        if (text.isEmpty() || text.equals("null")) {
+            text = getString(R.string.slogan);
+        }
+        hastags = new ArrayList<String>();
+        text = text.replace(" ", "");
+        String[] splitText = text.split("#");
+        for (int i = 0; i < splitText.length; i++) {
+            if (!splitText[i].equals("")) {
+                hastags.add(splitText[i]);
+            }
+        }
+        if (!hastags.isEmpty()) {
+            mapActive = false;
+            HASHTAG_QUERY = true;
+            doMapQuery(HASHTAG_QUERY);
+        }
+    }
 
 
     private void displayImage() {

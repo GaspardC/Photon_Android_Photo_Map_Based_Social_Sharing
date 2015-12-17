@@ -65,7 +65,11 @@
                     android:backgroundTint="@color/colorLightBlue"
                     android:selectAllOnFocus="false"
                     android:layout_marginRight="10dp"
-                    />
+                    android:inputType="text"
+                    android:singleLine="true"
+                    android:imeOptions="actionSearch"
+
+                />
             <Button
                 android:layout_width="33dp"
                 android:layout_height="33dp"
