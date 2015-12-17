@@ -18,6 +18,7 @@ import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 
+import ch.epfl.tabletlab.photon.ImageModel;
 import ch.epfl.tabletlab.photon.R;
 
 public class DetailSwipeActivity extends AppCompatActivity {
@@ -85,7 +86,7 @@ public class DetailSwipeActivity extends AppCompatActivity {
             public void onPageSelected(int position) {
 
                 //noinspection ConstantConditions
-                setTitle(data.get(position).getName());
+                setTitle(data.get(position).getHashtags());
 
             }
 
@@ -138,7 +139,7 @@ public class DetailSwipeActivity extends AppCompatActivity {
         public Fragment getItem(int position) {
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).
-            return PlaceholderFragment.newInstance(position, data.get(position).getName(), data.get(position).getUrl());
+            return PlaceholderFragment.newInstance(position, data.get(position).getHashtags(), data.get(position).getUrl());
         }
 
         @Override
@@ -149,7 +150,7 @@ public class DetailSwipeActivity extends AppCompatActivity {
 
         @Override
         public CharSequence getPageTitle(int position) {
-            return data.get(position).getName();
+            return data.get(position).getHashtags();
         }
     }
 

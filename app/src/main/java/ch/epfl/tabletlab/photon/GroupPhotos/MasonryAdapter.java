@@ -14,6 +14,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import java.util.ArrayList;
 import java.util.List;
 
+import ch.epfl.tabletlab.photon.ImageModel;
 import ch.epfl.tabletlab.photon.R;
 
 /**
@@ -27,9 +28,8 @@ public class MasonryAdapter extends RecyclerView.Adapter<MasonryAdapter.MasonryV
 
 
 
-
-
-    public MasonryAdapter(Context context, ArrayList<ImageModel> data) {
+    public
+    MasonryAdapter(Context context, ArrayList<ImageModel> data) {
         this.context = context;
         this.data = data;
         setNameList(data);
@@ -38,7 +38,7 @@ public class MasonryAdapter extends RecyclerView.Adapter<MasonryAdapter.MasonryV
     private void setNameList(ArrayList<ImageModel> data) {
 
         for (int position = 0; position<data.size();position++){
-            nameList.add(data.get(position).getName());
+            nameList.add(data.get(position).getHashtags());
         }
     }
 

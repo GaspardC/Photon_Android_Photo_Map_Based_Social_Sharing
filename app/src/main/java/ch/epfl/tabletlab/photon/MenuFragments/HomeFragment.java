@@ -67,7 +67,7 @@ import java.util.concurrent.ExecutionException;
 
 import ch.epfl.tabletlab.photon.DetailsActivity;
 import ch.epfl.tabletlab.photon.GroupPhotos.DetailGroupPhotoActivity;
-import ch.epfl.tabletlab.photon.LightMarker;
+import ch.epfl.tabletlab.photon.ImageModel;
 import ch.epfl.tabletlab.photon.MyMergeMarker;
 import ch.epfl.tabletlab.photon.PhotonPost;
 import ch.epfl.tabletlab.photon.MenuActivity;
@@ -488,12 +488,12 @@ public class HomeFragment extends Fragment {
                 if (myMarker1 instanceof MyMergeMarker){
                     Intent intent = new Intent(getActivity(), DetailGroupPhotoActivity.class);
                     HashSet<MyMarker> hashSet = ((MyMergeMarker) myMarker1).getMarkers();
-                    HashSet<LightMarker> lightHashSetMarker = new HashSet<LightMarker>();
+                    HashSet<ImageModel> imageHashSet = new HashSet<ImageModel>();
 
                     for (MyMarker marks : hashSet){
-                        lightHashSetMarker.add(new LightMarker(marks));
+                        imageHashSet.add(new ImageModel(marks));
                     }
-                    intent.putExtra("markers", lightHashSetMarker);
+                    intent.putExtra("markers", imageHashSet);
                     startActivity(intent);
 
                 }

@@ -13,7 +13,7 @@ import android.view.View;
 import java.util.ArrayList;
 import java.util.HashSet;
 
-import ch.epfl.tabletlab.photon.LightMarker;
+import ch.epfl.tabletlab.photon.ImageModel;
 import ch.epfl.tabletlab.photon.R;
 
 public class DetailGroupPhotoActivity extends AppCompatActivity {
@@ -33,11 +33,12 @@ public class DetailGroupPhotoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         Intent intent = getIntent();
-        HashSet<LightMarker> hashSet = (HashSet<LightMarker>) intent.getExtras().get("markers");
-        for(LightMarker marker : hashSet){
-            imgs.add(marker.getUrl());
-            if((marker.getHashtags()) != null){
-                hashatgs.add(marker.getHashtags());
+        HashSet<ImageModel> hashSet = (HashSet<ImageModel>) intent.getExtras().get("markers");
+
+        for(ImageModel image : hashSet){
+            imgs.add(image.getUrl());
+            if((image.getHashtags()) != null){
+                hashatgs.add(image.getHashtags());
             }
             else{
                 hashatgs.add("");
@@ -63,7 +64,7 @@ public class DetailGroupPhotoActivity extends AppCompatActivity {
         for (int i = 0; i < imgs.size(); i++) {
 
             ImageModel imageModel = new ImageModel();
-            imageModel.setName(hashatgs.get(i));
+            imageModel.setHashtags(hashatgs.get(i));
             imageModel.setUrl(imgs.get(i));
             data.add(imageModel);
         }

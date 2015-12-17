@@ -1,16 +1,16 @@
 package ch.epfl.tabletlab.photon;
 
 
-import android.graphics.Bitmap;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.widget.ImageView;
 
 import java.io.Serializable;
 
 /**
  * Created by Gasp on 15/12/15.
  */
-public class LightMarker implements Parcelable,Serializable{ //Serializable Marker without Bitmap
+public class ImageModel implements Parcelable,Serializable{ //Serializable Marker without Bitmap
 
     private String text;
     private String id;
@@ -18,16 +18,17 @@ public class LightMarker implements Parcelable,Serializable{ //Serializable Mark
     private String author;
     private String url;
 
-    public LightMarker(MyMarker marker ) {
+    public ImageModel(MyMarker marker) {
         this.text = marker.getText();
         this.id = marker.getId();
         this.hashtags = marker.getHashtags();
         this.author = marker.getAuthor();
         this.url = marker.getUrl();
     }
+    public ImageModel(){};
 
 
-    protected LightMarker(Parcel in) {
+    protected ImageModel(Parcel in) {
         text = in.readString();
         id = in.readString();
         hashtags = in.readString();
@@ -35,15 +36,15 @@ public class LightMarker implements Parcelable,Serializable{ //Serializable Mark
         url = in.readString();
     }
 
-    public static final Creator<LightMarker> CREATOR = new Creator<LightMarker>() {
+    public static final Creator<ImageModel> CREATOR = new Creator<ImageModel>() {
         @Override
-        public LightMarker createFromParcel(Parcel in) {
-            return new LightMarker(in);
+        public ImageModel createFromParcel(Parcel in) {
+            return new ImageModel(in);
         }
 
         @Override
-        public LightMarker[] newArray(int size) {
-            return new LightMarker[size];
+        public ImageModel[] newArray(int size) {
+            return new ImageModel[size];
         }
     };
 
