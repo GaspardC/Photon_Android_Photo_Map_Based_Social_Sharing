@@ -76,7 +76,7 @@ public class DetailsActivity extends AppCompatActivity {
         String markerId = null;
         String hashtags = null;
         String text = null;
-        String url = null;
+        url = null;
 
         assert origin != null;
         if(origin.equals("singlePhotos")){
