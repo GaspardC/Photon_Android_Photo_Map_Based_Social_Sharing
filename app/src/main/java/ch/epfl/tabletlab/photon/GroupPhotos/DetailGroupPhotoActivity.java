@@ -25,7 +25,8 @@ public class DetailGroupPhotoActivity extends AppCompatActivity {
 
     ArrayList<ImageModel> data = new ArrayList<>();
 
-    public  ArrayList<String> url = new ArrayList<>();
+    private   ArrayList<String> url = new ArrayList<>();
+    private   ArrayList<String> text = new ArrayList<>();
     private MasonryAdapter madapter;
     private  ArrayList<String> hashatgs = new ArrayList<>();
     private ArrayList<String> postId = new ArrayList<>();
@@ -39,6 +40,7 @@ public class DetailGroupPhotoActivity extends AppCompatActivity {
 
         for(ImageModel image : hashSet){
             url.add(image.getUrl());
+            text.add(image.getText());
             postId.add(image.getId());
             if((image.getHashtags()) != null){
                 hashatgs.add(image.getHashtags());
@@ -70,6 +72,7 @@ public class DetailGroupPhotoActivity extends AppCompatActivity {
             imageModel.setHashtags(hashatgs.get(i));
             imageModel.setUrl(url.get(i));
             imageModel.setId(postId.get(i));
+            imageModel.setText(text.get(i));
             data.add(imageModel);
         }
 

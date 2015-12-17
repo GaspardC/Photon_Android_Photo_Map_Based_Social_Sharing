@@ -364,19 +364,23 @@ public class HomeFragment extends Fragment {
                                                     hasMerged.add(myMarker2);
                                                 }
                                             }
-                                            // it means that we tried to add in a cluster but the near point was already taken by another cluster so it is alone again so add it with this cluster also
-                                            if (needToMerge.contains(myMarker1) ) {
-
-                                                if(!hasMerged.contains(myMarker1)){
-                                                    subHashMapMerge.add(myMarker1);
-                                                    hasMerged.add(myMarker1);
-                                                }
-                                            }
                                         }
                                     }
                                 }
                             }
+                        }                        // it means that we tried to add in a cluster but the near point was already taken by another cluster so it is alone again so add it with this cluster also
+                        if (needToMerge.contains(myMarker1) ) {
+                            if(subHashMapMerge.isEmpty()){
+                                markerNormal.add(myMarker1);
+                            }
+                            else{
+                                if(!hasMerged.contains(myMarker1)){
+                                    subHashMapMerge.add(myMarker1);
+                                    hasMerged.add(myMarker1);
+                                }
+                            }
                         }
+
                         if (!subHashMapMerge.isEmpty()) {
                             markersMerge.put(myMarker1.getId(), subHashMapMerge);
                         }
