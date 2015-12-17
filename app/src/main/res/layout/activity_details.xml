@@ -23,14 +23,14 @@
         android:layout_height="0dp"
         android:id="@+id/imageViewDetailed"
         android:layout_gravity="center"
-        android:background="@drawable/ic_launcher_photon"
-        android:onClick="displayImageFullScreen"/>
+        android:onClick="displayImageFullScreen"
+        />
 
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="3"
+        android:layout_weight="5"
         >
     <TextView
         android:layout_marginTop="20dp"
@@ -51,13 +51,13 @@
             android:orientation="vertical"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="2"
+            android:layout_weight="3"
             android:layout_marginTop="10dp"
             >
 
             <Button
                 android:layout_marginRight="5dp"
-                android:layout_weight="4"
+                android:layout_weight="6"
                 style="?android:attr/buttonStyleSmall"
                 android:layout_height="0dp"
                 android:maxWidth="10dp"
@@ -65,10 +65,10 @@
                 android:text="+1"
                 android:onClick="addLike"
                 android:layout_gravity="center"
-                android:background="@drawable/photon_like_button"
+                android:background="@drawable/photo_like_button_with_white"
                 android:id="@+id/buttonLike" />
         <TextView
-            android:layout_weight="1"
+            android:layout_weight="2"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:textAppearance="?android:attr/textAppearanceLarge"
@@ -108,7 +108,7 @@
         android:layout_gravity="center"
         />
     <TextView
-        android:layout_weight="1"
+        android:layout_weight="2"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:textAppearance="?android:attr/textAppearanceLarge"
@@ -119,5 +119,6 @@
         android:layout_gravity="center"
         android:textStyle="italic"
         android:textColor="@color/colorPrimary"
+        android:layout_marginBottom="10dp"
         />
 </LinearLayout>

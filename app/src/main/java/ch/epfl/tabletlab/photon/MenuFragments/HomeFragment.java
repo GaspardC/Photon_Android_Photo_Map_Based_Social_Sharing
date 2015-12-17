@@ -290,7 +290,7 @@ public class HomeFragment extends Fragment {
             HashSet hasMerged = new HashSet();
             HashSet<MyMarker> needToMerge = new HashSet<>();
 
-            float mergeDistance = 1500 + (float) (Math.pow(2.5,10)* 2500 / Math.pow(2.5,cameraPositionListener.zoom));
+            float mergeDistance = 500 + (float) (Math.pow(2.5,10)* 2500 / Math.pow(2.5,cameraPositionListener.zoom));
             Log.d("distance", " dist merge "+ (int) mergeDistance/1000);
             for(String currentKey :  toKeep.keySet())
             {
@@ -355,7 +355,14 @@ public class HomeFragment extends Fragment {
                                                     subHashMapMerge.add(myMarker2);
                                                     hasMerged.add(myMarker1);
                                                     hasMerged.add(myMarker2);
+                                                }
+                                            }
+                                            // it means that we tried to add in a cluster but the near point was already taken by another cluster so it is alone again so add it with this cluster also
+                                            if (needToMerge.contains(myMarker1) ) {
 
+                                                if(!hasMerged.contains(myMarker1)){
+                                                    subHashMapMerge.add(myMarker1);
+                                                    hasMerged.add(myMarker1);
                                                 }
                                             }
                                         }
@@ -367,14 +374,7 @@ public class HomeFragment extends Fragment {
                             markersMerge.put(myMarker1.getId(), subHashMapMerge);
                         }
                     }
-                        // it means that we tried to add in a cluster but the near point was already taken by another cluster so it is alone again
-                        if (needToMerge.contains(myMarker1) ) {
 
-                            if(!hasMerged.contains(myMarker1)){
-                                markerNormal.add(myMarker1);
-
-                            }
-                        }
                     }
                     else{
                         markerNormal.add(myMarker1);
@@ -719,8 +719,12 @@ public class HomeFragment extends Fragment {
                                     int widthPhoto = photo.getWidth();
                                     int heightPhoto = photo.getHeight();
 
+                                    int cadreWidth = cadre.getWidth();
+                                    int cadreHeight = cadre.getHeight();
+                                    Bitmap.Config config = cadre.getConfig();
 
-                                    bmOverlay = Bitmap.createBitmap(cadre.getWidth(), cadre.getHeight(), cadre.getConfig());
+
+                                    bmOverlay = Bitmap.createBitmap(cadreWidth, cadreHeight, config);
                                     Canvas canvas = new Canvas(bmOverlay);
                                     canvas.drawBitmap(cadre, new Matrix(), null);
                                     canvas.drawBitmap(roundPhoto, 8, 8, null);
