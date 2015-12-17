@@ -607,7 +607,7 @@ public class HomeFragment extends Fragment {
     /*
        * Set up the query to update the map view
        */
-    private void doMapQuery(boolean hashtagQuery) {
+    private void doMapQuery(final boolean hashtagQuery) {
 
 
 
@@ -798,7 +798,7 @@ public class HomeFragment extends Fragment {
                         }*/
                     }
                 }
-                displayAndCleanImagesIfTheyAreNotInTheServer(objects);
+                displayAndCleanImagesIfTheyAreNotInTheServer(objects,hashtagQuery);
             }
         });
     }
@@ -827,7 +827,7 @@ public class HomeFragment extends Fragment {
 
 
 
-    private void displayAndCleanImagesIfTheyAreNotInTheServer(List<PhotonPost> objects) {
+    private void displayAndCleanImagesIfTheyAreNotInTheServer(List<PhotonPost> objects, boolean hashtagQuery) {
 
         //if some objects are in toKeep but not in objects delete them
         // Loop through the results of the search
@@ -853,9 +853,10 @@ public class HomeFragment extends Fragment {
         for (String key : keyToRemove) {
             toKeep.remove(key);
         }
-
-//        displayImage();
-        //not needed anymore
+        if(hashtagQuery){
+            displayImage();
+        }
+        //not needed anymore if not an hastag query (already remove if hashtag query you have to redraw the cluster, or not
     }
     public static <T, E> T getKeyByValue(Map<T, E> map, E value) {
         for (Map.Entry<T, E> entry : map.entrySet()) {
