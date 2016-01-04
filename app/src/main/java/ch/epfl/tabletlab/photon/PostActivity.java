@@ -23,7 +23,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -35,14 +34,10 @@ import com.parse.ParseGeoPoint;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
-import org.json.JSONArray;
-
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 
 import ch.epfl.tabletlab.photon.MenuFragments.DataManager;
@@ -52,6 +47,11 @@ import ch.epfl.tabletlab.photon.MenuFragments.DataManager;
  */
 public class PostActivity extends Activity {
     private static final int REQUEST_TAKE_PHOTO = 0;
+
+    //THE SIZE MAX we use for photo (limitation of Out Of bond memory)
+    // The new size we want to scale to
+    private static final int REQUIRED_SIZE = 200;
+
     // UI references.
     private EditText postEditText;
     private TextView characterCountTextView;
@@ -78,6 +78,7 @@ public class PostActivity extends Activity {
     };
     private String fileName;
     private PhotonPost post;
+    private File photoFile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -186,29 +187,33 @@ public class PostActivity extends Activity {
       ParseFile pFile = new ParseFile("DocImage.jpg", bitmapdata);*/
 
 
+
         // Ensure bmp has value
         if (bmp == null || BmpFileName == null) {
             Log.d("Error", "Problem with image");
             return;
         }
 
-        //rotate image if need : some constructors have rotated the image when it is taken by the front cam
-        bmp =   rotateImage();
+
 
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         bmp.compress(Bitmap.CompressFormat.JPEG, 100, stream);
         text = text.replaceAll(" ", "_").toLowerCase();
         text = text.replaceAll("#", "_").toLowerCase();
+        text = text.replaceAll("!", "");
+        text = text.replaceAll("é", "");
 
         ParseFile pFile = new ParseFile(text + ".jpg", stream.toByteArray());
         post.put("image", pFile);
+        dialog.dismiss();
+
 
         pFile.saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {
 
-                if(e!= null){
-                    Toast.makeText(PostActivity.this,"there was a problem" + e.toString(), Toast.LENGTH_LONG).show();
+                if (e != null) {
+                    Toast.makeText(PostActivity.this, "there was a problem" + e.toString(), Toast.LENGTH_LONG).show();
                     return;
                 }
 
@@ -222,11 +227,12 @@ public class PostActivity extends Activity {
                 post.saveInBackground(new SaveCallback() {
                     @Override
                     public void done(ParseException e) {
-                        if(e!= null){
-                            Toast.makeText(PostActivity.this,"there was a problem" + e.toString(), Toast.LENGTH_LONG).show();
+                        if (e != null) {
+                            Toast.makeText(PostActivity.this, "there was a problem" + e.toString(), Toast.LENGTH_LONG).show();
                             return;
                         }
                         dialog.dismiss();
+                        Toast.makeText(getApplicationContext(),"Photo Uploaded",Toast.LENGTH_SHORT).show();
                         finish();
                     }
                 });
@@ -269,7 +275,7 @@ public class PostActivity extends Activity {
         return hashtags;
     }
 
-    private Bitmap rotateImage() {
+    private Bitmap rotateAndRedimensionningOfTheImage() {
 
         BitmapFactory.Options bounds = new BitmapFactory.Options();
         bounds.inJustDecodeBounds = true;
@@ -277,7 +283,18 @@ public class PostActivity extends Activity {
 
 
 
+
+        // Find the correct scale value. It should be the power of 2.
+        int scale = 1;
+        while(bounds.outWidth / scale / 2 >= REQUIRED_SIZE &&
+                bounds.outHeight / scale / 2 >= REQUIRED_SIZE) {
+            scale *= 2;
+        }
+
+
+
         BitmapFactory.Options opts = new BitmapFactory.Options();
+        opts.inSampleSize = scale;
         Bitmap bm = BitmapFactory.decodeFile(fileName, opts);
         ExifInterface exif = null;
         try {
@@ -295,7 +312,7 @@ public class PostActivity extends Activity {
         Matrix matrix = new Matrix();
         matrix.postRotate(rotationAngle);
 //        matrix.setRotate(rotationAngle, (float) bm.getWidth() / 2, (float) bm.getHeight() / 2);
-        return Bitmap.createBitmap(bm, 0, 0, bounds.outWidth, bounds.outHeight, matrix, true);
+        return Bitmap.createBitmap(bm, 0, 0, opts.outWidth, opts.outHeight, matrix, true);
     }
 
     private void launchCamera() throws IOException {
@@ -303,7 +320,7 @@ public class PostActivity extends Activity {
         String storageState = Environment.getExternalStorageState();
         if (storageState.equals(Environment.MEDIA_MOUNTED)) {
 
-            File photoFile = createImageFile();
+             photoFile = createImageFile();
 //            Log.i("DocumentActivity", path);
             BmpFileName = Uri.fromFile(photoFile);
 /*            i = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -367,21 +384,12 @@ public class PostActivity extends Activity {
 // TODO Auto-generated method stub
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
-            try {
-                bmp = MediaStore.Images.Media.getBitmap( this.getContentResolver(), BmpFileName);
-                BitmapFactory.Options bmOptions = new BitmapFactory.Options();
-                bmOptions.inJustDecodeBounds = true;
-                Bitmap bitmap1 = BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
-            } catch (FileNotFoundException e) {
-// TODO Auto-generated catch block
-                e.printStackTrace();
-            } catch (IOException e) {
 
-// TODO Auto-generated catch block
-                e.printStackTrace();
-            }
+            //rotate image just if needed : some constructors have rotated the image when it is taken by the front cam
+            // and dimensions max of 200
+            bmp =   rotateAndRedimensionningOfTheImage();
             if (bmp != null) {
-
+            Toast.makeText(getApplicationContext(),"problem with the image",Toast.LENGTH_SHORT).show();
             }
         }
     }
