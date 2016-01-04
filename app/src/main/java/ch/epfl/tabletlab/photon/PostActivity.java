@@ -23,6 +23,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -50,7 +51,7 @@ public class PostActivity extends Activity {
 
     //THE SIZE MAX we use for photo (limitation of Out Of bond memory)
     // The new size we want to scale to
-    private static final int REQUIRED_SIZE = 200;
+    private static final int REQUIRED_SIZE = 400;
 
     // UI references.
     private EditText postEditText;
@@ -201,7 +202,9 @@ public class PostActivity extends Activity {
         text = text.replaceAll(" ", "_").toLowerCase();
         text = text.replaceAll("#", "_").toLowerCase();
         text = text.replaceAll("!", "");
-        text = text.replaceAll("é", "");
+        text = text.replaceAll("é", "e");
+        text = text.replaceAll(",", "");
+
 
         ParseFile pFile = new ParseFile(text + ".jpg", stream.toByteArray());
         post.put("image", pFile);
@@ -388,9 +391,16 @@ public class PostActivity extends Activity {
             //rotate image just if needed : some constructors have rotated the image when it is taken by the front cam
             // and dimensions max of 200
             bmp =   rotateAndRedimensionningOfTheImage();
-            if (bmp != null) {
+            if (bmp == null) {
             Toast.makeText(getApplicationContext(),"problem with the image",Toast.LENGTH_SHORT).show();
             }
+            else{
+                ImageView preview = (ImageView) findViewById(R.id.previewImageView);
+                preview.setImageBitmap(bmp);
+            }
+        }
+        if (resultCode == RESULT_CANCELED){
+            onBackPressed();
         }
     }
 
@@ -413,14 +423,14 @@ public class PostActivity extends Activity {
             public void onProgressChanged(SeekBar seekBar, int progress,
                                           boolean fromUser) {
                 seekBarValueExpiration.setText(
-                        "  " + String.valueOf(progress) + " h visible to the world");
-                seekvalueExpiration[0] = progress;
+                        "  " + String.valueOf(progress + 24) + " h visible to the world");
+                seekvalueExpiration[0] = progress + 24;
                 PhotonApplication.HOUR_TO_KEEP_PHOTO_DISPLAYED = seekvalueExpiration[0];
-                if (seekvalueExpiration[0] == 48) {
+                if (seekvalueExpiration[0] == 96) {
                     seekBar.getProgressDrawable().setColorFilter(Color.YELLOW, PorterDuff.Mode.SRC_IN);
 
                 } else {
-                    seekBar.getProgressDrawable().setColorFilter(getResources().getColor(R.color.colorLightBlue), PorterDuff.Mode.SRC_IN);
+                    seekBar.getProgressDrawable().setColorFilter(getResources().getColor(R.color.com_facebook_blue), PorterDuff.Mode.SRC_IN);
 
                 }
             }
@@ -431,9 +441,8 @@ public class PostActivity extends Activity {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                currentUser.put("numberDisplayed", seekvalueExpiration[0]);
-                currentUser.saveInBackground();
                 PhotonApplication.HOUR_TO_KEEP_PHOTO_DISPLAYED = seekvalueExpiration[0];
+
             }
         });
 
