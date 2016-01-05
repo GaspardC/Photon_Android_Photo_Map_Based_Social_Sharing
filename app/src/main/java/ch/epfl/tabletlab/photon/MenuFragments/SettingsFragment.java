@@ -5,6 +5,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -43,9 +44,18 @@ public class SettingsFragment extends Fragment {
 
     private void setUpSwitchMap() {
         mapSwithch = (Switch) parentView.findViewById(R.id.switchMapType);
-        mapSwithch.setOnClickListener(new View.OnClickListener() {
+        if (PhotonApplication.MAP_TYPE == GoogleMap.MAP_TYPE_SATELLITE){
+            mapSwithch.setChecked(true);
+        }
+        else{
+            mapSwithch.setChecked(false);
+        }
+
+        mapSwithch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onClick(View v) {
+            public void onCheckedChanged(CompoundButton buttonView,
+                                         boolean isChecked) {
+
                 if(mapNormalMode){
                     mapNormalMode = false;
                     PhotonApplication.MAP_TYPE = GoogleMap.MAP_TYPE_SATELLITE;
@@ -54,6 +64,7 @@ public class SettingsFragment extends Fragment {
                     mapNormalMode = true;
                     PhotonApplication.MAP_TYPE = GoogleMap.MAP_TYPE_NORMAL;
                 }
+
             }
         });
     }

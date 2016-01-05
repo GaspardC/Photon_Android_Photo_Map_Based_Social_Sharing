@@ -154,6 +154,7 @@ public class PostActivity extends Activity {
         final ProgressDialog dialog = new ProgressDialog(PostActivity.this);
         dialog.setMessage(getString(R.string.progress_post));
         dialog.show();
+        postButton.setEnabled(false);
 
         // Create a post.
         post = new PhotonPost();
@@ -208,7 +209,6 @@ public class PostActivity extends Activity {
 
         ParseFile pFile = new ParseFile(text + ".jpg", stream.toByteArray());
         post.put("image", pFile);
-        dialog.dismiss();
 
 
         pFile.saveInBackground(new SaveCallback() {
@@ -235,6 +235,7 @@ public class PostActivity extends Activity {
                             return;
                         }
                         dialog.dismiss();
+                        postButton.setEnabled(true);
                         Toast.makeText(getApplicationContext(),"Photo Uploaded",Toast.LENGTH_SHORT).show();
                         finish();
                     }

@@ -26,7 +26,7 @@
             android:thumbTint="@color/colorLightBlue"
             android:progressTint="@color/colorLightBlue"
             android:progressBackgroundTint="@color/colorLightBlue"
-            android:max="48"
+            android:max="100"
             android:thumb="@android:drawable/btn_star_big_on"
             android:layout_weight="4"/>
         <TextView
@@ -43,8 +43,9 @@
     <Switch
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/map_type_sattelite"
         android:id="@+id/switchMapType"
+        android:text="@string/map_type_sattelite"
+        android:showText="true"
         android:layout_gravity="left|center_vertical" />
 
 
