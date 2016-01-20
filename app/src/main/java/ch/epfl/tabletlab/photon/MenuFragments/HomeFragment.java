@@ -647,7 +647,7 @@ public class HomeFragment extends Fragment {
         // If location info isn't available, clean up any existing markers
         if (myLoc == null) {
 //            cleanUpMarkers(new HashSet<String>());
-            Toast.makeText(this.getActivity(), "Unknown location", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this.getActivity(), "Unknown location", Toast.LENGTH_SHORT).show();
             return;
         }
         /*final ParseGeoPoint myPoint = DataManager.geoPointFromLocation(myLoc);
@@ -1128,12 +1128,20 @@ public class HomeFragment extends Fragment {
     @Override
      public void onResume() {
         super.onResume();
+        getActivity().findViewById(R.id.layout_middle_top).setVisibility(View.VISIBLE);
         if(myMapFragment.isVisible()){// if the map is ready
             if (!mapActive) return; // if th mode search by keyword is active
             HASHTAG_QUERY = false;
             doMapQuery(HASHTAG_QUERY);
 
         }
+
+    }
+
+    @Override
+    public void onPause(){
+        super.onPause();
+        getActivity().findViewById(R.id.layout_middle_top).setVisibility(View.GONE);
 
     }
 

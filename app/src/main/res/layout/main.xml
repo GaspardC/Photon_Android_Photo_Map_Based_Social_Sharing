@@ -54,18 +54,27 @@
                 android:layout_gravity="center"
 
                 >
+
+
+
                 <Button
+                    style="@style/MyMaterialTheme.PopupOverlay"
                     android:layout_marginRight="15dp"
+                    android:background="@drawable/icon_camera"
                     android:layout_width="35dp"
                     android:layout_height="35dp"
-                    android:background="@drawable/icon_camera"
                     android:id="@+id/camera_post"
                     android:layout_gravity="center"
-                    android:backgroundTint="@color/com_facebook_blue"
+                    android:height="@dimen/_10sdp"
+                    android:translationZ="@dimen/_100sdp"
+                    android:elevation="@dimen/_10sdp"
+                    android:shadowColor="@color/background_dark"
+                    android:stateListAnimator="@null"
                     />
 
 
-                    <EditText
+
+                <EditText
                         android:layout_marginLeft="10dp"
                         android:layout_marginRight="10dp"
                         android:layout_width="wrap_content"
@@ -81,7 +90,7 @@
                         android:layout_gravity="center"
                         android:singleLine="true"
                         android:imeOptions="actionSearch"
-                        android:gravity="end"
+                        android:gravity="center"
 
                         />
                     <Button
@@ -91,7 +100,7 @@
                         android:id="@+id/delete_right_menu"
                         android:layout_gravity="center"
                         android:layout_marginRight="15dp"
-                        android:backgroundTint="@color/com_facebook_blue"
+                        android:backgroundTint="@color/White"
                         />
 
             </LinearLayout>

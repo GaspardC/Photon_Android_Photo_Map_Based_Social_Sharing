@@ -32,6 +32,7 @@
         android:layout_weight="5"
         >
     <TextView
+        android:hint="#no hashtag"
         android:layout_marginTop="20dp"
         android:layout_weight="16"
         android:layout_width="0dp"
@@ -59,12 +60,13 @@
                 android:layout_weight="6"
                 style="?android:attr/buttonStyleSmall"
                 android:layout_height="0dp"
-                android:maxWidth="10dp"
-                android:layout_width="wrap_content"
+                android:layout_width="@dimen/_30sdp"
                 android:text="+1"
+                android:textColor="@color/White"
+                android:textSize="@dimen/_10sdp"
                 android:onClick="addLike"
                 android:layout_gravity="center"
-                android:background="@drawable/photo_like_button_with_white"
+                android:background="@drawable/test_buuton_like"
                 android:id="@+id/buttonLike" />
         <TextView
             android:layout_weight="2"
@@ -73,7 +75,7 @@
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="@string/likes"
             android:id="@+id/textViewLikes"
-            android:textSize="12sp"
+            android:textSize="@dimen/_10sdp"
             android:layout_marginRight="5dp"
             android:layout_gravity="center"
             android:gravity="center"
@@ -105,8 +107,13 @@
         android:layout_marginLeft="10dp"
         android:layout_marginEnd="77dp"
         android:layout_gravity="center"
+        android:background="@drawable/background_textview"
+        android:padding="@dimen/_3sdp"
+
+
         />
     <TextView
+        android:padding="@dimen/_5sdp"
         android:layout_weight="2"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -119,5 +126,6 @@
         android:textStyle="italic"
         android:textColor="@color/colorPrimary"
         android:layout_marginBottom="10dp"
+        android:textSize="@dimen/_8sdp"
         />
 </LinearLayout>

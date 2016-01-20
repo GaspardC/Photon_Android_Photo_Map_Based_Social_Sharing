@@ -27,7 +27,7 @@
     <string name="search_distance">Search Distance</string>
     <string name="logout_full">Log out of Photon</string>
     <string name="post">Post</string>
-    <string name="prompt_post">Post what wou want here</string>
+    <string name="prompt_post">Post what wou want here ex : \"Amazing concert here #Davide #Bowie\"</string>
     <string name="post_out_of_range">Can\'t view post! Get closer.</string>
     <string name="progress_post">Posting&#8230;</string>
     <string name="progress_map_init">loading&#8230;</string>

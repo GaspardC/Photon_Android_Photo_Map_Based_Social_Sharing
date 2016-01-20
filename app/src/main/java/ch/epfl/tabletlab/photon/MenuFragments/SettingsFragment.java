@@ -84,7 +84,7 @@ public class SettingsFragment extends Fragment {
         int seekbarValueInit = currentUser.getInt("numberDisplayed");
         if(0 != seekbarValueInit){
             seekBarNumber.setProgress(seekbarValueInit);
-            seekBarValue.setText(String.valueOf(seekbarValueInit)+ " displayed");
+            seekBarValue.setText("maximum " + String.valueOf(seekbarValueInit)+ " photos displayed");
         }
 
         final int[] seekvalue = {0};

@@ -10,13 +10,16 @@
     android:background="@drawable/cloud">
 
     <ImageView
+        android:layout_marginTop="@dimen/_20sdp"
         android:layout_width="wrap_content"
         android:layout_height="@dimen/_200sdp"
         android:id="@+id/previewImageView"
         android:src="@drawable/button"
         android:layout_centerHorizontal="true"
         android:layout_above="@+id/character_count_textview"
-        android:layout_marginBottom="@dimen/_100sdp"
+        android:layout_marginBottom="@dimen/_50sdp"
+        android:elevation="@dimen/_10sdp"
+        android:background="@color/colorLightBlue"
         />
 
     <EditText

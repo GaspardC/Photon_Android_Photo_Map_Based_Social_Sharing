@@ -26,8 +26,12 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 
@@ -109,9 +113,18 @@ public class DetailsActivity extends AppCompatActivity {
 
 
         numberLikes = post.getLikes();
+        Date date = (Date) post.getCreatedAt();
+        SimpleDateFormat formatterDay = new SimpleDateFormat("dd");
+        SimpleDateFormat formatterMonth = new SimpleDateFormat("MMMM", Locale.UK);
+
+        SimpleDateFormat formatterHour = new SimpleDateFormat("HH");
+        String day1 = formatterDay.format(date);
+        int nDay = Integer.valueOf(day1);
+        String days = day1 + getDayOfMonthSuffix(nDay);
+        String now = " on the " + days + " of " + formatterMonth.format(date) + " at " + formatterHour.format(date) + "h";
         likeText.setText(numberLikes + " likes");
 
-        textViewAuthor.setText("by @" + post.getAuthor());
+        textViewAuthor.setText("posted by @" + post.getAuthor() + now) ;
 
         toolbar = (Toolbar) findViewById(R.id.detail_toolbar);
         setSupportActionBar(toolbar);
@@ -125,6 +138,18 @@ public class DetailsActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private String getDayOfMonthSuffix(final int n) {
+        if (n >= 11 && n <= 13) {
+            return "th";
+        }
+        switch (n % 10) {
+            case 1:  return "st";
+            case 2:  return "nd";
+            case 3:  return "rd";
+            default: return "th";
+        }
     }
 
     public void addLike(View view) throws IOException, ClassNotFoundException {
