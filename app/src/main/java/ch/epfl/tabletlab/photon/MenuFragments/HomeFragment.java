@@ -325,6 +325,7 @@ public class HomeFragment extends Fragment {
                     }
                 }
             }
+            MyMarker groupMeLostMarker = null;
             for(String currentKey :  toKeep.keySet())
             {
                 if(countMaxMarkerDisplayed1<PhotonApplication.MAX_POST_SEARCH_RESULTS) {
@@ -362,16 +363,24 @@ public class HomeFragment extends Fragment {
                                                     subHashMapMerge.add(myMarker2);
                                                     hasMerged.add(myMarker1);
                                                     hasMerged.add(myMarker2);
+                                                    groupMeLostMarker = myMarker1;
                                                 }
                                             }
                                         }
                                     }
                                 }
                             }
-                        }                        // it means that we tried to add in a cluster but the near point was already taken by another cluster so it is alone again so add it with this cluster also
+                        }
+                        // it means that we tried to add in a cluster but the near point was already taken by another cluster so it is alone again so add it with this cluster also
                         if (needToMerge.contains(myMarker1) ) {
                             if(subHashMapMerge.isEmpty()){
-                                markerNormal.add(myMarker1);
+                                if (groupMeLostMarker != null){
+                                    HashSet<MyMarker> sub = (HashSet<MyMarker>) markersMerge.get(groupMeLostMarker.getId());
+                                    sub.add(myMarker1);
+                                }
+                                else{
+                                    markerNormal.add(myMarker1);
+                                }
                             }
                             else{
                                 if(!hasMerged.contains(myMarker1)){

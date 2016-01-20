@@ -10,9 +10,7 @@
 
     <color name="bright_foreground_light_disabled">#80000000</color>
     <color name="background_dark">#ff000000</color>
-
-
-
+    <color name="white">#ffff</color>
 
 
 </resources>

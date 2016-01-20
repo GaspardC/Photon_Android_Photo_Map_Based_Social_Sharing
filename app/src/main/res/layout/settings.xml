@@ -23,8 +23,8 @@
             android:id="@+id/seekBarRestaurantDistance"
             android:layout_gravity="center_horizontal"
             android:scrollIndicators="right"
-            android:thumbTint="@color/colorLightBlue"
-            android:progressTint="@color/colorLightBlue"
+            android:thumbTint="@color/com_facebook_blue"
+            android:progressTint="@color/com_facebook_blue"
             android:progressBackgroundTint="@color/colorLightBlue"
             android:max="100"
             android:thumb="@android:drawable/btn_star_big_on"
@@ -40,13 +40,32 @@
             />
     </LinearLayout>
 
-    <Switch
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/switchMapType"
-        android:text="@string/map_type_sattelite"
-        android:showText="true"
-        android:layout_gravity="left|center_vertical" />
+        android:orientation="horizontal"
+        android:layout_gravity="left|center_vertical">
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/map_type_sattelite"
+            android:layout_marginRight="@dimen/_10sdp"
+            android:textColor="@color/white"
+            />
+
+    <Switch
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:id="@+id/switchMapType"
+        android:text=""
+        android:theme="@style/AppTheme"
+        />
+
+
+
+    </LinearLayout>
 
 </FrameLayout>
