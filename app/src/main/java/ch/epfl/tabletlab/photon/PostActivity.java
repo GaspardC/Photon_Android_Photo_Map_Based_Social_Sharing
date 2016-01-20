@@ -205,6 +205,8 @@ public class PostActivity extends Activity {
         text = text.replaceAll("!", "");
         text = text.replaceAll("é", "e");
         text = text.replaceAll(",", "");
+        text = text.replaceAll("'", "");
+
 
 
         ParseFile pFile = new ParseFile(text + ".jpg", stream.toByteArray());

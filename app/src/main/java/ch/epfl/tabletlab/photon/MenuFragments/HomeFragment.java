@@ -107,6 +107,7 @@ public class HomeFragment extends Fragment {
 
     // Maximum post search radius for map in kilometers
     public static int MAX_POST_SEARCH_DISTANCE = 100;
+    private final MenuActivity parentActivity;
 
     private View parentView;
     private ResideMenu resideMenu;
@@ -142,11 +143,9 @@ public class HomeFragment extends Fragment {
     private Dialog dialogHashtag;
 
 
-/*
     public HomeFragment(MenuActivity menuActivity) {
          parentActivity = menuActivity;
     }
-*/
 
 
     @Override
@@ -222,6 +221,10 @@ public class HomeFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence sequence, int start, int before, int count) {
+                boolean isAdded = isAdded();
+
+                if(isAdded){
+
                 hastagsEditText.setTextColor(getResources().getColor(R.color.grayColorText));
                 if (hastagsEditText.length() > 20) {
                     sequence = hastagsEditText.getText().subSequence(0, 20);
@@ -232,6 +235,7 @@ public class HomeFragment extends Fragment {
                 EditTextReformated = EditTextReformated.toLowerCase();
                 EditTextReformated = EditTextReformated.replaceAll(" ", " #");
                 Log.d("searchtext", EditTextReformated);
+                }
 
             }
 
@@ -306,8 +310,8 @@ public class HomeFragment extends Fragment {
             HashSet hasMerged = new HashSet();
             HashSet<MyMarker> needToMerge = new HashSet<>();
 
-            float mergeDistance = 500 + (float) (Math.pow(2.5,10)* 2500 / Math.pow(2.5,cameraPositionListener.zoom));
-            Log.d("distance", " dist merge "+ (int) mergeDistance/1000);
+            float mergeDistance =  (float) (500 + Math.pow(2.5,10)* 2500 / Math.pow(2.5,cameraPositionListener.zoom));
+            Log.d("distance", " dist merge "+  mergeDistance/1000 + " zoom " + cameraPositionListener.zoom);
             for(String currentKey :  toKeep.keySet())
             {
                 if(countMaxMarkerDisplayed0<PhotonApplication.MAX_POST_SEARCH_RESULTS) {
@@ -1128,6 +1132,8 @@ public class HomeFragment extends Fragment {
     @Override
      public void onResume() {
         super.onResume();
+        boolean isAdded = isAdded();
+
         getActivity().findViewById(R.id.layout_middle_top).setVisibility(View.VISIBLE);
         if(myMapFragment.isVisible()){// if the map is ready
             if (!mapActive) return; // if th mode search by keyword is active
@@ -1141,7 +1147,7 @@ public class HomeFragment extends Fragment {
     @Override
     public void onPause(){
         super.onPause();
-        getActivity().findViewById(R.id.layout_middle_top).setVisibility(View.GONE);
+        getActivity().findViewById(R.id.layout_middle_top).setVisibility(View.INVISIBLE);
 
     }
 
