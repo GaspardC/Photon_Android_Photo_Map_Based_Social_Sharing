@@ -2,6 +2,7 @@ package ch.epfl.tabletlab.photon.MenuFragments;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -22,6 +23,8 @@ import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.SystemClock;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -31,8 +34,11 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -133,6 +139,7 @@ public class HomeFragment extends Fragment {
     private Bitmap mergeMarkerImage;
     private float previousZoom = 10;
     private CameraPosition cameraPositionListener;
+    private Dialog dialogHashtag;
 
 
 /*
@@ -197,6 +204,8 @@ public class HomeFragment extends Fragment {
                     deleteButton.setBackground(getActivity().getDrawable(R.drawable.delete));
                 }
                 hastagsEditText.setTextColor(getResources().getColor(R.color.grayColorTextHint));
+                mapActive = true;
+                onResume();
 
             }
         });
@@ -660,10 +669,15 @@ public class HomeFragment extends Fragment {
         mapQuery.findInBackground(new FindCallback<PhotonPost>() {
             @Override
             public void done(List<PhotonPost> objects, ParseException e) {
-                    //change color of search item
+                //change color of search item
 
-                    // hide keyboard
-                if(getActivity()!=null) {
+                if (objects.size() == 0 && hashtagQuery) {
+                    Toast.makeText(getActivity(), "no result found, try other hashtags", Toast.LENGTH_LONG).show();
+                    showCustomDialog();
+
+                }
+                // hide keyboard
+                if (getActivity() != null) {
                     View view = getActivity().getCurrentFocus();
                     if (view != null) {
                         InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -819,9 +833,60 @@ public class HomeFragment extends Fragment {
                         }*/
                     }
                 }
-                displayAndCleanImagesIfTheyAreNotInTheServer(objects,hashtagQuery);
+                displayAndCleanImagesIfTheyAreNotInTheServer(objects, hashtagQuery);
             }
         });
+    }
+
+    private void showCustomDialog() {
+        dialogHashtag = new Dialog(getActivity(), android.R.style.Theme_Translucent);
+        dialogHashtag.requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+        dialogHashtag.setCancelable(true);
+        dialogHashtag.setContentView(R.layout.dialog_no_hashtag);
+
+        /*etSearch = (EditText) dialog.findViewById(R.id.etsearch);
+        btnSearch = (Button) dialog.findViewById(R.id.btnsearch);
+        btnCancel = (Button) dialog.findViewById(R.id.btncancel);
+
+        btnSearch.setOnClickListener(this);
+        btnCancel.setOnClickListener(this);*/
+        Button buttonDialog = (Button) dialogHashtag.findViewById(R.id.DialogHashtagButtonOk);
+        buttonDialog.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialogHashtag.dismiss();
+               /* InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.showSoftInput(hastagsEditText, InputMethodManager.SHOW_IMPLICIT);
+                getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);*/
+                (new Handler()).postDelayed(new Runnable() {
+
+                    public void run() {
+//              ((EditText) findViewById(R.id.et_find)).requestFocus();
+//
+//              InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+//              imm.showSoftInput(yourEditText, InputMethodManager.SHOW_IMPLICIT);
+
+                        hastagsEditText.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_DOWN, 0, 0, 0));
+                        hastagsEditText.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_UP , 0, 0, 0));
+
+                    }
+                }, 200);
+
+            }
+        });
+        Button buttonDialogCancel = (Button) dialogHashtag.findViewById(R.id.DialogHashtagButtonNoThanks);
+        buttonDialogCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialogHashtag.dismiss();
+                mapActive = true;
+                onResume();
+            }
+        });
+
+
+        dialogHashtag.show();
     }
 
     public static Bitmap getRoundedCornerBitmap(Bitmap bitmap, int pixels) {

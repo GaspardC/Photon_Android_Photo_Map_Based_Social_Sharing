@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content" android:layout_gravity="center"
+    android:background="@drawable/bgdialog"
+    android:orientation="vertical" >
+
+
+    <TextView
+        android:gravity="center"
+        android:id="@+id/tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="No result found, try some other hashtags :)"
+        android:layout_marginLeft="@dimen/_10sdp"
+        android:layout_marginRight="@dimen/_10sdp"
+        android:layout_marginBottom="@dimen/_10sdp"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/_10sdp"
+        android:layout_gravity="center"
+        android:orientation="horizontal"
+
+        >
+
+    <Button
+        android:id="@+id/DialogHashtagButtonOk"
+        android:layout_marginTop="@dimen/_1sdp"
+        android:text="try again"
+        android:textColor="#FFFFFF"
+        android:textSize="@dimen/_15sdp"
+        android:layout_weight="1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/button_shape"
+        android:shadowColor="#A8A8A8"
+        android:shadowDx="0"
+        android:textAllCaps="false"
+        android:shadowDy="0"
+        android:shadowRadius="5"
+        android:layout_marginRight="@dimen/_5sdp"
+        />
+
+        <Button
+            android:layout_marginLeft="@dimen/_5sdp"
+            android:layout_weight="1"
+            android:id="@+id/DialogHashtagButtonNoThanks"
+            android:layout_marginTop="@dimen/_1sdp"
+            android:text="no thanks"
+            android:textColor="#FFFFFF"
+            android:textSize="@dimen/_15sdp"
+            android:textAllCaps="false"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/button_shape"
+            android:shadowColor="#A8A8A8"
+            android:shadowDx="0"
+            android:shadowDy="0"
+            android:shadowRadius="5"
+            />
+
+    </LinearLayout>
+
+
+
+</LinearLayout>

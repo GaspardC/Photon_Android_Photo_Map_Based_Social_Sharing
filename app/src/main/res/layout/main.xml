@@ -72,8 +72,8 @@
                         android:layout_height="wrap_content"
                         android:padding="7dp"
                         android:id="@+id/hashtags_text_view"
-                        android:hint="@string/slogan"
-                        android:textSize="24sp"
+                        android:hint="try to search for some #hastags"
+                        android:textSize="@dimen/_11sdp"
                         android:textColor="@color/grayColorTextHint"
                         android:backgroundTint="@color/colorLightBlue"
                         android:selectAllOnFocus="false"
@@ -81,6 +81,7 @@
                         android:layout_gravity="center"
                         android:singleLine="true"
                         android:imeOptions="actionSearch"
+                        android:gravity="end"
 
                         />
                     <Button
