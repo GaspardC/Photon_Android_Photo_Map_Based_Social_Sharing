@@ -1,14 +1,14 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:facebook="http://schemas.android.com/apk/res-auto"
     android:paddingTop="@dimen/com_parse_ui_vertical_margin"
     android:paddingLeft="@dimen/com_parse_ui_horizontal_margin"
     android:paddingRight="@dimen/com_parse_ui_horizontal_margin"
     android:paddingBottom="@dimen/com_parse_ui_vertical_margin"
     android:gravity="center"
     android:orientation="vertical"
-    android:background="@drawable/small_background_cloud"
-    >
+    android:background="@drawable/small_background_cloud">
 
     <include
         layout="@layout/com_parse_ui_parse_login_app_logo"
@@ -22,6 +22,14 @@
         android:layout_weight="0.5"
         android:gravity="center"
         android:orientation="vertical">
+        <com.facebook.login.widget.ProfilePictureView
+            android:id="@+id/avatar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            facebook:com_facebook_preset_size="large"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="@dimen/_10sdp"
+            />
 
         <TextView
             android:id="@+id/profile_title"
@@ -47,6 +55,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:orientation="horizontal">
+
             <Button
                 android:layout_marginTop="3dp"
                 android:id="@+id/login_or_logout_button"

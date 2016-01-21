@@ -30,6 +30,8 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.facebook.AccessToken;
+import com.facebook.login.widget.ProfilePictureView;
 import com.parse.ParseUser;
 import com.parse.ui.ParseLoginBuilder;
 
@@ -48,7 +50,7 @@ public class ProfileActivity extends Activity {
   private TextView emailTextView;
   private TextView nameTextView;
   private Button loginOrLogoutButton;
-
+  private static ProfilePictureView avatar;
   private ParseUser currentUser;
   private Button beginButton;
 
@@ -64,6 +66,11 @@ public class ProfileActivity extends Activity {
     beginButton = (Button) findViewById(R.id.goToHome_Button);
     titleTextView.setText(R.string.profile_title_logged_in);
 
+    avatar = (ProfilePictureView) findViewById(R.id.avatar);
+    AccessToken accessToken = AccessToken.getCurrentAccessToken();
+    if (accessToken != null) {
+      avatar.setProfileId(accessToken.getUserId());
+    }
     loginOrLogoutButton.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View v) {
@@ -101,6 +108,10 @@ public class ProfileActivity extends Activity {
     titleTextView.setText(R.string.profile_title_logged_in);
     emailTextView.setText(currentUser.getEmail());
     beginButton.setVisibility(View.VISIBLE);
+    AccessToken accessToken = AccessToken.getCurrentAccessToken();
+    if (accessToken != null) {
+      avatar.setProfileId(accessToken.getUserId());
+    }
     String fullName = currentUser.getString("name");
     if (fullName != null) {
       nameTextView.setText(fullName);
@@ -117,6 +128,8 @@ public class ProfileActivity extends Activity {
     nameTextView.setText("");
     beginButton.setVisibility(View.GONE);
     loginOrLogoutButton.setText(R.string.profile_login_button_label);
+    avatar.setProfileId(null);
+
   }
 
   public void goToMapActivity(View v){
