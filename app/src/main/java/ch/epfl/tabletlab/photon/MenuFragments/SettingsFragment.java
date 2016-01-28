@@ -56,13 +56,11 @@ public class SettingsFragment extends Fragment {
             public void onCheckedChanged(CompoundButton buttonView,
                                          boolean isChecked) {
 
-                if(mapNormalMode){
-                    mapNormalMode = false;
-                    PhotonApplication.MAP_TYPE = GoogleMap.MAP_TYPE_SATELLITE;
+                if(PhotonApplication.MAP_TYPE == GoogleMap.MAP_TYPE_SATELLITE){
+                    PhotonApplication.MAP_TYPE = GoogleMap.MAP_TYPE_NORMAL;
                 }
                 else{
-                    mapNormalMode = true;
-                    PhotonApplication.MAP_TYPE = GoogleMap.MAP_TYPE_NORMAL;
+                    PhotonApplication.MAP_TYPE = GoogleMap.MAP_TYPE_SATELLITE;
                 }
 
             }

@@ -39,6 +39,7 @@ import com.facebook.GraphResponse;
 import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseFacebookUtils;
+import com.parse.ParseGeoPoint;
 import com.parse.ParseTwitterUtils;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
@@ -266,6 +267,11 @@ public class ParseLoginFragment extends ParseLoginFragmentBase {
                 if (fbUser != null && parseUser != null
                         && fbUser.optString("name").length() > 0) {
                   parseUser.put(USER_OBJECT_NAME_FIELD, fbUser.optString("name"));
+                  ParseGeoPoint tempLoc = new ParseGeoPoint(45.764043,4.835659);
+                  parseUser.put("Location", tempLoc);
+                  parseUser.put("numberDisplayed",100);
+
+
                   parseUser.saveInBackground(new SaveCallback() {
                     @Override
                     public void done(ParseException e) {
@@ -345,6 +351,10 @@ public class ParseLoginFragment extends ParseLoginFragmentBase {
                   real name instead, you can implement additional calls to the
                   Twitter API to fetch it.
                 */
+                ParseGeoPoint tempLoc = new ParseGeoPoint(45.764043,4.835659);
+                user.put("Location", tempLoc);
+                user.put("numberDisplayed",100);
+
                 user.put(USER_OBJECT_NAME_FIELD, twitterUser.getScreenName());
                 user.saveInBackground(new SaveCallback() {
                   @Override

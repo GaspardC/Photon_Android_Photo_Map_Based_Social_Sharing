@@ -48,6 +48,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/layout_middle_top"
                 android:gravity="center"
+                android:layout_marginLeft="@dimen/_3sdp"
                 android:layout_marginTop="5dp"
                 android:layout_marginBottom="5dp"
                 android:padding="5dp"
@@ -59,7 +60,8 @@
 
                 <Button
                     style="@style/MyMaterialTheme.PopupOverlay"
-                    android:layout_marginRight="15dp"
+                    android:layout_marginRight="@dimen/_6sdp"
+                    android:layout_marginLeft="@dimen/_6sdp"
                     android:background="@drawable/icon_camera"
                     android:layout_width="35dp"
                     android:layout_height="35dp"

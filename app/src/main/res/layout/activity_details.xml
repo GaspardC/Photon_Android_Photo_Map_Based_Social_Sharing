@@ -40,9 +40,8 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Large Text"
         android:id="@+id/textViewHashtagDetailed"
-        android:layout_marginRight="10dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginEnd="77dp"
+        android:layout_marginRight="@dimen/_10sdp"
+        android:layout_marginLeft="@dimen/_10sdp"
         android:textStyle="bold"
         android:layout_gravity="center"
         />
@@ -52,7 +51,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="3"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="@dimen/_10sdp"
             >
 
             <Button
@@ -86,7 +85,7 @@
                 android:layout_height="0dp"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:text=""
-                android:textSize="12sp"
+                android:textSize="@dimen/_12sdp"
                 android:layout_marginRight="5dp"
                 android:layout_gravity="center"
                 android:gravity="center"
@@ -103,9 +102,8 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Large Text"
         android:id="@+id/textViewTextDetailed"
-        android:layout_marginRight="10dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginEnd="77dp"
+        android:layout_marginRight="@dimen/_10sdp"
+        android:layout_marginLeft="@dimen/_10sdp"
         android:layout_gravity="center"
         android:background="@drawable/background_textview"
         android:padding="@dimen/_3sdp"
@@ -125,7 +123,7 @@
         android:layout_gravity="center"
         android:textStyle="italic"
         android:textColor="@color/colorPrimary"
-        android:layout_marginBottom="10dp"
+        android:layout_marginBottom="@dimen/_10sdp"
         android:textSize="@dimen/_8sdp"
         />
 </LinearLayout>

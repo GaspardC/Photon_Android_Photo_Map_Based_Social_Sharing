@@ -8,7 +8,7 @@ import com.parse.Parse;
 import com.parse.ParseFacebookUtils;
 import com.parse.ParseObject;
 import com.parse.ParseTwitterUtils;
-
+import com.parse.ParseUser;
 
 
 public class PhotonApplication extends android.app.Application {
@@ -53,6 +53,7 @@ public class PhotonApplication extends android.app.Application {
     Parse.setLogLevel(Parse.LOG_LEVEL_DEBUG);
 
     ParseFacebookUtils.initialize(this);
+    ParseUser.enableRevocableSessionInBackground();
 
     // Optional - If you don't want to allow Twitter login, you can
     // remove this line (and other related ParseTwitterUtils calls)

@@ -72,7 +72,7 @@ public class MenuActivity extends FragmentActivity implements View.OnClickListen
             mContext = this;
             setUpMenu();
             if( savedInstanceState == null )
-                changeFragment(new HomeFragment(this));
+                changeFragment(new HomeFragment());
         }
 
 
@@ -138,7 +138,7 @@ public class MenuActivity extends FragmentActivity implements View.OnClickListen
         public void onClick(View view) {
 
             if (view == itemHome){
-                changeFragment(new HomeFragment(this));
+                changeFragment(new HomeFragment());
             }else if (view == itemProfile){
 
                 Intent intent = new Intent(this, ProfileActivity.class);

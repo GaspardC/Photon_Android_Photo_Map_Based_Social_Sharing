@@ -107,7 +107,6 @@ public class HomeFragment extends Fragment {
 
     // Maximum post search radius for map in kilometers
     public static int MAX_POST_SEARCH_DISTANCE = 100;
-    private final MenuActivity parentActivity;
 
     private View parentView;
     private ResideMenu resideMenu;
@@ -143,8 +142,7 @@ public class HomeFragment extends Fragment {
     private Dialog dialogHashtag;
 
 
-    public HomeFragment(MenuActivity menuActivity) {
-         parentActivity = menuActivity;
+    public HomeFragment() {
     }
 
 
@@ -329,7 +327,7 @@ public class HomeFragment extends Fragment {
                         loc2.setLongitude(myMarker2.getmLongitude());
 
                         double distanceInMeters = loc1.distanceTo(loc2);
-                        if (distanceInMeters != 0 && distanceInMeters < mergeDistance) {
+                        if (myMarker1.getId() != myMarker2.getId() && distanceInMeters < mergeDistance) {
 
                             needToMerge.add(myMarker1);//only done once
                             needToMerge.add(myMarker2);
@@ -368,7 +366,7 @@ public class HomeFragment extends Fragment {
                                         loc2.setLongitude(myMarker2.getmLongitude());
 
                                         double distanceInMeters = loc1.distanceTo(loc2);
-                                        if (distanceInMeters != 0 && distanceInMeters < mergeDistance) {
+                                        if ( distanceInMeters < mergeDistance) {
 
                                             if (!subHashMapMerge.contains(myMarker2)) {
                                                 if (needToMerge.contains(myMarker1) && needToMerge.contains(myMarker2)) {
@@ -616,6 +614,8 @@ public class HomeFragment extends Fragment {
 //                R.id.map)).getMap();
         // Changing map type
 
+        if(myMapFragment != null){
+
         myMapFragment.getMap().setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
             public void onCameraChange(CameraPosition position) {
                 // When the camera changes, update the query
@@ -635,6 +635,8 @@ public class HomeFragment extends Fragment {
                 }
             }
         });
+        }
+
 
     }
 
@@ -675,7 +677,7 @@ public class HomeFragment extends Fragment {
             public void done(List<PhotonPost> objects, ParseException e) {
                 //change color of search item
 
-                if (objects.size() == 0 && hashtagQuery) {
+                if (objects!= null && objects.size() == 0 && hashtagQuery) {
                     Toast.makeText(getActivity(), "no result found, try other hashtags", Toast.LENGTH_LONG).show();
                     showCustomDialog();
 
@@ -950,8 +952,10 @@ public class HomeFragment extends Fragment {
     }
     public static <T, E> T getKeyByValue(Map<T, E> map, E value) {
         for (Map.Entry<T, E> entry : map.entrySet()) {
-            if (Objects.equals(value, entry.getValue())) {
-                return entry.getKey();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                if (Objects.equals(value, entry.getValue())) {
+                    return entry.getKey();
+                }
             }
         }
         return null;

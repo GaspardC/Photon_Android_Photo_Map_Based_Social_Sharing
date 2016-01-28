@@ -200,12 +200,14 @@ public class PostActivity extends Activity {
 
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         bmp.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-        text = text.replaceAll(" ", "_").toLowerCase();
+        /*text = text.replaceAll(" ", "_").toLowerCase();
         text = text.replaceAll("#", "_").toLowerCase();
         text = text.replaceAll("!", "");
         text = text.replaceAll("é", "e");
         text = text.replaceAll(",", "");
-        text = text.replaceAll("'", "");
+        text = text.replaceAll("'", "");*/
+        text = text.replaceAll("[^a-zA-Z0-9]+","");
+
 
 
 
@@ -318,6 +320,7 @@ public class PostActivity extends Activity {
         Matrix matrix = new Matrix();
         matrix.postRotate(rotationAngle);
 //        matrix.setRotate(rotationAngle, (float) bm.getWidth() / 2, (float) bm.getHeight() / 2);
+        Log.d("photo",opts.outWidth + " "+ opts.outHeight);
         return Bitmap.createBitmap(bm, 0, 0, opts.outWidth, opts.outHeight, matrix, true);
     }
 
