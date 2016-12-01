@@ -2,6 +2,7 @@
 <merge xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <ImageView
+        android:layout_marginTop="@dimen/_60sdp"
         android:id="@+id/iv_background"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -9,6 +10,7 @@
         android:scaleType="centerCrop" />
 
     <ImageView
+        android:layout_marginTop="@dimen/_60sdp"
         android:id="@+id/iv_shadow"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"

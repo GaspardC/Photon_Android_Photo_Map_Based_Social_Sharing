@@ -4,9 +4,9 @@ android {
     signingConfigs {
         config {
             keyAlias 'PhotonAndroidKey'
-            keyPassword 'Securite33'
+            keyPassword 'XXXXXXXXX'
             storeFile file('/Users/Gasp/.android/keystore.jks')
-            storePassword 'Securite33'
+            storePassword 'XXXXXXX'
         }
     }
     compileSdkVersion 23
@@ -16,8 +16,8 @@ android {
         applicationId "ch.epfl.tabletlab.photon"
         minSdkVersion 19
         targetSdkVersion 23
-        versionCode 26
-        versionName "1.0.6" +
+        versionCode 27
+        versionName "1.0.7" +
                 ""
     }
     buildTypes {
@@ -60,5 +60,3 @@ dependencies {
 
 
 }
-
-

@@ -584,7 +584,7 @@ public class HomeFragment extends Fragment {
 
     private void setUpMap() {
 
-        fm=getChildFragmentManager();
+        fm = getChildFragmentManager();
 
         myMapFragment = (SupportMapFragment) fm.findFragmentById(R.id.myMap);
 
@@ -614,28 +614,30 @@ public class HomeFragment extends Fragment {
 //                R.id.map)).getMap();
         // Changing map type
 
-        if(myMapFragment != null){
+        if (myMapFragment != null) {
+            GoogleMap googleMap = myMapFragment.getMap();
+            if (googleMap != null) {
+            googleMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
+                public void onCameraChange(CameraPosition position) {
+                    // When the camera changes, update the query
+                    Location loc = new Location("cam");
+                    loc.setLatitude(position.target.latitude);
+                    loc.setLongitude(position.target.longitude);
+                    currentMapLocation = loc;
+                    cameraPositionListener = position;
 
-        myMapFragment.getMap().setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
-            public void onCameraChange(CameraPosition position) {
-                // When the camera changes, update the query
-                Location loc = new Location("cam");
-                loc.setLatitude(position.target.latitude);
-                loc.setLongitude(position.target.longitude);
-                currentMapLocation = loc;
-                cameraPositionListener = position;
 
-
-                if (!mapActive) return; // if th mode search by keyword is active
-                HASHTAG_QUERY = false;
-                doMapQuery(HASHTAG_QUERY);
-                if (position.zoom != previousZoom) { // the zoom change plot markers to merge them if needed
-                    displayImage();
-                    previousZoom = position.zoom;
+                    if (!mapActive) return; // if th mode search by keyword is active
+                    HASHTAG_QUERY = false;
+                    doMapQuery(HASHTAG_QUERY);
+                    if (position.zoom != previousZoom) { // the zoom change plot markers to merge them if needed
+                        displayImage();
+                        previousZoom = position.zoom;
+                    }
                 }
-            }
-        });
+            });
         }
+    }
 
 
     }

@@ -59,17 +59,18 @@
 
 
                 <Button
+                    android:backgroundTint="@color/com_facebook_blue"
                     style="@style/MyMaterialTheme.PopupOverlay"
                     android:layout_marginRight="@dimen/_6sdp"
                     android:layout_marginLeft="@dimen/_6sdp"
                     android:background="@drawable/icon_camera"
-                    android:layout_width="35dp"
-                    android:layout_height="35dp"
+                    android:layout_width="@dimen/_35sdp"
+                    android:layout_height="@dimen/_30sdp"
                     android:id="@+id/camera_post"
                     android:layout_gravity="center"
                     android:height="@dimen/_10sdp"
                     android:translationZ="@dimen/_100sdp"
-                    android:elevation="@dimen/_10sdp"
+                    android:elevation="@dimen/_2sdp"
                     android:shadowColor="@color/background_dark"
                     android:stateListAnimator="@null"
                     />
@@ -95,14 +96,14 @@
                         android:gravity="center"
 
                         />
-                    <Button
+                        <Button
+                        android:backgroundTint="@color/com_facebook_blue"
                         android:layout_width="35dp"
                         android:layout_height="35dp"
                         android:background="@drawable/delete"
                         android:id="@+id/delete_right_menu"
                         android:layout_gravity="center"
                         android:layout_marginRight="15dp"
-                        android:backgroundTint="@color/White"
                         />
 
             </LinearLayout>
